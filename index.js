@@ -8,11 +8,11 @@ var app = express();
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({type:'application/vnd.api+json'}));
 
-const token = '223951341:AAGJXSvta7MkEEoeM3Fy3FCMjn_8ho3YV10';
+const token = process.env.FOOBOT_TOKEN || '223951341:AAGJXSvta7MkEEoeM3Fy3FCMjn_8ho3YV10';
 const db = '//TODO: db connection';
 const telegram = 'https://api.telegram.org/bot' + token;
 const url = '//TODO: url of this server for the webhook to be sent to';
-const port = 9000;
+const port = process.env.FOOBOT_PORT || 9000;
 
 // mongoose.connect(db);
 // mongoose.connection.on('open', function() {
