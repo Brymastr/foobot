@@ -18,45 +18,44 @@ const telegram = 'https://api.telegram.org/bot' + token;
 const url = '//TODO: url of this server for the webhook to be sent to';
 const port = process.env.FOOBOT_PORT || 9000;
 
-
 // Function to get all updates from telegram bot api
-var getUpdates = function(done, timeout, limit) {
+var getUpdates = function(timeout, limit, offset, done) {
   var result = [];
-  request.get(telegram + '/getUpdates?limit=' + limit + '&timeout = ' + timeout, function(err, response, body) {
+  request.get(telegram + '/getUpdates?limit=' + limit + '&timeout=' + timeout + '&offset=' + offset, function(err, response, body) {
     if(err) console.log(err);
     var json = JSON.parse(body);
     for(update in json.result) {
       var message = json.result[update].message;
       var val = 'id: ' + message.message_id + '\t text: ' + message.text;
-      console.log(val);
       result.push({
         id: message.message_id,
         text: message.text,
         date: message.date,
-        user: message.from.first_name || message.from.username
+        user: message.from.first_name || message.from.username,
+        chat_id: message.chat.id,
+        chat_name: message.chat.title,
+        update_id: json.result[update].update_id
       });
     }
     return done(result);
   });
 }
 
-var sendMessage = function(message, done) {
-  console.log(message);  
+var sendMessage = function(message, chatId, done) {
   request.post(telegram + '/sendMessage', {
     json: {
-      chat_id: -118475537,
+      chat_id: chatId,
       text: message
     }
   }, function(err, resonse, body) {
     if(err) console.log(err);
-    console.log(body);
     return done(body);
   });
 }
 
 // Routes
 app.post('/foobot/send', function(req, res, next) {
-  sendMessage(req.body.message, function() {
+  sendMessage(req.body.message, req.body.chat_id, function() {
     res.send('message sent: ' + req.body.message);
   });
 });
@@ -66,23 +65,30 @@ app.post('/foobot/webhook/:token', function(req, res, next) {
 });
 
 app.get('/foobot/updates', function(req, res) {
-  getUpdates(function(updates) {
+  console.log('getUpdates()');
+  getUpdates(0, 10, null, function(updates) {
     res.json(updates);
-  }, 0, 10);
+  });
 });
 
 // Schedule
 schedule.scheduleJob('0 * * * * *', function() {
-  getUpdates(function(updates) {
+   
+  getUpdates(30, 1, -1, function(updates) {
     for(update in updates) {
-      if(updates[update].text.match(/(hey foobot)/)) {
-        sendMessage('I am here to serve', function() {
-          console.log('CRON ran');
+      var message = updates[update];
+      console.log('message: ' + message.text + '  ' + (message.chat_name || message.chat_id));      
+      if(message.text != undefined && message.text.match(/(hey foobot)/)) {
+        console.log('FooBot triggered: ' + message.text + '  ' + (message.chat_name || message.chat_id));
+        
+        sendMessage('I pass butter', message.chat_id, function() {
+          // Send a getUpdates with higher offset to mark all as read
+          getUpdates(0, 1, message.update_id + 1, function() {});
         });
-        break;
       }
     }
-  }, 10, 5);
+  });
+  console.log('CRON ran');
 });
 
 // Start listener
