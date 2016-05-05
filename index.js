@@ -4,6 +4,7 @@ var express = require('express');
 var http = require('http');
 var request = require('request');
 var bodyParser = require('body-parser');
+var schedule = require('node-schedule');
 
 // App setup
 var app = express();
@@ -19,9 +20,9 @@ const port = process.env.FOOBOT_PORT || 9000;
 
 
 // Function to get all updates from telegram bot api
-var getUpdates = function(done) {
+var getUpdates = function(done, timeout, limit) {
   var result = [];
-  request.get(telegram + '/getUpdates', function(err, response, body) {
+  request.get(telegram + '/getUpdates?limit=' + limit + '&timeout = ' + timeout, function(err, response, body) {
     if(err) console.log(err);
     var json = JSON.parse(body);
     for(update in json.result) {
@@ -30,7 +31,9 @@ var getUpdates = function(done) {
       console.log(val);
       result.push({
         id: message.message_id,
-        text: message.text
+        text: message.text,
+        date: message.date,
+        user: message.from.first_name || message.from.username
       });
     }
     return done(result);
@@ -63,9 +66,23 @@ app.post('/foobot/webhook/:token', function(req, res, next) {
 });
 
 app.get('/foobot/updates', function(req, res) {
-  getUpdates(function(result) {
-    res.json(result);
-  });
+  getUpdates(function(updates) {
+    res.json(updates);
+  }, 0, 10);
+});
+
+// Schedule
+schedule.scheduleJob('0 * * * * *', function() {
+  getUpdates(function(updates) {
+    for(update in updates) {
+      if(updates[update].text.match(/(hey foobot)/)) {
+        sendMessage('I am here to serve', function() {
+          console.log('CRON ran');
+        });
+        break;
+      }
+    }
+  }, 10, 5);
 });
 
 // Start listener
