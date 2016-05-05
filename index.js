@@ -74,7 +74,7 @@ app.get('/foobot/updates', function(req, res) {
 // Schedule
 schedule.scheduleJob('0 * * * * *', function() {
    
-  getUpdates(30, 1, -1, function(updates) {
+  getUpdates(30, 5, -5, function(updates) {
     for(update in updates) {
       var message = updates[update];
       console.log('message: ' + message.text + '  ' + (message.chat_name || message.chat_id));      
