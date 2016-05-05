@@ -81,7 +81,7 @@ schedule.scheduleJob('0 * * * * *', function() {
       if(message.text != undefined && message.text.match(/(hey foobot)/)) {
         console.log('FooBot triggered: ' + message.text + '  ' + (message.chat_name || message.chat_id));
         
-        sendMessage('I pass butter', message.chat_id, function() {
+        sendMessage('What the fuck do you want?', message.chat_id, function() {
           // Send a getUpdates with higher offset to mark all as read
           getUpdates(0, 1, message.update_id + 1, function() {});
         });
