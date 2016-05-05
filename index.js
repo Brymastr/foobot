@@ -21,7 +21,6 @@ const port = process.env.FOOBOT_PORT || 9000;
 // Function to get all updates from telegram bot api
 var getUpdates = function(done) {
   var result = [];
-  
   request.get(telegram + '/getUpdates', function(err, response, body) {
     if(err) console.log(err);
     var json = JSON.parse(body);
@@ -38,7 +37,27 @@ var getUpdates = function(done) {
   });
 }
 
+var sendMessage = function(message, done) {
+  console.log(message);  
+  request.post(telegram + '/sendMessage', {
+    json: {
+      chat_id: -118475537,
+      text: message
+    }
+  }, function(err, resonse, body) {
+    if(err) console.log(err);
+    console.log(body);
+    return done(body);
+  });
+}
+
 // Routes
+app.post('/foobot/send', function(req, res, next) {
+  sendMessage(req.body.message, function() {
+    res.send('message sent: ' + req.body.message);
+  });
+});
+
 app.post('/foobot/webhook/:token', function(req, res, next) {
   res.send('foo');
 });
