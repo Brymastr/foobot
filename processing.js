@@ -22,7 +22,7 @@ exports.processMessage = function(message) {
     target = message.user;
   }
 
-  return (verb + ' @' + target + ' ' + meat).stripTags();
+  return (verb + ' @' + target + meat).stripTags();
 };
 
 String.prototype.getWordsByTag = function(tag) {
@@ -34,7 +34,7 @@ String.prototype.removeWords = function(find) {
   var replaceString = this;
   var regex;
   for (var i = 0; i < find.length; i++) {
-    regex = new RegExp(find[i], "g");
+    regex = new RegExp(find[i]);
     replaceString = replaceString.replace(regex, '');
   }
   return replaceString;
