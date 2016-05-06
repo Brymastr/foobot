@@ -3,7 +3,7 @@ var Message = require('./message');
 
 var exports = module.exports = {};
 
-const token = process.env.FOOBOT_TOKEN || '223951341:AAGJXSvta7MkEEoeM3Fy3FCMjn_8ho3YV10';
+const token = process.env.FOOBOT_TOKEN;
 const telegram = 'https://api.telegram.org/bot' + token;
 
 // Send a text message
@@ -17,12 +17,13 @@ exports.sendMessage = function(message, chatId, done) {
     if(err) console.log(err);
     return done(body);
   });
-}
+};
 
 // Get all updates from telegram bot api
 exports.getUpdates = function(timeout, limit, offset, done) {
   var result = [];
-  request.get(telegram + '/getUpdates?limit=' + limit + '&timeout=' + timeout + '&offset=' + offset, function(err, response, body) {
+  var queryString = telegram + '/getUpdates?limit=' + limit + '&timeout=' + timeout + '&offset=' + offset;
+  request.get(queryString, function(err, response, body) {
     if(err) console.log(err);
     var json = JSON.parse(body);
     for(update in json.result) {
