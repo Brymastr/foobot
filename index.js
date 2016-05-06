@@ -23,7 +23,7 @@ app.use('/foobot', routes);
 
 var job = function() {
   bot.getUpdates(30, 5, -5, function(updates) {
-    for(update in updates) {
+    for(var update in updates) {
       var message = updates[update];
       console.log('message: ' + message.text + '  ' + (message.chat_name || message.chat_id));      
       if(message.text != undefined && processing.isTrigger(message.text)) {
@@ -36,7 +36,7 @@ var job = function() {
       }
     }
   });
-}
+};
 
 // Schedule NOTE: This scheduler will die with the uprising of the webhook overlord
 schedule.scheduleJob('0 * * * * *', function() {

@@ -1,4 +1,5 @@
 var request = require('request');
+var Message = require('./message');
 
 var exports = module.exports = {};
 
@@ -27,16 +28,16 @@ exports.getUpdates = function(timeout, limit, offset, done) {
     for(update in json.result) {
       var message = json.result[update].message;
       var val = 'id: ' + message.message_id + '\t text: ' + message.text;
-      result.push({
-        id: message.message_id,
+      result.push(new Message({
+        message_id: message.message_id,
         text: message.text,
         date: message.date,
         user: message.from.first_name || message.from.username,
         chat_id: message.chat.id,
         chat_name: message.chat.title,
         update_id: json.result[update].update_id
-      });
+      }));
     }
     return done(result);
   });
-}
+};

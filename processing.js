@@ -1,30 +1,42 @@
+var pos = require('pos');
+var chunker = require('pos-chunker');
+
 var exports = module.exports = {};
 
 exports.isTrigger = function(text) {
-  if(text.match(/(foobot)/)) {
-    return true;
-  } else {
-    return false;
-  }
-}
+  return !!text.match(/(foobot)/);
+};
 
 exports.processMessage = function(message) {
   var text = message.text;
+  var result;
   switch(true) {
     case (/(call|tell) .+/).test(text):
-      var what = text.split(/(call|tell) .+/)[1];
-      var target = what.split(' ')[0];
-      if(target == 'me') {
-        target = message.user;
+      var verb = text.match(/.* (call|tell)/)[1];
+      text = removeText(text, /.* (call|tell) /);
+      var who = text.match(/[a-zA-Z0-9]+/)[0];
+      text = removeText(text, /[a-zA-Z0-9]+ /);
+      var what = text;
+
+
+      if(who == 'me') {
+        who = message.user;
       }
-      var message = 'Hey @' + target + ', you are ' + what;
+      if(verb == 'tell') {
+        // what = removeText(what, /([a-zA-Z0-9]+ ){2}/)
+      }
+      result = 'Hey @' + who + ', you are ' + what;
       console.log('first case');
       break;
       
     default:
-      message = 'default';
+      result = 'default';
       console.log('default');
   }
   
-  return message;
-}  
+  return result;
+};
+
+function removeText(text, regex) {
+  return text.replace(text.match(regex)[0], '');
+}
