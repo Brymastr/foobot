@@ -8,35 +8,46 @@ exports.isTrigger = function(text) {
 };
 
 exports.processMessage = function(message) {
-  var text = message.text;
-  var result;
-  switch(true) {
-    case (/(call|tell) .+/).test(text):
-      var verb = text.match(/.* (call|tell)/)[1];
-      text = removeText(text, /.* (call|tell) /);
-      var who = text.match(/[a-zA-Z0-9]+/)[0];
-      text = removeText(text, /[a-zA-Z0-9]+ /);
-      var what = text;
+  var text = message.text.removeWords(ignoredWords) + ' ';
+  var words = new pos.Lexer().lex(text);
+  var tags = new pos.Tagger()
+    .tag(words)
+    .map(function(tag) {return tag[0] + '/' + tag[1];})
+    .join(' ');
+  var verb = tags.getWordsByTag(['VB'])[0];
+  var target = tags.getWordsByTag(['NNP', 'PRP']);
+  var meat = tags.split(target[0])[1];
 
-
-      if(who == 'me') {
-        who = message.user;
-      }
-      if(verb == 'tell') {
-        // what = removeText(what, /([a-zA-Z0-9]+ ){2}/)
-      }
-      result = 'Hey @' + who + ', you are ' + what;
-      console.log('first case');
-      break;
-      
-    default:
-      result = 'default';
-      console.log('default');
+  if(target == 'me') {
+    target = message.user;
   }
-  
-  return result;
+
+  return (verb + ' @' + target + ' ' + meat).stripTags();
 };
 
-function removeText(text, regex) {
-  return text.replace(text.match(regex)[0], '');
-}
+String.prototype.getWordsByTag = function(tag) {
+  var re = new RegExp('[a-zA-Z0-9]+\/(' + tag.join('|') + ') ', 'g');
+  return this.match(re);
+};
+
+String.prototype.removeWords = function(find) {
+  var replaceString = this;
+  var regex;
+  for (var i = 0; i < find.length; i++) {
+    regex = new RegExp(find[i], "g");
+    replaceString = replaceString.replace(regex, '');
+  }
+  return replaceString;
+};
+
+String.prototype.stripTags = function() {
+  return this
+    .removeWords(this.match(/\/[a-zA-Z0-9]+/g))
+    .replace(/( ){2,}/, ' ');
+};
+
+var ignoredWords = [
+  'please ',
+  'foobot ',
+  'you '
+];
