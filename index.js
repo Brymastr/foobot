@@ -7,21 +7,23 @@ var schedule = require('node-schedule');
 var processing = require('./processing');
 var bot = require('./telegramBotApi');
 
+var log = require('./logger');
+
 // App setup
 var app = express();
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({type:'application/vnd.api+json'}));
 
 // Configurations
-const db = process.env.FOOBOT_DB_CONN || '//TODO: db connection';
-const url = '//TODO: url of this server for the webhook to be sent to';
+const db = process.env.FOOBOT_DB_CONN || 'mongodb://localhost/foobot';
+const url = process.env.FOOBOT_URL || 'http://localhost';
 const port = process.env.FOOBOT_PORT || 9000;
 
 // Routes
 var routes = require('./routes')();
 app.use('/foobot', routes);
 
-var job = function() {
+var getUpdatesJob = function() {
   bot.getUpdates(30, 5, -5, function(updates) {
     for(var update in updates) {
       var message = updates[update];
@@ -38,13 +40,16 @@ var job = function() {
   });
 };
 
-// Schedule NOTE: This scheduler will die with the uprising of the webhook overlord
-schedule.scheduleJob('0 * * * * *', function() {
-  job();
-  console.log('CRON ran');
-});
+// Schedule getUpdates if webhook not set up.
+if(!url) {
+  schedule.scheduleJob('0 * * * * *', function() {
+    getUpdatesJob();
+    log.info('')
+  });
+}
 
-// Start listener
+
+// Start server
 http.createServer(app).listen(port, function() {
   console.log("server listening on port " + port);
 });

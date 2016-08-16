@@ -13,7 +13,7 @@ module.exports = function(app) {
 
   router.post('/webhook/:token', function(req, res) {
     processing.processMessage(req.body, function() {
-      res.send('foo');
+      res.send(req.body);
     });
   });
 
