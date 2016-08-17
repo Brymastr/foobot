@@ -25,6 +25,7 @@ exports.write = function(level, message) {
   }
   // Ensure directory exists
   fs.access(this.logFile, fs.constants.W_OK, (err) => {
+    if(err) fs.mkdirSync('./logs')
     message = err ? 'error writing to log dir' : new Date().toISOString() + ' ' + level + ': ' + message;
     console.log(message);
     if(!err) fs.appendFile(this.logFile, message + '\r\n');

@@ -44,12 +44,12 @@ api:
   environment:
     - 'FOOBOT_DB_CONN=mongodb://db/foobot'
     - FOOBOT_URL=https://foobot.dorsaydevelopment.ca
-    - FOOBOT_PORT=80
+    - FOOBOT_PORT=443
     - NODE_ENV=production
     - 'SECRET=super secret secret'
     - VIRTUAL_HOST=foobot.dorsaydevelopment.ca
     - VIRTUAL_NETWORK=nginx-proxy
-    - VIRTUAL_PORT=80
+    - VIRTUAL_PORT=443
     - LETSENCRYPT_HOST=foobot.dorsaydevelopment.ca
     - LETSENCRYPT_EMAIL=dorsay@live.ca
     - LETSENCRYPT_TEST=true
