@@ -1,6 +1,7 @@
 var request = require('request');
 var Message = require('./message');
 var fs = require('fs');
+var log = require('./logger');
 
 var exports = module.exports = {};
 
