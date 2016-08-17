@@ -27,14 +27,13 @@ letsencrypt-nginx-proxy-companion:
     - nginx
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock:ro
-    - /volumes/idealist/certs:/etc/nginx/certs:rw
+    - /volumes/foobot/certs:/etc/nginx/certs:rw
   environment:
     - NGINX_DOCKER_GEN_CONTAINER=nginx-gen
     
     
 api:
-  # image: 'dorsaydevelopment/foobot:latest'
-  build: ./
+  image: 'brymastr/foo-bot:latest'
   container_name: api
   links:
     - db
