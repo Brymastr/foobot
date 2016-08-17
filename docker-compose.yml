@@ -5,7 +5,7 @@ nginx:
     - /etc/nginx/conf.d
     - /etc/nginx/vhost.d
     - /usr/share/nginx/html
-    - /volumes/idealist/certs:/etc/nginx/certs:ro
+    - /volumes/foobot/certs:/etc/nginx/certs:ro
   ports:
     - '80:80'
     - '443:443'
