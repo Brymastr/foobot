@@ -22,8 +22,8 @@ exports.sendMessage = function(message, chatId, done) {
 
 exports.setWebhook = function(url) {
   request.post({url: telegram + '/setWebhook', formData: {
-      url: url,
-      certificate: fs.readFileSync('/etc/nginx/certs/certificate.crt') // This is incorrect
+      url: url//,
+      //certificate: fs.readFileSync('/etc/nginx/certs/certificate.crt') // This is incorrect
     }}, function(err, response, body) {
       if(err) log.error(err);
       if(url == '') log.info('Webhook removed')
