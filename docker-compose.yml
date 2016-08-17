@@ -37,6 +37,8 @@ api:
   container_name: api
   links:
     - db
+  volumes_from:
+    - letsencrypt-nginx-proxy-companion
   volumes:
     - ./conf.d/:/etc/nginx/conf.d
   environment:

@@ -40,11 +40,14 @@ var getUpdatesJob = function() {
   });
 };
 
-// Schedule getUpdates if webhook not set up.
-if(!url) {
+// Set up webhook or use getUpdates()
+if(url) {
+  bot.setWebhook(url);
+} else {
+  bot.setWebhook('');
   schedule.scheduleJob('0 * * * * *', function() {
     getUpdatesJob();
-    log.info('')
+    log.info('getUpdates()');
   });
 }
 

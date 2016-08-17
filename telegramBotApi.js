@@ -13,9 +13,20 @@ exports.sendMessage = function(message, chatId, done) {
       chat_id: chatId,
       text: message
     }
-  }, function(err, resonse, body) {
-    if(err) console.log(err);
+  }, function(err, response, body) {
+    if(err) log.error(err);    
     return done(body);
+  });
+};
+
+exports.setWebhook = function(url) {
+  request.post({url: telegram + '/setWebhook', formData: {
+      url: url,
+      certificate: fs.readFileSync('/etc/nginx/certs/certificate.crt') // This is incorrect
+    }}, function(err, response, body) {
+      if(err) log.error(err);
+      if(url == '') log.info('Webhook removed')
+      else log.info('Webhook set: ' + url)
   });
 };
 
