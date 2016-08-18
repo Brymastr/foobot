@@ -1,7 +1,7 @@
 var fs = require('fs');
 
 this.logLevel;
-this.logFile = process.env.FOOBOT_LOG_DIR || './logs/log.txt';
+this.logDir = process.env.FOOBOT_LOG_DIR || './logs';
 this.levels = ['debug', 'info', 'error']; // low to high
 
 exports.debug = function(message) {
@@ -24,10 +24,10 @@ exports.write = function(level, message) {
     message = JSON.stringify(message);
   }
   // Ensure directory exists
-  fs.access(this.logFile, fs.constants.W_OK, (err) => {
-    if(err) fs.mkdirSync('./logs')
-    message = err ? 'error writing to log dir' : new Date().toISOString() + ' ' + level + ': ' + message;
+  fs.access(this.logDir, fs.W_OK, (err) => {
+    if(err) fs.mkdirSync(this.logDir)
+    message = err ? 'error writing to log dir: ' + err : new Date().toISOString() + ' ' + level + ': ' + message;
     console.log(message);
-    if(!err) fs.appendFile(this.logFile, message + '\r\n');
+    if(!err) fs.appendFile(this.logDir + '/log.txt', message + '\r\n');
   });
 }

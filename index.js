@@ -16,7 +16,7 @@ app.use(bodyParser.json({type:'application/vnd.api+json'}));
 
 // Configurations
 const db = process.env.FOOBOT_DB_CONN || 'mongodb://localhost/foobot';
-const url = process.env.FOOBOT_URL || 'http://localhost';
+const url = process.env.FOOBOT_URL;
 const port = process.env.FOOBOT_PORT || 9000;
 
 // Routes
@@ -25,8 +25,8 @@ app.use('/foobot', routes);
 
 var getUpdatesJob = function() {
   bot.getUpdates(30, 5, -5, function(updates) {
-    for(var update in updates) {
-      var message = updates[update];
+    updates.forEach(function(update) {
+      var message = update;
       console.log('message: ' + message.text + '  ' + (message.chat_name || message.chat_id));      
       if(message.text != undefined && processing.isTrigger(message.text)) {
         console.log('FooBot triggered: ' + message.text + '  ' + (message.chat_name || message.chat_id));
@@ -36,15 +36,15 @@ var getUpdatesJob = function() {
           bot.getUpdates(0, 1, message.update_id + 1, function() {});
         });
       }
-    }
+    });
   });
 };
 
 // Set up webhook or use getUpdates()
 if(url) {
-  bot.setWebhook(url);
+  bot.setWebhook(url, '/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt');
 } else {
-  bot.setWebhook('');
+  bot.setWebhook();
   schedule.scheduleJob('0 * * * * *', function() {
     getUpdatesJob();
     log.info('getUpdates()');
@@ -53,21 +53,6 @@ if(url) {
 
 
 // Start server
-http.createServer(app).listen(port, function() {
+http.createServer(app).listen(port, '0.0.0.0', function() {
   console.log("server listening on port " + port);
 });
-
-
-// mongoose.connect(db);
-// mongoose.connection.on('open', function() {
-//   console.log('Mongo connection is open. Connected to: ' + db);
-// });
-
-// request.post(telegram + '/setWebhook', {
-//   json: {
-//     url: url,
-//     certficate: '//TODO: generate self-signed cert'
-//   }
-// }, function(err, response, body) {
-//   if(err) console.log(err);
-// });

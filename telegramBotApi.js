@@ -5,7 +5,7 @@ var log = require('./logger');
 
 var exports = module.exports = {};
 
-const token = process.env.FOOBOT_TOKEN;
+const token = process.env.FOOBOT_TOKEN || '223951341:AAGsPCHjO44E9OEHEvWMtUS3k73l4KKXoRQ'; // TODO: Telegram foobot bot token
 const telegram = 'https://api.telegram.org/bot' + token;
 
 // Send a text message
@@ -21,11 +21,19 @@ exports.sendMessage = function(message, chatId, done) {
   });
 };
 
-exports.setWebhook = function(url) {
-  request.post({url: telegram + '/setWebhook', formData: {
+exports.setWebhook = function(url = '', certPath) {
+  let formData;
+  if(certPath) { 
+    formData = {
       url: url,
-      certificate: fs.readFileSync('/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt')
-    }}, function(err, response, body) {
+      certificate: fs.readFileSync(certPath)
+    };
+  } else {
+    formData = {
+      url: url
+    }
+  }
+  request.post({url: telegram + '/setWebhook', formData: formData}, function(err, response, body) {
       if(err) log.error(err);
       if(url == '') log.info('Webhook removed')
       else log.info('Webhook set: ' + url)
