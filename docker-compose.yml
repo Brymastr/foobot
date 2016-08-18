@@ -4,7 +4,6 @@ nginx:
   volumes: 
     - /etc/nginx/conf.d
     - /etc/nginx/vhost.d
-    - /usr/share/nginx/html
     - /volumes/foobot/certs:/etc/nginx/certs:ro
   ports:
     - '80:80'

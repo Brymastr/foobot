@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var schedule = require('node-schedule');
 var processing = require('./processing');
 var bot = require('./telegramBotApi');
+var methodOverride = require('method-override');
 
 var log = require('./logger');
 
@@ -13,6 +14,14 @@ var log = require('./logger');
 var app = express();
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({type:'application/vnd.api+json'}));
+app.use(methodOverride());
+
+// CORS
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // Configurations
 const db = process.env.FOOBOT_DB_CONN || 'mongodb://localhost/foobot';
@@ -21,7 +30,7 @@ const port = process.env.FOOBOT_PORT || 9000;
 
 // Routes
 var routes = require('./routes')();
-app.use('/foobot', routes);
+app.use('', routes);
 
 var getUpdatesJob = function() {
   bot.getUpdates(30, 5, -5, function(updates) {
