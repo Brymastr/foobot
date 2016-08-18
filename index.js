@@ -53,6 +53,6 @@ if(url) {
 
 
 // Start server
-http.createServer(app).listen(port, '0.0.0.0', function() {
+http.createServer(app).listen(port, function() {
   console.log("server listening on port " + port);
 });

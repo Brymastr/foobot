@@ -37,12 +37,11 @@ api:
   container_name: api
   links:
     - db
-  volumes_from:
-    - letsencrypt-nginx-proxy-companion
   volumes:
     - ./conf.d/:/etc/nginx/conf.d
+    - /volumes/foobot/certs:/etc/nginx/certs:rw
   environment:
-    - 'FOOBOT_DB_CONN=mongodb://db/foobot'
+    - FOOBOT_DB_CONN=mongodb://db/foobot
     - FOOBOT_URL=https://foobot.dorsaydevelopment.ca
     - FOOBOT_TOKEN=223951341:AAGsPCHjO44E9OEHEvWMtUS3k73l4KKXoRQ
     - FOOBOT_PORT=80
