@@ -37,7 +37,7 @@ api:
   links:
     - db
   volumes:
-    - ./conf.d/:/etc/nginx/conf.d
+    - ./api/conf.d/:/etc/nginx/conf.d
     - /volumes/foobot/certs:/etc/nginx/certs:rw
   environment:
     - FOOBOT_DB_CONN=mongodb://db/foobot
