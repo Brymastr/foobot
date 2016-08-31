@@ -33,7 +33,8 @@ letsencrypt-nginx-proxy-companion:
     
     
 api:
-  image: 'brymastr/foo-bot:latest'
+  # image: 'brymastr/foo-bot:latest'
+  build: .
   container_name: api
   links:
     - db
