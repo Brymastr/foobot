@@ -39,7 +39,7 @@ api:
     - db
   volumes:
     - ./conf.d/:/etc/nginx/conf.d
-    # - /volumes/foobot/certs:/etc/nginx/certs:rw
+    - /volumes/foobot/certs:/etc/nginx/certs:rw
   environment:
     - FOOBOT_DB_CONN=mongodb://db/foobot
     - FOOBOT_URL=https://foobot.dorsaydevelopment.ca

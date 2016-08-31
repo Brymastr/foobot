@@ -32,6 +32,11 @@ const port = process.env.FOOBOT_PORT || 9000;
 var routes = require('./routes')();
 app.use('', routes);
 
+// Start server
+http.createServer(app).listen(port, function() {
+  console.log("server listening on port " + port);
+});
+
 var getUpdatesJob = function() {
   bot.getUpdates(30, 5, -5, function(updates) {
     updates.forEach(function(update) {
@@ -51,8 +56,7 @@ var getUpdatesJob = function() {
 
 // Set up webhook or use getUpdates()
 if(url) {
-  // bot.setWebhook(url, '/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt');
-  bot.setWebhook(url);
+  bot.setWebhook(url, '/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt');
 } else {
   bot.setWebhook();
   schedule.scheduleJob('0 * * * * *', function() {
@@ -60,9 +64,3 @@ if(url) {
     log.info('getUpdates()');
   });
 }
-
-
-// Start server
-http.createServer(app).listen(port, function() {
-  console.log("server listening on port " + port);
-});
