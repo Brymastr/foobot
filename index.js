@@ -51,7 +51,8 @@ var getUpdatesJob = function() {
 
 // Set up webhook or use getUpdates()
 if(url) {
-  bot.setWebhook(url, '/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt');
+  // bot.setWebhook(url, '/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt');
+  bot.setWebhook(url);
 } else {
   bot.setWebhook();
   schedule.scheduleJob('0 * * * * *', function() {
