@@ -23,10 +23,18 @@ app.use(function(req, res, next) {
   next();
 });
 
+// Logging middleware
+app.use('*', function(req, res, next) {
+  log.info(req.method + ': ' + req.baseUrl);
+  log.debug(req.body)
+  next();
+});
+
 // Configurations
 const db = process.env.FOOBOT_DB_CONN || 'mongodb://localhost/foobot';
 const url = process.env.FOOBOT_URL;
 const port = process.env.FOOBOT_PORT || 9000;
+log.logLevel = process.env.FOOBOT_LOG_LEVEL || 'info';
 
 // Routes
 var routes = require('./routes')();
@@ -34,7 +42,7 @@ app.use('', routes);
 
 // Start server
 http.createServer(app).listen(port, function() {
-  console.log("server listening on port " + port);
+  log.debug("server listening on port " + port);
 });
 
 var getUpdatesJob = function() {
