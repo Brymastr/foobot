@@ -5,5 +5,5 @@ COPY . /src
 
 RUN npm install
 
-EXPOSE 80 443
+EXPOSE 80
 CMD ["node", "index.js"]
