@@ -50,7 +50,7 @@ api:
     - VIRTUAL_PORT=80
     - LETSENCRYPT_HOST=foobot.dorsaydevelopment.ca
     - LETSENCRYPT_EMAIL=dorsay@live.ca
-    - LETSENCRYPT_TEST=true
+    - LETSENCRYPT_TEST=false
     
   restart: always
 
