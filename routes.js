@@ -1,6 +1,7 @@
 var bot = require('./telegramBotApi');
 var processing = require('./processing');
 var express = require('express');
+var log = require('./logger');
 
 module.exports = function(app) {
   var router = express.Router();
@@ -12,8 +13,8 @@ module.exports = function(app) {
   });
 
   router.post('/webhook/:token', function(req, res) {
-    processing.processMessage(req.body, function() {
-      res.send(req.body);
+    processing.processMessage(req.body, function(response) {
+      res.send(response);
     });
   });
 
