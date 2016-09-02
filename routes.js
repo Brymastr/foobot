@@ -15,7 +15,7 @@ module.exports = function(app) {
   router.post('/webhook/:token', function(req, res) {
     if(processing.isTrigger(req.body.message.text)) {
       processing.processMessage(req.body.message, (response) => {
-        bot.sendMessage(response, req.body.chat.id, () => res.send(200));
+        bot.sendMessage(response, req.body.message.chat.id, () => res.send(200));
       });
     } else {
       res.send(200);
