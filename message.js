@@ -6,10 +6,11 @@ var messageSchema = Schema({
   message_id: Number,
   text: String,
   date: Date,
-  user: String,
+  user: Object,
   chat_id: Number,
   chat_name: String,
-  update_id: Number
+  update_id: Number,
+  response: String
 });
 
 module.exports = mongoose.model('Message', messageSchema);

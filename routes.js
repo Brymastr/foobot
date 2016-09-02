@@ -5,6 +5,7 @@ var log = require('./logger');
 
 module.exports = function(app) {
   var router = express.Router();
+
   // Routes
   router.post('/send', function(req, res, next) {
     bot.sendMessage(req.body.message, req.body.chat_id, function() {
@@ -13,13 +14,18 @@ module.exports = function(app) {
   });
 
   router.post('/webhook/:token', function(req, res) {
-    if(processing.isTrigger(req.body.message.text)) {
-      processing.processMessage(req.body.message, (response) => {
-        bot.sendMessage(response, req.body.message.chat.id, () => res.send(200));
-      });
-    } else {
-      res.send(200);
-    }
+    /* 
+      decide what type of message
+      decide what to do with it
+      https://core.telegram.org/bots/webhooks
+      Update types:
+      message.text, edited_message.text, message.audio, message.voice,
+      message.document, inline_query.query, chosen_inline_result.query, callback_query.data
+    */
+    processing.processUpdate(req.body, (response) => {
+      log.debug('Response: ' + response.response);
+      bot.sendMessage(response.response, response.chat_id, () => res.send(200));
+    });
   });
 
   router.get('/updates', function(req, res) {

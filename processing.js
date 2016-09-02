@@ -1,14 +1,40 @@
 var pos = require('pos');
 var chunker = require('pos-chunker');
-
+var Message = require('./message');
 var exports = module.exports = {};
 
 exports.isTrigger = function(text) {
   return !!text.match(/(foobot)/);
 };
 
-exports.processMessage = function(message, cb) {
-  cb(`I know your deepest fears, ${message.from.first_name} ${message.from.last_name}`);
+exports.mapUpdate = function(update) {
+  let message = new Message({
+    update_id: update.update_id
+  });
+  if(update.edited_message != undefined) {
+    message.message_id = update.edited_message.message_id;
+    message.date = update.edited_message.date;
+    message.user = update.edited_message.from;
+    message.chat_id = update.edited_message.chat.id;
+    message.chat_name = update.edited_message.chat.first_name;
+    message.text = update.edited_message.text;
+  } else if(update.message != undefined) {
+    message.message_id = update.message.message_id;
+    message.date = update.message.date;
+    message.user = update.message.from;
+    message.chat_id = update.message.chat.id;
+    message.chat_name = update.message.chat.first_name;
+    message.text = update.message.text;
+  }
+
+  return message;
+}
+
+exports.processUpdate = function(update, cb) {
+  let message = this.mapUpdate(update);
+  message.response = `I know your deepest fears, ${message.user.first_name} ${message.user.last_name}`;
+
+  cb(message);
   
   // var text = message.text.removeWords(ignoredWords) + ' ';
   // var words = new pos.Lexer().lex(text);
@@ -24,7 +50,7 @@ exports.processMessage = function(message, cb) {
   //   target = message.user;
   // }
 
-  // return (verb + ' @' + target + meat).stripTags();
+  // return (`${verb} @${target} ${meat}`).stripTags();
 };
 
 String.prototype.getWordsByTag = function(tag) {
