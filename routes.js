@@ -23,8 +23,12 @@ module.exports = function(app) {
       message.document, inline_query.query, chosen_inline_result.query, callback_query.data
     */
     processing.processUpdate(req.body, (response) => {
-      log.debug('Response: ' + response.response);
-      bot.sendMessage(response.response, response.chat_id, () => res.send(200));
+      if(response != undefined) {
+        log.debug('Response: ' + response.response);
+        bot.sendMessage(response.response, response.chat_id, () => res.send(200));
+      } else {
+        res.send(200)
+      }
     });
   });
 

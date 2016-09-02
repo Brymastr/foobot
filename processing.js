@@ -32,9 +32,12 @@ exports.mapUpdate = function(update) {
 
 exports.processUpdate = function(update, cb) {
   let message = this.mapUpdate(update);
-  message.response = `I know your deepest fears, ${message.user.first_name} ${message.user.last_name}`;
 
-  cb(message);
+  message.response = `I know your deepest fears, ${message.user.first_name} ${message.user.last_name}`;
+  if(this.isTrigger(message.text))
+    cb(message);
+  else
+    cb();
   
   // var text = message.text.removeWords(ignoredWords) + ' ';
   // var words = new pos.Lexer().lex(text);
