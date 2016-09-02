@@ -28,6 +28,9 @@ exports.mapUpdate = function(update) {
     message.text = update.message.text;
   }
 
+  if(message.text == undefined)
+    message.text = '';
+
   return message;
 }
 
