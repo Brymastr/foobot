@@ -13,10 +13,13 @@ module.exports = function(app) {
   });
 
   router.post('/webhook/:token', function(req, res) {
-    if(processing.isTrigger(req.body.message.text))
-      processing.processMessage(req.body.message, () => res.send(200));
-    else
+    if(processing.isTrigger(req.body.message.text)) {
+      processing.processMessage(req.body.message, (response) => {
+        bot.sendMessage(response, req.body.chat.id, () => res.send(200));
+      });
+    } else {
       res.send(200);
+    }
   });
 
   router.get('/updates', function(req, res) {

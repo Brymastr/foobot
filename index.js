@@ -20,7 +20,7 @@ app.use(methodOverride());
 const db = process.env.FOOBOT_DB_CONN || 'mongodb://localhost/foobot';
 const url = process.env.FOOBOT_URL;
 const port = process.env.FOOBOT_PORT || 9000;
-log.logLevel = process.env.FOOBOT_LOG_LEVEL || 'info';
+log.logLevel = process.env.FOOBOT_LOG_LEVEL || 'debug';
 
 // CORS
 app.use(function(req, res, next) {
