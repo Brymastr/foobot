@@ -18,7 +18,7 @@ exports.mapUpdate = function(update) {
     message.chat_id = update.edited_message.chat.id;
     message.chat_name = update.edited_message.chat.first_name;
     // message.text = update.edited_message.text;
-    message.text = '';  // Don't care about edited messages for now
+    message.response = 'Edit that message again, I fuckin\' dare you';  // Don't care about edited messages for now
   } else if(update.message != undefined) {
     message.message_id = update.message.message_id;
     message.date = update.message.date;
@@ -26,6 +26,7 @@ exports.mapUpdate = function(update) {
     message.chat_id = update.message.chat.id;
     message.chat_name = update.message.chat.first_name;
     message.text = update.message.text;
+    message.response = `Hey, ${message.user.first_name}, why don't you come say that to my face?`;
   }
 
   if(message.text == undefined)
@@ -36,9 +37,10 @@ exports.mapUpdate = function(update) {
 
 exports.processUpdate = function(update, cb) {
   let message = this.mapUpdate(update);
-
-  message.response = `I know your deepest fears, ${message.user.first_name} ${message.user.last_name}`;
-  if(this.isTrigger(message.text))
+  
+  if(update.edited_message != undefined) {
+    cb(message);
+  } else if(this.isTrigger(message.text))
     cb(message);
   else
     cb();
