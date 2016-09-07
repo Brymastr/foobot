@@ -42,7 +42,7 @@ api:
     - /volumes/foobot/certs:/etc/nginx/certs:rw
   environment:
     - FOOBOT_DB_CONN=mongodb://db/foobot
-    - FOOBOT_URL=https://foobot.dorsaydevelopment.ca/webhook/token
+    - FOOBOT_URL=https://foobot.dorsaydevelopment.ca/webhook
     - FOOBOT_TOKEN=223951341:AAGsPCHjO44E9OEHEvWMtUS3k73l4KKXoRQ
     - FOOBOT_PORT=80
     - FOOBOT_LOG_LEVEL=info

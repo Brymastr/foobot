@@ -7,6 +7,7 @@ var schedule = require('node-schedule');
 var processing = require('./processing');
 var bot = require('./telegramBotApi');
 var methodOverride = require('method-override');
+var uuid = require('node-uuid');
 
 var log = require('./logger');
 
@@ -21,6 +22,8 @@ const db = process.env.FOOBOT_DB_CONN || 'mongodb://localhost/foobot';
 const url = process.env.FOOBOT_URL;
 const port = process.env.FOOBOT_PORT || 9000;
 log.logLevel = process.env.FOOBOT_LOG_LEVEL || 'debug';
+const routeToken = (url != null) ? uuid.v4() : 'token';
+log.info('Route token => ' + routeToken);
 
 // CORS
 app.use(function(req, res, next) {
@@ -37,7 +40,7 @@ app.use('*', function(req, res, next) {
 });
 
 // Routes
-var routes = require('./routes')();
+var routes = require('./routes')(routeToken);
 app.use('', routes);
 
 // Start server
@@ -64,7 +67,7 @@ var getUpdatesJob = function() {
 
 // Set up webhook or use getUpdates()
 if(url) {
-  bot.setWebhook(url, '/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt');
+  bot.setWebhook(`${url}/${routeToken}`, '/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt');
 } else {
   bot.setWebhook();
   schedule.scheduleJob('0 * * * * *', function() {

@@ -2,9 +2,16 @@ var pos = require('pos');
 var chunker = require('pos-chunker');
 var Message = require('./message');
 var exports = module.exports = {};
+var fs = require('fs');
+
+this.kanye = 'I miss the old kanye';
+this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
+  if(err) data = err;
+  this.kanye = data;
+})
 
 exports.isTrigger = function(text) {
-  return !!text.match(/(foobot)/);
+  return !!text.match(/(foobot)/i);
 };
 
 exports.mapUpdate = function(update) {
@@ -17,8 +24,7 @@ exports.mapUpdate = function(update) {
     message.user = update.edited_message.from;
     message.chat_id = update.edited_message.chat.id;
     message.chat_name = update.edited_message.chat.first_name;
-    // message.text = update.edited_message.text;
-    message.response = 'Edit that message again, I fuckin\' dare you';  // Don't care about edited messages for now
+    message.text = '\edited';
   } else if(update.message != undefined) {
     message.message_id = update.message.message_id;
     message.date = update.message.date;
@@ -26,7 +32,6 @@ exports.mapUpdate = function(update) {
     message.chat_id = update.message.chat.id;
     message.chat_name = update.message.chat.first_name;
     message.text = update.message.text;
-    message.response = `Hey, ${message.user.first_name}, why don't you come say that to my face?`;
   }
 
   if(message.text == undefined)
@@ -35,15 +40,22 @@ exports.mapUpdate = function(update) {
   return message;
 }
 
+exports.getKanye = () => {
+  let kanye = this.kanye.split(/[,\n]+/).map(line => line.replace('\\', ''));
+  return kanye[Math.floor(Math.random() * (kanye.length - 1))]
+}
+
 exports.processUpdate = function(update, cb) {
   let message = this.mapUpdate(update);
+
+  if(message.text == '\edited')
+    message.response = 'Edit that message again, I fuckin\' dare you';
+  else if(message.text.match(/(kanye)/i))
+    message.response = this.getKanye();
+  else if(message.text.match(/(foobot)/i))
+    message.response = 'Hey, that\'s me!';
   
-  if(update.edited_message != undefined) {
-    cb(message);
-  } else if(this.isTrigger(message.text))
-    cb(message);
-  else
-    cb();
+  cb(message);
   
   // var text = message.text.removeWords(ignoredWords) + ' ';
   // var words = new pos.Lexer().lex(text);

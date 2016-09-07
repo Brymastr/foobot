@@ -3,7 +3,7 @@ var processing = require('./processing');
 var express = require('express');
 var log = require('./logger');
 
-module.exports = function(app) {
+module.exports = function(routeToken) {
   var router = express.Router();
 
   // Routes
@@ -14,6 +14,7 @@ module.exports = function(app) {
   });
 
   router.post('/webhook/:token', function(req, res) {
+    
     /* 
       decide what type of message
       decide what to do with it
@@ -23,11 +24,14 @@ module.exports = function(app) {
       message.document, inline_query.query, chosen_inline_result.query, callback_query.data
     */
     processing.processUpdate(req.body, (response) => {
-      if(response != undefined) {
+      if(req.params.token != routeToken) {
+        log.info('Incorrect route token');
+        res.sendStatus(404);
+      } else if(response != undefined) {
         log.debug('Response: ' + response.response);
-        bot.sendMessage(response.response, response.chat_id, () => res.send(200));
+        bot.sendMessage(response.response, response.chat_id, () => res.sendStatus(200));
       } else {
-        res.send(200)
+        res.sendStatus(200);
       }
     });
   });
