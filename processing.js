@@ -45,7 +45,7 @@ exports.getKanye = () => {
   return kanye[Math.floor(Math.random() * (kanye.length - 1))]
 }
 
-exports.processUpdate = function(update, cb) {
+exports.processUpdate = function(update, classifier, cb) {
   let message = this.mapUpdate(update);
 
   if(message.text == '\edited')
@@ -54,6 +54,8 @@ exports.processUpdate = function(update, cb) {
     message.response = this.getKanye();
   else if(message.text.match(/(foobot)/i))
     message.response = 'Hey, that\'s me!';
+
+  message.topic = classifier.classify(message.text);
   
   cb(message);
   

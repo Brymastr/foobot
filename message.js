@@ -10,6 +10,7 @@ var messageSchema = Schema({
   chat_id: Number,
   chat_name: String,
   update_id: Number,
+  topic: String,
   response: String
 });
 

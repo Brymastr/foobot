@@ -8,8 +8,8 @@ var processing = require('./processing');
 var bot = require('./telegramBotApi');
 var methodOverride = require('method-override');
 var uuid = require('node-uuid');
-
 var log = require('./logger');
+var natural = require('natural');  
 
 // App setup
 var app = express();
@@ -24,6 +24,7 @@ const port = process.env.FOOBOT_PORT || 9000;
 log.logLevel = process.env.FOOBOT_LOG_LEVEL || 'debug';
 const routeToken = (url != null) ? uuid.v4() : 'token';
 log.info('Route token => ' + routeToken);
+let classifier;
 
 // CORS
 app.use(function(req, res, next) {
@@ -39,9 +40,12 @@ app.use('*', function(req, res, next) {
   next();
 });
 
-// Routes
-var routes = require('./routes')(routeToken);
-app.use('', routes);
+// Routes + classifier
+natural.BayesClassifier.load('classifier.json', null, function(err, classifier) {  
+  log.debug('classifier loaded from classifier.json');
+  let routes = require('./routes')(routeToken, classifier);
+  app.use('', routes);
+});
 
 // Start server
 http.createServer(app).listen(port, function() {

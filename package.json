@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha -w"
+    "test": "node_modules/.bin/mocha -w",
+    "train": "node classifier.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "method-override": "^2.3.6",
     "mocha": "^2.4.5",
     "mongoose": "^4.4.14",
+    "natural": "^0.4.0",
     "node-schedule": "^1.1.0",
     "node-uuid": "^1.4.7",
     "pos": "^0.3.0",

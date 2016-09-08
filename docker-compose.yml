@@ -40,6 +40,7 @@ api:
   volumes:
     - ./conf.d/:/etc/nginx/conf.d
     - /volumes/foobot/certs:/etc/nginx/certs:rw
+    - /var/run/docker.sock:/var/run/docker.sock
   environment:
     - FOOBOT_DB_CONN=mongodb://db/foobot
     - FOOBOT_URL=https://foobot.dorsaydevelopment.ca/webhook
