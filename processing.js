@@ -97,18 +97,15 @@ exports.processUpdate = function(update, classifier, cb) {
   }
   // Message content
   else {
-    if(message.text.match(/(define|#)/i)) {
-      const word = message.text.split(/(define|#)/i)[2];
+    if(message.text.match(/(define)/i)) {
+      const word = message.text.split(/(define)/i)[2];
       urban(word).first(json => {
         message.response = `${json.definition}\nExample: ${json.example}`;
-        console.log(message.response);
         cb(message);
       });
     }
     else if(message.text.match(/(kanye)/i)) message.response = this.getKanye();
     else if(message.text.match(/(foobot)/i)) message.response = strings.$('meta');
-    
   }
-
   cb(message);
 };
