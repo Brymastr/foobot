@@ -23,8 +23,6 @@ classifier.addDocument('can you lookup', 'urban');
 for(i = 0; i < 50; i++)
   classifier.addDocument('any words ever', 'else');
 
-
-
 classifier.train();
 
 classifier.save('classifier.json', function(err, classifier) {  

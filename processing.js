@@ -100,7 +100,7 @@ exports.processUpdate = function(update, classifier, cb) {
     if(message.text.match(/(define|#)/)) {
       const word = message.text.split(/(define|#)/)[2];
       urban(word).first(function(json) {
-        message.response = `From the Urban Dictionary: ${word}\n "${json.definition}"\nExample: "${json.example}"`;
+        message.response = `From the Urban Dictionary: ${word}\n ${json.definition}\nExample: ${json.example}`;
         console.log(message.response);
         cb(message);
       });
