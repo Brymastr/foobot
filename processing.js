@@ -5,6 +5,7 @@ const InlineKeyboardButton = require('./models/InlineKeyboardButton');
 const fs = require('fs');
 const strings = require('./strings');
 const urban = require('urban');
+const googleAPI = require('./googleAPI');
 
 this.kanye = 'I miss the old kanye';
 this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
@@ -93,6 +94,11 @@ exports.processUpdate = function(update, classifier, cb) {
           })
         ]]
       }
+    } else if(message.topic == 'flights') {
+      googleAPI.getFlights(message, result => {
+        message.response = result;
+        cb(message);
+      });
     }
   }
   // Message content

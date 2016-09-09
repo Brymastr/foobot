@@ -17,7 +17,7 @@ exports.sendMessage = function(message, done) {
       reply_markup: message.reply_markup,
       parse_mode: 'Markdown'
     }
-  }, function(err, response, body) {
+  }, (err, response, body) => {
     if(err) log.error(err);    
     return done(body);
   });

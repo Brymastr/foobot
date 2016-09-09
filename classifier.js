@@ -19,6 +19,10 @@ classifier.addDocument('dropin at bonsor', 'volleyball');
 classifier.addDocument('basically anything else', 'else');
 classifier.addDocument('hey lookup words', 'urban');
 classifier.addDocument('can you lookup', 'urban');
+classifier.addDocument('lookup flights', 'flights');
+classifier.addDocument('find flights', 'flights');
+classifier.addDocument('find a flight', 'flights');
+classifier.addDocument('flights from qqqqq to qqq qq for 1 people less than 2000', 'flights');
 
 for(i = 0; i < 50; i++)
   classifier.addDocument('any words ever', 'else');

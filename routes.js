@@ -15,14 +15,7 @@ module.exports = function(routeToken, classifier) {
   });
 
   router.post('/webhook/:token', function(req, res) {
-    /* 
-      decide what type of message
-      decide what to do with it
-      https://core.telegram.org/bots/webhooks
-      Update types:
-        message.text, edited_message.text, message.audio, message.voice,
-        message.document, inline_query.query, chosen_inline_result.query, callback_query.data
-    */
+    
     processing.processUpdate(req.body, classifier, (response) => {
       
       log.debug('Topic: ' + response.topic)
@@ -37,23 +30,6 @@ module.exports = function(routeToken, classifier) {
       } else {
         res.sendStatus(200);
       }
-    });
-  });
-
-  router.post('/updateContainer', (req, res) => {
-    // Update the api container
-    if(routeToken == 'token') {
-      res.send('Bot not running in docker container');
-    } else {
-      // docker-compose pull api && docker-compose up --no-deps -d api
-      res.send('This will update the docker container BUT NOT YET BECAUASE I HAVEN\'T IMPLEMENTED IT YET')
-    }
-  });
-
-  router.get('/updates', (req, res) => {
-    console.log('getUpdates()');
-    bot.getUpdates(0, 10, null, function(updates) {
-      res.json(updates);
     });
   });
   
