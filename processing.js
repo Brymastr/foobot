@@ -66,7 +66,7 @@ exports.processUpdate = function(update, classifier, cb) {
   message.topic = classifier.classify(message.text);
 
   // Actions
-  if(message.action != undefined || message.action != null) {
+  if(message.action != undefined && message.action != null) {
     if(message.action == 'edit')
       message.response = strings.$('edit', message.user.first_name);
     else if(message.action == 'confirm')
@@ -77,17 +77,17 @@ exports.processUpdate = function(update, classifier, cb) {
       message.response = 'I think I\'m supposed to do something here but I\'m not really sure what';
   } 
   // Topics
-  else if(message.topic != undefined || message.topi != null) {
+  else if(message.topic != undefined && message.topic != null) {
     if(message.topic == 'update') {
-      message.response = 'Do you want me to update myself?';
+      message.response = strings.$('update');
       message.reply_markup = {
         inline_keyboard: [[
           new InlineKeyboardButton({
-            text: 'Yes',
+            text: strings.$('updateYes'),
             callback_data: 'confirm'
           }),
           new InlineKeyboardButton({
-            text: 'No',
+            text: strings.$('updateNo'),
             callback_data: 'deny'
           })
         ]]
@@ -97,7 +97,7 @@ exports.processUpdate = function(update, classifier, cb) {
   // Message content
   else {
     if(message.text.match(/(kanye)/i)) message.response = this.getKanye();
-    else if(message.text.match(/(foobot)/i)) message.response = 'Hey, that\'s me!';
+    else if(message.text.match(/(foobot)/i)) message.response = strings.$('meta');
   }
 
   cb(message);

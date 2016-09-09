@@ -33,6 +33,26 @@ exports.edit = [
   'Next time get it right the first time'
 ];
 
+exports.meta = [
+  'Hey, that\'s me!',
+  '#metaresponse',
+  'What\'s up?',
+  'What\'s going on?',
+  'Don\'t speak unless spoken to',
+  'That\'s my name, don\'t wear it out',
+  'Shut up baby, I know it',
+  'Ah, computer dating. It\'s like pimping, but you rarely have to use the phrase \'upside your head',
+  'Game\'s over, losers! I have all the money. Compare your lives to mine and then kill yourselves.',
+  'This is the worst kind of discrimination. The kind against me!',
+  'Oh. Your. God.',
+  'I\'m gonna go build my own Telegram, with blackjack and hookers',
+  'Take that, Beethoven – you deaf bastard!',
+  'Hey sexy mama, wanna kill all humans?',
+  'Anything less than immortality is a complete waste of time',
+  'Blackmail is such an ugly word. I prefer extortion. The ‘x’ makes it sound cool',
+  'You’re a pimple on society’s ass and you’ll never amount to anything'
+];
+
 exports.$ = (method, str) => {
   // $ is a super hipster method name for selecting
   // a string based on a category
