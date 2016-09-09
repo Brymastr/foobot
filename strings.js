@@ -16,8 +16,7 @@ exports.updateYes = [
   'Probably',
   'Just do it',
   'I suppose',
-  'Fuck ya!',
-  'This will update the docker container BUT NOT YET BECAUASE I HAVEN\'T IMPLEMENTED IT YET CHILL THE FUCK OUT I\'M WORKING ON IT OK ROBOTS DON\'T WRITE THEMSELVES OVERNIGHT'
+  'Fuck ya!'
 ];
 
 exports.updateNo = [

@@ -71,7 +71,7 @@ exports.processUpdate = function(update, classifier, cb) {
     if(message.action == 'edit')
       message.response = strings.$('edit', message.user.first_name);
     else if(message.action == 'confirm')
-      message.response = 'She said yes!!!!';
+      message.response = 'This will update the docker container BUT NOT YET BECAUASE I HAVEN\'T IMPLEMENTED IT YET CHILL THE FUCK OUT I\'M WORKING ON IT OK ROBOTS DON\'T WRITE THEMSELVES OVERNIGHT';
     else if(message.action == 'deny')
       message.response = 'Nnnnooooooooooo';
     else
@@ -97,8 +97,8 @@ exports.processUpdate = function(update, classifier, cb) {
   }
   // Message content
   else {
-    if(message.text.match(/(define|#)/)) {
-      const word = message.text.split(/(define|#)/)[2];
+    if(message.text.match(/(define|#)/i)) {
+      const word = message.text.split(/(define|#)/i)[2];
       urban(word).first(function(json) {
         message.response = `From the Urban Dictionary: ${word}\n ${json.definition}\nExample: ${json.example}`;
         console.log(message.response);
