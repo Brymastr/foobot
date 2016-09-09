@@ -58,7 +58,7 @@ var getUpdatesJob = _classifier => {
       processing.processUpdate(update, _classifier, (response) => {
         log.debug('Topic: ' + response.topic);
         // log.debug('SEND: ' + response)
-        bot.sendMessage(response.response, response.chat_id, response.reply_markup, () => {
+        bot.sendMessage(response, () => {
           // Send a getUpdates with higher offset to mark all as read
           bot.getUpdates(0, 1, update.update_id + 1, () => {});
         });

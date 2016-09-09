@@ -100,7 +100,7 @@ exports.processUpdate = function(update, classifier, cb) {
     if(message.text.match(/(define)/i)) {
       const word = message.text.split(/(define)/i)[2];
       urban(word).first(json => {
-        message.response = `${json.definition}\nExample: ${json.example}`;
+        message.response = `*Definition:* ${json.definition}\n*Example:* ${json.example}`;
         cb(message);
       });
     }

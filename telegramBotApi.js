@@ -9,12 +9,13 @@ const token = process.env.FOOBOT_TOKEN || '223951341:AAGsPCHjO44E9OEHEvWMtUS3k73
 const telegram = 'https://api.telegram.org/bot' + token;
 
 // Send a text message
-exports.sendMessage = function(message, chatId, replyMarkup, done) {
+exports.sendMessage = function(message, done) {
   request.post(telegram + '/sendMessage', {
     json: {
-      chat_id: chatId,
-      text: message,
-      reply_markup: replyMarkup
+      chat_id: message.chat_id,
+      text: message.response,
+      reply_markup: message.reply_markup,
+      parse_mode: 'Markdown'
     }
   }, function(err, response, body) {
     if(err) log.error(err);    

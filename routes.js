@@ -9,7 +9,7 @@ module.exports = function(routeToken, classifier) {
 
   // Routes
   router.post('/send', function(req, res) {
-    bot.sendMessage(req.body.message, req.body.chat_id, null, function() {
+    bot.sendMessage(req.body, function() {
       res.send('message sent: ' + req.body.message);
     });
   });
@@ -33,7 +33,7 @@ module.exports = function(routeToken, classifier) {
         res.sendStatus(401);
       } else if(response != undefined) {
         log.debug('Response: ' + response.response);
-        bot.sendMessage(response.response, response.chat_id, response.reply_markup, () => res.sendStatus(200));
+        bot.sendMessage(response, () => res.sendStatus(200));
       } else {
         res.sendStatus(200);
       }
