@@ -1,7 +1,7 @@
 nginx:
   image: nginx
   container_name: nginx
-  volumes: 
+  volumes:
     - /etc/nginx/conf.d
     - /etc/nginx/vhost.d
     - /usr/share/nginx/html
@@ -53,7 +53,6 @@ api:
     - LETSENCRYPT_HOST=foobot.dorsaydevelopment.ca
     - LETSENCRYPT_EMAIL=dorsay@live.ca
     - LETSENCRYPT_TEST=false
-    
   restart: always
 
 db:
@@ -63,3 +62,9 @@ db:
     - /volumes/foobot/db:/data/db
   ports:
     - '27017:27017'
+
+watchtower:
+  image: 'centurylink/watchtower:latest'
+  cotainer_name:: watchtower
+  environment:
+    - /var/run/docker.sock:/var/run/docker.sock
