@@ -1,6 +1,7 @@
 var pos = require('pos');
 var chunker = require('pos-chunker');
-var Message = require('./message');
+var Message = require('./models/Message');
+var InlineKeyboardButton = require('./models/InlineKeyboardButton');
 var exports = module.exports = {};
 var fs = require('fs');
 
@@ -47,6 +48,7 @@ exports.getKanye = () => {
 
 exports.processUpdate = function(update, classifier, cb) {
   let message = this.mapUpdate(update);
+  message.topic = classifier.classify(message.text);
 
   if(message.text == '\edited')
     message.response = 'Edit that message again, I fuckin\' dare you';
@@ -55,7 +57,22 @@ exports.processUpdate = function(update, classifier, cb) {
   else if(message.text.match(/(foobot)/i))
     message.response = 'Hey, that\'s me!';
 
-  message.topic = classifier.classify(message.text);
+  if(message.topic == 'update') {
+    message.response = 'Do you want me to update myself?';
+    message.reply_markup = {
+      inline_keyboard: [[
+        new InlineKeyboardButton({
+          text: 'Yes',
+          callback_data: 'confirm'
+        }),
+        new InlineKeyboardButton({
+          text: 'No',
+          callback_data: 'deny'
+        })
+      ]]
+    }
+  }
+   
   
   cb(message);
   

@@ -9,7 +9,7 @@ module.exports = function(routeToken, classifier) {
 
   // Routes
   router.post('/send', function(req, res) {
-    bot.sendMessage(req.body.message, req.body.chat_id, function() {
+    bot.sendMessage(req.body.message, req.body.chat_id, null, function() {
       res.send('message sent: ' + req.body.message);
     });
   });
@@ -25,12 +25,15 @@ module.exports = function(routeToken, classifier) {
     */
     processing.processUpdate(req.body, classifier, (response) => {
       
+      log.debug('Topic: ' + response.topic)
+      log.debug(response)
+
       if(req.params.token != routeToken) {
         log.info('Incorrect route token');
         res.sendStatus(404);
       } else if(response != undefined) {
         log.debug('Response: ' + response.response);
-        bot.sendMessage(response.response, response.chat_id, () => res.sendStatus(200));
+        bot.sendMessage(response.response, response.chat_id, response.reply_markup, () => res.sendStatus(200));
       } else {
         res.sendStatus(200);
       }

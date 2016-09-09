@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
 
-var messageSchema = Schema({
+module.exports = mongoose.model('Message', Schema({
   message_id: Number,
   text: String,
   date: Date,
@@ -11,7 +11,6 @@ var messageSchema = Schema({
   chat_name: String,
   update_id: Number,
   topic: String,
-  response: String
-});
-
-module.exports = mongoose.model('Message', messageSchema);
+  response: String,
+  reply_markup: Object
+}));

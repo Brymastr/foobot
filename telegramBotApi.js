@@ -1,19 +1,20 @@
 var request = require('request');
-var Message = require('./message');
+var Message = require('./models/Message');
 var fs = require('fs');
 var log = require('./logger');
 
 var exports = module.exports = {};
 
-const token = process.env.FOOBOT_TOKEN || '223951341:AAGsPCHjO44E9OEHEvWMtUS3k73l4KKXoRQ'; // TODO: Telegram foobot bot token
+const token = process.env.FOOBOT_TOKEN || '223951341:AAGsPCHjO44E9OEHEvWMtUS3k73l4KKXoRQ';
 const telegram = 'https://api.telegram.org/bot' + token;
 
 // Send a text message
-exports.sendMessage = function(message, chatId, done) {
+exports.sendMessage = function(message, chatId, replyMarkup, done) {
   request.post(telegram + '/sendMessage', {
     json: {
       chat_id: chatId,
-      text: message
+      text: message,
+      reply_markup: replyMarkup
     }
   }, function(err, response, body) {
     if(err) log.error(err);    
