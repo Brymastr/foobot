@@ -47,6 +47,7 @@ api:
     - FOOBOT_TOKEN=223951341:AAGsPCHjO44E9OEHEvWMtUS3k73l4KKXoRQ
     - FOOBOT_PORT=80
     - FOOBOT_LOG_LEVEL=info
+    - FOOBOT_LOG_DIR=/src/logs
     - VIRTUAL_HOST=foobot.dorsaydevelopment.ca
     - VIRTUAL_NETWORK=nginx-proxy
     - VIRTUAL_PORT=80
