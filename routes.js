@@ -15,18 +15,13 @@ module.exports = function(routeToken, classifier) {
   });
 
   router.post('/webhook/:token', function(req, res) {
-    
-    processing.processUpdate(req.body, classifier, (response) => {
-      
-      log.debug('Topic: ' + response.topic)
-      log.debug(response)
-
+    processing.processUpdate(req.body, classifier, (message) => {
       if(req.params.token != routeToken) {
         log.info('Invalid route token');
         res.sendStatus(401);
-      } else if(response != undefined) {
-        log.debug('Response: ' + response.response);
-        bot.sendMessage(response, () => res.sendStatus(200));
+      } else if(message != undefined) {
+        log.debug('Response: ' + message);
+        bot.sendMessage(message, () => res.sendStatus(200));
       } else {
         res.sendStatus(200);
       }
