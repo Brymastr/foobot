@@ -72,25 +72,7 @@ exports.processUpdate = function(update, classifier, cb) {
       ]]
     }
   }
-   
-  
   cb(message);
-  
-  // var text = message.text.removeWords(ignoredWords) + ' ';
-  // var words = new pos.Lexer().lex(text);
-  // var tags = new pos.Tagger()
-  //   .tag(words)
-  //   .map(function(tag) {return tag[0] + '/' + tag[1];})
-  //   .join(' ');
-  // var verb = tags.getWordsByTag(['VB'])[0];
-  // var target = tags.getWordsByTag(['NNP', 'PRP']);
-  // var meat = tags.split(target[0])[1];
-
-  // if(target == 'me') {
-  //   target = message.user;
-  // }
-
-  // return (`${verb} @${target} ${meat}`).stripTags();
 };
 
 String.prototype.getWordsByTag = function(tag) {

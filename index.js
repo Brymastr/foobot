@@ -52,17 +52,15 @@ http.createServer(app).listen(port, function() {
   log.info("server listening on port " + port);
 });
 
-var getUpdatesJob = function() {
+var getUpdatesJob = function(_classifier) {
   bot.getUpdates(30, 5, -5, function(updates) {
     updates.forEach(function(update) {
       var message = update;
-      console.log('message: ' + message.text + '  ' + (message.chat_name || message.chat_id));      
-      if(message.text != undefined && processing.isTrigger(message.text)) {
-        console.log('FooBot triggered: ' + message.text + '  ' + (message.chat_name || message.chat_id));
-        
-        bot.sendMessage(processing.processMessage(message), message.chat_id, function() {
+      console.log('message: ' + update.text + '  ' + (update.chat_name || update.chat_id));      
+      if(update.text != undefined) {
+        bot.sendMessage(processing.processUpdate(update, _classifier, () => res.sendStatus(200)), null, update.chat_id, () => {
           // Send a getUpdates with higher offset to mark all as read
-          bot.getUpdates(0, 1, message.update_id + 1, function() {});
+          bot.getUpdates(0, 1, update.update_id + 1, () => {});
         });
       }
     });
@@ -75,7 +73,9 @@ if(url) {
 } else {
   bot.setWebhook();
   schedule.scheduleJob('0 * * * * *', function() {
-    getUpdatesJob();
+    natural.BayesClassifier.load('classifier.json', null, function(err, classifier) {  
+      getUpdatesJob(classifier);
+    });
     log.info('getUpdates()');
   });
 }

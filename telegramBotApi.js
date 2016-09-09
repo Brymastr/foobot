@@ -24,21 +24,25 @@ exports.sendMessage = function(message, chatId, replyMarkup, done) {
 
 exports.setWebhook = function(url = '', certPath) {
   let formData;
-  if(certPath) { 
-    formData = {
-      url: url,
-      certificate: fs.readFileSync(certPath)
-    };
+  if(url != '') {
+    request.post({
+      url: telegram + '/setWebhook', 
+      formData: {
+        url: url,
+        certificate: fs.readFileSync(certPath)
+      }},
+      function(err, response, body) {
+        if(err) log.error(err);
+        log.info('Webhook set: ' + url);
+    });
   } else {
-    formData = {
-      url: url
-    }
+    request.post(
+      {url: telegram + '/setWebhook'}, 
+      function(err, response, body) {
+        if(err) log.error(err);
+        log.info(JSON.parse(body).description);
+    });
   }
-  request.post({url: telegram + '/setWebhook', formData: formData}, function(err, response, body) {
-      if(err) log.error(err);
-      if(url == '') log.info('Webhook removed')
-      else log.info('Webhook set: ' + url)
-  });
 };
 
 // Get all updates from telegram bot api
