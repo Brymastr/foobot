@@ -97,8 +97,7 @@ exports.processUpdate = function(update, classifier, cb) {
   }
   // Message content
   else {
-    if(message.text.match(/(kanye)/i)) message.response = this.getKanye();
-    else if(message.text.match(/(define|#)/)) {
+    if(message.text.match(/(define|#)/)) {
       const word = message.text.split(/(define|#)/)[2];
       urban(word).first(function(json) {
         message.response = `From the Urban Dictionary: ${word}\n "${json.definition}"\nExample: "${json.example}"`;
@@ -106,6 +105,7 @@ exports.processUpdate = function(update, classifier, cb) {
         cb(message);
       });
     }
+    else if(message.text.match(/(kanye)/i)) message.response = this.getKanye();
     else if(message.text.match(/(foobot)/i)) message.response = strings.$('meta');
     
   }
