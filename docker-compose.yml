@@ -65,6 +65,6 @@ db:
 
 watchtower:
   image: 'centurylink/watchtower:latest'
-  cotainer_name:: watchtower
-  environment:
+  container_name:: watchtower
+  volumes:
     - /var/run/docker.sock:/var/run/docker.sock
