@@ -4,6 +4,7 @@ const Message = require('./models/Message');
 const InlineKeyboardButton = require('./models/InlineKeyboardButton');
 const fs = require('fs');
 const strings = require('./strings');
+const urban = require('urban');
 
 this.kanye = 'I miss the old kanye';
 this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
@@ -77,7 +78,7 @@ exports.processUpdate = function(update, classifier, cb) {
       message.response = 'I think I\'m supposed to do something here but I\'m not really sure what';
   } 
   // Topics
-  else if(message.topic != undefined && message.topic != null) {
+  else if(message.topic != undefined && message.topic != null && message.topic != 'else') {
     if(message.topic == 'update') {
       message.response = strings.$('update');
       message.reply_markup = {
@@ -97,7 +98,16 @@ exports.processUpdate = function(update, classifier, cb) {
   // Message content
   else {
     if(message.text.match(/(kanye)/i)) message.response = this.getKanye();
+    else if(message.text.match(/(define|#)/)) {
+      const word = message.text.split(/(define|#)/)[2];
+      urban(word).first(function(json) {
+        message.response = `From the Urban Dictionary: ${word}\n "${json.definition}"\nExample: "${json.example}"`;
+        console.log(message.response);
+        cb(message);
+      });
+    }
     else if(message.text.match(/(foobot)/i)) message.response = strings.$('meta');
+    
   }
 
   cb(message);

@@ -1,7 +1,12 @@
 exports.update = [
   'Do you want me to update myself?',
   'Update time!',
-  'Update me like one of your french girls'
+  'Update me like one of your french girls',
+  'Do you think it\'s more of an \'upgrade\' than an update?',
+  'Oh goodie! An update',
+  'Improvements!',
+  'State of the art',
+  'Updates!'
 ];
 
 exports.updateYes = [

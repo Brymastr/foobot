@@ -8,15 +8,17 @@ classifier.addDocument('my laptop', 'computers');
 classifier.addDocument('your computer laptop', 'computers');
 classifier.addDocument('update yourself', 'update');
 classifier.addDocument('redeploy', 'update');
-classifier.addDocument('new version of foobot', 'update');
-classifier.addDocument('new release for foobot', 'update');
+classifier.addDocument('new version of', 'update');
+classifier.addDocument('new release for', 'update');
 classifier.addDocument('let\'s play vball', 'volleyball');
 classifier.addDocument('let\'s vball', 'volleyball');
 classifier.addDocument('let\'s play', 'volleyball');
 classifier.addDocument('volleyball tonight', 'volleyball');
 classifier.addDocument('dropin at bonsor', 'volleyball');
 classifier.addDocument('dropin at bonsor', 'volleyball');
-classifier.addDocument('basically anything else', 'else')
+classifier.addDocument('basically anything else', 'else');
+classifier.addDocument('hey lookup words', 'urban');
+classifier.addDocument('can you lookup', 'urban');
 
 for(i = 0; i < 50; i++)
   classifier.addDocument('any words ever', 'else');
