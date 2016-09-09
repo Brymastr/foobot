@@ -20,8 +20,8 @@ module.exports = function(routeToken, classifier) {
       decide what to do with it
       https://core.telegram.org/bots/webhooks
       Update types:
-      message.text, edited_message.text, message.audio, message.voice,
-      message.document, inline_query.query, chosen_inline_result.query, callback_query.data
+        message.text, edited_message.text, message.audio, message.voice,
+        message.document, inline_query.query, chosen_inline_result.query, callback_query.data
     */
     processing.processUpdate(req.body, classifier, (response) => {
       
@@ -29,8 +29,8 @@ module.exports = function(routeToken, classifier) {
       log.debug(response)
 
       if(req.params.token != routeToken) {
-        log.info('Incorrect route token');
-        res.sendStatus(404);
+        log.info('Invalid route token');
+        res.sendStatus(401);
       } else if(response != undefined) {
         log.debug('Response: ' + response.response);
         bot.sendMessage(response.response, response.chat_id, response.reply_markup, () => res.sendStatus(200));
@@ -43,15 +43,14 @@ module.exports = function(routeToken, classifier) {
   router.post('/updateContainer', (req, res) => {
     // Update the api container
     if(routeToken == 'token') {
-      res.send('Not running in docker container');
+      res.send('Bot not running in docker container');
     } else {
       // docker-compose pull api && docker-compose up --no-deps -d api
-      res.send('This will update the docker container')
+      res.send('This will update the docker container BUT NOT YET BECAUASE I HAVEN\'T IMPLEMENTED IT YET')
     }
-
   });
 
-  router.get('/updates', function(req, res) {
+  router.get('/updates', (req, res) => {
     console.log('getUpdates()');
     bot.getUpdates(0, 10, null, function(updates) {
       res.json(updates);

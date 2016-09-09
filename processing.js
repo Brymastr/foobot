@@ -1,9 +1,9 @@
-var pos = require('pos');
-var chunker = require('pos-chunker');
-var Message = require('./models/Message');
-var InlineKeyboardButton = require('./models/InlineKeyboardButton');
-var exports = module.exports = {};
-var fs = require('fs');
+const pos = require('pos');
+const chunker = require('pos-chunker');
+const Message = require('./models/Message');
+const InlineKeyboardButton = require('./models/InlineKeyboardButton');
+const fs = require('fs');
+const strings = require('./strings');
 
 this.kanye = 'I miss the old kanye';
 this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
@@ -25,7 +25,7 @@ exports.mapUpdate = function(update) {
     message.user = update.edited_message.from;
     message.chat_id = update.edited_message.chat.id;
     message.chat_name = update.edited_message.chat.first_name;
-    message.text = '\edited';
+    message.action = 'edit';
   } else if(update.message != undefined) {
     message.message_id = update.message.message_id;
     message.date = update.message.date;
@@ -33,6 +33,13 @@ exports.mapUpdate = function(update) {
     message.chat_id = update.message.chat.id;
     message.chat_name = update.message.chat.first_name;
     message.text = update.message.text;
+  } else if(update.callback_query != undefined) {
+    message.message_id = update.callback_query.message.message_id;
+    message.user = update.callback_query.from;
+    message.chat_id = update.callback_query.message.chat.id;
+    message.chat_name = update.callback_query.message.chat.first_name;
+    message.text = update.callback_query.message.text;
+    message.action = update.callback_query.data;
   }
 
   if(message.text == undefined)
@@ -47,57 +54,51 @@ exports.getKanye = () => {
 }
 
 exports.processUpdate = function(update, classifier, cb) {
+  /*
+    There are three ways of deciding what to do.
+    There is a heirarchy in which messages are processed
+    1. Action - Edited messages, Callback Queries, and other good stuff
+    2. Topic - What the classifier thinks of the message contents
+    3. Message content - If 1 and 2 are null, then maybe respond based on the actual text of the message
+  */
+
   let message = this.mapUpdate(update);
   message.topic = classifier.classify(message.text);
 
-  if(message.text == '\edited')
-    message.response = 'Edit that message again, I fuckin\' dare you';
-  else if(message.text.match(/(kanye)/i))
-    message.response = this.getKanye();
-  else if(message.text.match(/(foobot)/i))
-    message.response = 'Hey, that\'s me!';
-
-  if(message.topic == 'update') {
-    message.response = 'Do you want me to update myself?';
-    message.reply_markup = {
-      inline_keyboard: [[
-        new InlineKeyboardButton({
-          text: 'Yes',
-          callback_data: 'confirm'
-        }),
-        new InlineKeyboardButton({
-          text: 'No',
-          callback_data: 'deny'
-        })
-      ]]
+  // Actions
+  if(message.action != undefined || message.action != null) {
+    if(message.action == 'edit')
+      message.response = strings.$('edit', message.user.first_name);
+    else if(message.action == 'confirm')
+      message.response = 'She said yes!!!!';
+    else if(message.action == 'deny')
+      message.response = 'Nnnnooooooooooo';
+    else
+      message.response = 'I think I\'m supposed to do something here but I\'m not really sure what';
+  } 
+  // Topics
+  else if(message.topic != undefined || message.topi != null) {
+    if(message.topic == 'update') {
+      message.response = 'Do you want me to update myself?';
+      message.reply_markup = {
+        inline_keyboard: [[
+          new InlineKeyboardButton({
+            text: 'Yes',
+            callback_data: 'confirm'
+          }),
+          new InlineKeyboardButton({
+            text: 'No',
+            callback_data: 'deny'
+          })
+        ]]
+      }
     }
   }
+  // Message content
+  else {
+    if(message.text.match(/(kanye)/i)) message.response = this.getKanye();
+    else if(message.text.match(/(foobot)/i)) message.response = 'Hey, that\'s me!';
+  }
+
   cb(message);
 };
-
-String.prototype.getWordsByTag = function(tag) {
-  var re = new RegExp('[a-zA-Z0-9]+\/(' + tag.join('|') + ') ', 'g');
-  return this.match(re);
-};
-
-String.prototype.removeWords = function(find) {
-  var replaceString = this;
-  var regex;
-  for (var i = 0; i < find.length; i++) {
-    regex = new RegExp(find[i]);
-    replaceString = replaceString.replace(regex, '');
-  }
-  return replaceString;
-};
-
-String.prototype.stripTags = function() {
-  return this
-    .removeWords(this.match(/\/[a-zA-Z0-9]+/g))
-    .replace(/( ){2,}/, ' ');
-};
-
-var ignoredWords = [
-  'please ',
-  'foobot ',
-  'you '
-];

@@ -1,15 +1,15 @@
 // Require libraries
-var mongoose = require('mongoose');
-var express = require('express');
-var http = require('http');
-var bodyParser = require('body-parser');
-var schedule = require('node-schedule');
-var processing = require('./processing');
-var bot = require('./telegramBotApi');
-var methodOverride = require('method-override');
-var uuid = require('node-uuid');
-var log = require('./logger');
-var natural = require('natural');  
+const mongoose = require('mongoose');
+const express = require('express');
+const http = require('http');
+const bodyParser = require('body-parser');
+const schedule = require('node-schedule');
+const processing = require('./processing');
+const bot = require('./telegramBotApi');
+const methodOverride = require('method-override');
+const uuid = require('node-uuid');
+const log = require('./logger');
+const natural = require('natural');  
 
 // App setup
 var app = express();
@@ -52,17 +52,17 @@ http.createServer(app).listen(port, function() {
   log.info("server listening on port " + port);
 });
 
-var getUpdatesJob = function(_classifier) {
-  bot.getUpdates(30, 5, -5, function(updates) {
-    updates.forEach(function(update) {
-      var message = update;
-      console.log('message: ' + update.text + '  ' + (update.chat_name || update.chat_id));      
-      if(update.text != undefined) {
-        bot.sendMessage(processing.processUpdate(update, _classifier, () => res.sendStatus(200)), null, update.chat_id, () => {
+var getUpdatesJob = _classifier => {
+  bot.getUpdates(50, 5, -5, updates => {
+    updates.forEach(update => {
+      processing.processUpdate(update, _classifier, (response) => {
+        log.debug('Topic: ' + response.topic);
+        // log.debug('SEND: ' + response)
+        bot.sendMessage(response.response, response.chat_id, response.reply_markup, () => {
           // Send a getUpdates with higher offset to mark all as read
           bot.getUpdates(0, 1, update.update_id + 1, () => {});
         });
-      }
+      });
     });
   });
 };
@@ -72,9 +72,10 @@ if(url) {
   bot.setWebhook(`${url}/${routeToken}`, '/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt');
 } else {
   bot.setWebhook();
-  schedule.scheduleJob('0 * * * * *', function() {
-    natural.BayesClassifier.load('classifier.json', null, function(err, classifier) {  
-      getUpdatesJob(classifier);
+  natural.BayesClassifier.load('classifier.json', null, function(err, _classifier) { 
+    getUpdatesJob(_classifier);
+    schedule.scheduleJob('0 * * * * *', function() {
+      getUpdatesJob(_classifier);
     });
     log.info('getUpdates()');
   });

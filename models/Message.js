@@ -11,6 +11,7 @@ module.exports = mongoose.model('Message', Schema({
   chat_name: String,
   update_id: Number,
   topic: String,
-  response: String,
-  reply_markup: Object
+  response: String,     // Text to use a reponse message
+  reply_markup: Object, // Use with response, for inline keyboards
+  action: String       // Process Update uses this to figure out what to do next (eg. CallbackQuery)
 }));
