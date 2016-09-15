@@ -105,8 +105,9 @@ exports.processUpdate = function(update, classifier, cb) {
   else {
     if(message.text.match(/(define)/i)) {
       const word = message.text.split(/(define)/i)[2];
-      urban(word).first(json => {
-        message.response = `*Definition:* ${json.definition}\n*Example:* ${json.example}`;
+      urban(word).first(data => {
+        if(data == undefined) data = {definition: 'The library I used for Urban Dictionary lookups is having a down day, probably', example: 'No example'}
+        message.response = `*Definition:* ${data.definition}\n*Example:* ${data.example}`;
         cb(message);
       });
     }
