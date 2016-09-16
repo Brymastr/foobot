@@ -33,17 +33,24 @@ module.exports = function(routeToken, classifier) {
 
   router.get('/messages/:chatId?/:userId?', (req, res) => {
     if(req.params.chatId == undefined && req.params.userId == undefined) {
-      res.json(messagesController.getAllMessages)
+      messagesController.getAllMessages(messages => res.json(messages));
     } else if(req.params.chatId != undefined && req.params.userId == undefined) {
-      res.send('all messages for chat ' + req.params.chatId)
+      messagesController.getMessagesForConversation(req.params.chatId, messages => res.json(messages));
     } else if(req.params.chatId == undefined && req.params.userId != undefined) {
-      res.send('all messages for user ' + req.params.userId)
+      messagesController.getMessagesForUser(req.params.userId, messages => res.json(messages));      
     } else if(req.params.chatId != undefined && req.params.userId != undefined) {
-      res.send('all messages for user ' + req.params.userId + ' and chat ' + req.params.chatId)
+      messagesController.getMessagesForUserByConversation(req.params.userId, req.params.chatId, messages => res.json(messages));      
     } else {
       res.send('probably never')
     }
   });
+
+  router.delete('/messages', (req, res) => {
+    messagesController.deleteMessages((result) => {
+      log.debug(result);
+      res.send(result);
+    });
+  })
   
   return router;
 };

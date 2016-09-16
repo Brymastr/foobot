@@ -47,6 +47,12 @@ natural.BayesClassifier.load('classifier.json', null, function(err, classifier) 
   app.use('', routes);
 });
 
+// MongoDB connection
+mongoose.connect(db);
+mongoose.connection.on('open', function() {
+  console.log('Mongo connection is open. Connected to: ' + db);
+});
+
 // Start server
 http.createServer(app).listen(port, function() {
   log.info("server listening on port " + port);
