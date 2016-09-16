@@ -88,19 +88,19 @@ exports.processUpdate = function(update, classifier, cb) {
   // Topics
   else if(message.topic != undefined && message.topic != null && message.topic != 'else') {
     if(message.topic == 'update') {
-      message.response = strings.$('update');
-      message.reply_markup = {
-        inline_keyboard: [[
-          new InlineKeyboardButton({
-            text: strings.$('updateYes'),
-            callback_data: 'confirm'
-          }),
-          new InlineKeyboardButton({
-            text: strings.$('updateNo'),
-            callback_data: 'deny'
-          })
-        ]]
-      }
+      // message.response = strings.$('update');
+      // message.reply_markup = {
+      //   inline_keyboard: [[
+      //     new InlineKeyboardButton({
+      //       text: strings.$('updateYes'),
+      //       callback_data: 'confirm'
+      //     }),
+      //     new InlineKeyboardButton({
+      //       text: strings.$('updateNo'),
+      //       callback_data: 'deny'
+      //     })
+      //   ]]
+      // }
     } else if(message.topic == 'flights') {
       googleAPI.getFlights(message, result => {
         message.response = result;
