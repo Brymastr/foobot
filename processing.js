@@ -6,6 +6,8 @@ const fs = require('fs');
 const strings = require('./strings');
 const urban = require('urban');
 const googleAPI = require('./googleAPI');
+const messagesController = require('./controllers/messagesController');
+const log = require('./logger');
 
 this.kanye = 'I miss the old kanye';
 this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
@@ -17,7 +19,7 @@ exports.isTrigger = function(text) {
   return !!text.match(/(foobot)/i);
 };
 
-exports.mapUpdate = function(update) {
+exports.conform = function(update) {
   let message = new Message({
     update_id: update.update_id
   });
@@ -64,9 +66,14 @@ exports.processUpdate = function(update, classifier, cb) {
     3. Message content - If 1 and 2 are null, then maybe respond based on the actual text of the message
   */
 
-  let message = this.mapUpdate(update);
+  // Conform to my message model
+  let message = this.conform(update);
   message.topic = classifier.classify(message.text);
+  // Save ALL messages  
+  messagesController.createMessage(message, (m) => log.debug(`Message saved: ${m}`));
 
+  log.debug(`User: ${message.user.first_name}  Message: ${message.text}`);
+  
   // Actions
   if(message.action != undefined && message.action != null) {
     if(message.action == 'edit')

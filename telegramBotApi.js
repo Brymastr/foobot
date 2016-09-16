@@ -8,7 +8,7 @@ var exports = module.exports = {};
 const token = process.env.FOOBOT_TOKEN || '223951341:AAGsPCHjO44E9OEHEvWMtUS3k73l4KKXoRQ';
 const telegram = 'https://api.telegram.org/bot' + token;
 
-// Send a text message
+// Send a message
 exports.sendMessage = function(message, done) {
   request.post(telegram + '/sendMessage', {
     json: {
@@ -23,6 +23,7 @@ exports.sendMessage = function(message, done) {
   });
 };
 
+// Set the webhook so that messages are sent to this api
 exports.setWebhook = function(url = '', certPath) {
   let formData;
   if(url != '') {
@@ -46,7 +47,7 @@ exports.setWebhook = function(url = '', certPath) {
   }
 };
 
-// Get all updates from telegram bot api
+// Get updates manually when the webhook is not set
 exports.getUpdates = function(timeout, limit, offset, done) {
   var result = [];
   var queryString = telegram + '/getUpdates?limit=' + limit + '&timeout=' + timeout + '&offset=' + offset;

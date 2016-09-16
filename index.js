@@ -56,7 +56,6 @@ var getUpdatesJob = _classifier => {
   bot.getUpdates(50, 5, -5, updates => {
     updates.forEach(update => {
       processing.processUpdate(update, _classifier, (response) => {
-        log.debug('Topic: ' + response.topic);
         // log.debug('SEND: ' + response)
         bot.sendMessage(response, () => {
           // Send a getUpdates with higher offset to mark all as read
