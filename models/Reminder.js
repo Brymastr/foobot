@@ -14,5 +14,6 @@ module.exports = mongoose.model('Reminder', Schema({
   date_created: Date,
   reminder_date: Date,
   user_id: Number,
-  chat_id: Number
+  chat_id: Number,
+  occurrence: String
 }));
