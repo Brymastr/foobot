@@ -105,6 +105,7 @@ exports.processUpdate = function(update, classifier, cb) {
       googleAPI.getFlights(message, result => {
         message.response = result;
         cb(message);
+        return;
       });
     }
   }
@@ -116,10 +117,12 @@ exports.processUpdate = function(update, classifier, cb) {
         if(data == undefined) data = {definition: 'The library I used for Urban Dictionary lookups is having a down day, probably', example: 'No example'}
         message.response = `*Definition:* ${data.definition}\n*Example:* ${data.example}`;
         cb(message);
+        return;
       });
     }
     else if(message.text.match(/(kanye)/i)) message.response = this.getKanye();
     else if(message.text.match(/(foobot)/i)) message.response = strings.$('meta');
+
   }
-  cb(message);
+  cb(message);  
 };
