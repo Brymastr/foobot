@@ -8,8 +8,9 @@ Improvements:
 const log = require('../logger');
 const Message = require('../models/Message');
 
+// Save an incoming message to the database
 exports.createMessage = (message, cb) => {
-  message.save(_message => cb(_message));
+  message.save((err, _message) => cb(_message));
 }
 
 // Get messages for a conversation
@@ -28,11 +29,11 @@ exports.getMessagesForUserByConversation = (userId, chatId, cb) => {
 };
 
 // DEV: Get all messages
-exports.getAllMessages = (cb) => {
+exports.getAllMessages = cb => {
   Message.find({}, (err, messages) => cb(messages));
 };
 
 // DEV: Delete all messages
-exports.deleteMessages = (cb) => {
+exports.deleteMessages = cb => {
   Message.remove({}, () => cb('Messages deleted'));
 };
