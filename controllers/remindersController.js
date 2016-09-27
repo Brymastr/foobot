@@ -12,9 +12,10 @@ const schedule = require('node-schedule');
 const bot = require('../telegramBotApi');
 
 exports.createReminder = (reminder, cb) => {
+  // Reminder may already exist if it has been scheduled on before, could be scheduled multiple times
   Reminder.findOne({_id: reminder._id}, (err, result) => {
     if(!result)  // Reminder doesn't already exist
-      reminder.save(_reminder => cb(_reminder));
+      reminder.save((err, _reminder) => cb(_reminder));
     else         // Reminder already exists so just return it
       cb(reminder);
   });
@@ -30,6 +31,7 @@ exports.getAllReminders = cb => {
   Reminder.find({}, (err, reminders) => cb(reminders));
 };
 
+// DEV: Delete all reminders
 exports.deleteReminders = cb => {
   Reminder.remove({}, () => cb('Reminders deleted'));
 };
@@ -39,21 +41,26 @@ exports.deleteById = (reminderId, cb) => {
 };
 
 exports.scheduleReminder = (reminder, cb) => {
-  let id;
   // Save reminder to database with recurrence scheme
   this.createReminder(reminder, (_reminder) => {
-    // Give _id to scheduleJob    
-    id = _reminder._id;
-  });
     // Re evaluate, maybe reschedule
-  let job = schedule.scheduleJob(reminder.occurrence, () => {
-    // What to do every execution (Send message)
-    bot.sendMessage(new Message({
-      response: reminder.text,
-      chat_id: reminder.chat_id // TODO: send to user directly instead of the chat it originated from
-    }));
-  });
+    schedule.scheduleJob(_reminder.date, () => {
+      // What to do every execution (Send message)
+      bot.sendMessage(new Message({
+        response: _reminder.text,
+        chat_id: _reminder.chat_id // TODO: send to user directly instead of the chat it originated from
+      }));
 
-  // Remove reminder from database (or soft delete)
-  /* Delete the reminder if no more occurrences */
+      if(_reminder.scheme != 'once') {
+        // _reminder.date += 
+        schedule.scheduleJob(_reminder.date, () => {
+          bot.sendMessage(new Message({
+            response: _reminder.text,
+            chat_id: _reminder.chat_id // TODO: send to user directly instead of the chat it originated from
+          }));
+          cb();
+        });     
+      }
+    });
+  });
 };

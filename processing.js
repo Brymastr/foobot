@@ -6,7 +6,7 @@ const log = require('./logger');
 const actions = require('./actions');
 
 
-// Make the m
+// Make the message into a local message without nulls
 exports.conform = function(update) {
   let message = new Message({
     update_id: update.update_id
@@ -47,6 +47,8 @@ exports.processUpdate = function(update, classifier, cb) {
     1. Action - Edited messages, Callback Queries, and other good stuff
     2. Topic - What the classifier thinks of the message contents
     3. Message content - If 1 and 2 are null, then maybe respond based on the actual text of the message
+
+    The callback object from this method is the message that will be sent to the telegram api
   */
 
   // Conform to my message model

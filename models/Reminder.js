@@ -12,8 +12,9 @@ module.exports = mongoose.model('Reminder', Schema({
   message_id: Number,   // This is a foreign key type reference to the message schema
   text: String,
   date_created: Date,
-  reminder_date: Date,
   user_id: Number,
   chat_id: Number,
-  occurrence: String
+  reminder_date: Date,  // Date for next occurrence
+  scheme: String,   // once, minute, hour, day, week, month, year
+  active: Boolean
 }));
