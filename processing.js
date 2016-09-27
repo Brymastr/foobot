@@ -98,6 +98,9 @@ exports.processUpdate = function(update, classifier, cb) {
     } else if(message.text.match(/(foobot)/i)) {
       message.response = actions.iAmFoobot();
       cb(message);
+    } else if(message.text.match(/(remind me)/i)) {
+      message.response = 'You fucking wish';
+      cb(message);
     } else {
       // Return the message in case it's boring and doesn't make foobot do anything
       cb(message);
