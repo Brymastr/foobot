@@ -55,12 +55,11 @@ exports.processUpdate = function(update, classifier, cb) {
   let message = this.conform(update);
   message.topic = classifier.classify(message.text);
   // Save ALL messages  
-  messagesController.createMessage(message, (m) => log.debug(`Message saved: ${m._id}`));
-
-  log.debug(`User: ${message.user.first_name}  Message: ${message.text}`);
-
+  messagesController.createMessage(message, (m) => log.info(`Message saved: ${m.text}`));
   // Actions
   if(message.action != undefined) {
+    console.log('!!!!!!!!!!!!!!action')
+    
     if(message.action == 'edit')
       message.response = strings.$('edit', message.user.first_name);
     else if(message.action == 'confirm')
@@ -69,11 +68,13 @@ exports.processUpdate = function(update, classifier, cb) {
       message.response = 'Nnnnooooooooooo';
     else
       message.response = 'I think I\'m supposed to do something here but I\'m not really sure what';
-    cb(message);
+    cb(message);    
   } 
-
+  
   // Topics
   else if(message.topic != undefined && message.topic != 'else') {
+    console.log('!!!!!!!!!!!!!!topic')
+    
     if(message.topic == 'update') {
       /** Deprecated **/
       // message = actions.update(message);
@@ -84,11 +85,15 @@ exports.processUpdate = function(update, classifier, cb) {
       //   cb(data);
       // });
       cb(message);
+    } else {
+      cb(message);
     }
   }
 
   // Message content
   else {
+    console.log('!!!!!!!!!!!!!!content')
+      
     if(message.text.match(/(define)/i)) {
       const word = message.text.split(/(define)/i)[2];
       actions.define(message, word, (result) => cb(result));
