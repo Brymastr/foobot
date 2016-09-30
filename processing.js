@@ -58,8 +58,6 @@ exports.processUpdate = function(update, classifier, cb) {
   messagesController.createMessage(message, (m) => log.info(`Message saved: ${m.text}`));
   // Actions
   if(message.action != undefined) {
-    console.log('!!!!!!!!!!!!!!action')
-    
     if(message.action == 'edit')
       message.response = strings.$('edit', message.user.first_name);
     else if(message.action == 'confirm')
@@ -73,8 +71,6 @@ exports.processUpdate = function(update, classifier, cb) {
   
   // Topics
   else if(message.topic != undefined && message.topic != 'else') {
-    console.log('!!!!!!!!!!!!!!topic')
-    
     if(message.topic == 'update') {
       /** Deprecated **/
       // message = actions.update(message);
@@ -92,8 +88,6 @@ exports.processUpdate = function(update, classifier, cb) {
 
   // Message content
   else {
-    console.log('!!!!!!!!!!!!!!content')
-      
     if(message.text.match(/(define)/i)) {
       const word = message.text.split(/(define)/i)[2];
       actions.define(message, word, (result) => cb(result));
