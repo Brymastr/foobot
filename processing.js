@@ -55,10 +55,7 @@ exports.processUpdate = function(update, classifier, cb) {
   let message = this.conform(update);
   message.topic = classifier.classify(message.text);
   // Save ALL messages  
-  messagesController.createMessage(message, (m) => log.debug(`Message saved: ${m._id}`));
-
-  log.debug(`User: ${message.user.first_name}  Message: ${message.text}`);
-
+  messagesController.createMessage(message, (m) => log.info(`Message saved: ${m.text}`));
   // Actions
   if(message.action != undefined) {
     if(message.action == 'edit')
@@ -69,9 +66,9 @@ exports.processUpdate = function(update, classifier, cb) {
       message.response = 'Nnnnooooooooooo';
     else
       message.response = 'I think I\'m supposed to do something here but I\'m not really sure what';
-    cb(message);
+    cb(message);    
   } 
-
+  
   // Topics
   else if(message.topic != undefined && message.topic != 'else') {
     if(message.topic == 'update') {
@@ -83,6 +80,8 @@ exports.processUpdate = function(update, classifier, cb) {
       // actions.flights(message, (data) => {
       //   cb(data);
       // });
+      cb(message);
+    } else {
       cb(message);
     }
   }
