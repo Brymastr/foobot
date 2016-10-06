@@ -10,7 +10,11 @@ const Message = require('../models/Message');
 
 // Save an incoming message to the database
 exports.createMessage = (message, cb) => {
-  message.save((err, _message) => cb(_message));
+  message.save((err, _message) => {
+    if(err) log.error(`Error saving message: ${err}`);
+    else log.info(`Message saved => ${_message.text}`);
+    cb(_message);
+  });
 }
 
 // Get messages for a conversation
