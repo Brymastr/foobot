@@ -55,7 +55,8 @@ exports.processUpdate = function(update, classifier, cb) {
   let message = this.conform(update);
   message.topic = classifier.classify(message.text);
   // Save ALL messages  
-  messagesController.createMessage(message, (m) => log.info(`Message saved: ${m.text}`));
+  messagesController.createMessage(message, (m) => log.debug(`createMessage returned`));
+  console.log('after')
   // Actions
   if(message.action != undefined) {
     if(message.action == 'edit')
