@@ -36,7 +36,7 @@ app.use(function(req, res, next) {
 // Logging middleware
 app.use('*', function(req, res, next) {
   log.info(req.method + ': ' + req.baseUrl);
-  log.debug(req.body);
+  // log.debug(req.body);
   next();
 });
 
@@ -44,18 +44,18 @@ app.use('*', function(req, res, next) {
 natural.BayesClassifier.load('classifier.json', null, function(err, classifier) {  
   log.debug('classifier loaded from classifier.json');
   let routes = require('./routes')(routeToken, classifier);
-  app.use('', routes);
+  app.use('/', routes);
 });
 
 // MongoDB connection
 mongoose.connect(db);
 mongoose.connection.on('open', function() {
-  console.log('Mongo connection is open. Connected to: ' + db);
+  console.log(`Mongo connection is open. Connected to: ${db}`);
 });
 
 // Start server
 http.createServer(app).listen(port, function() {
-  log.info("server listening on port " + port);
+  log.info(`server listening on port ${port}`);
 });
 
 var getUpdatesJob = _classifier => {
