@@ -5,7 +5,7 @@ const http = require('http');
 const bodyParser = require('body-parser');
 const schedule = require('node-schedule');
 const processing = require('./processing');
-const bot = require('./telegramBotApi');
+const bot = require('./services/telegramBotApi');
 const methodOverride = require('method-override');
 const uuid = require('node-uuid');
 const log = require('./logger');
@@ -62,7 +62,6 @@ var getUpdatesJob = _classifier => {
   bot.getUpdates(50, 5, -5, updates => {
     updates.forEach(update => {
       processing.processUpdate(update, _classifier, (response) => {
-        // log.debug('SEND: ' + response)
         bot.sendMessage(response, () => {
           // Send a getUpdates with higher offset to mark all as read
           bot.getUpdates(0, 1, update.update_id + 1, () => {});

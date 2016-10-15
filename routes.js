@@ -1,4 +1,4 @@
-const bot = require('./telegramBotApi');
+const bot = require('./services/telegramBotApi');
 const processing = require('./processing');
 const express = require('express');
 const log = require('./logger');
@@ -18,7 +18,7 @@ module.exports = function(routeToken, classifier) {
   // Reference message id in other objects. Reminders should know which message they came from
 
   router.post('/webhook/:token', (req, res) => {
-    processing.processUpdate(req.body, classifier, (response) => {
+    processing.processUpdate(req.body, classifier, (response) => {      
       if(req.params.token != routeToken) {
         log.info('Invalid route token');
         res.sendStatus(401);

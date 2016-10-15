@@ -3,10 +3,13 @@
  * decides what to do, and then forwards the request to the appropriate action in this module.
  */
 
-const googleAPI = require('./googleAPI');
+const googleAPI = require('./services/googleApi');
+const canadaPost = require('./services/canadaPost');
 const urban = require('urban');
 const log = require('./logger');
 const strings = require('./strings');
+const textParser = require('./textParser');
+
 const fs = require('fs');
 
 
@@ -56,6 +59,13 @@ exports.define = (message, word, cb) => {
     cb(message);
   });
 };
+
+exports.trackPackage = (messageText, cb) => {
+  let trackingNumber = messageText.match(/(\d|[A-Z]){10,16}/g);
+  canadaPost.trackPackage(trackingNumber, (info) => {
+    cb(info);
+  });
+}
 
 // Foobot is self aware
 exports.iAmFoobot = () => {
