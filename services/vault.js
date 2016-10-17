@@ -1,0 +1,1 @@
+// For communicating with Hashicorp Vault

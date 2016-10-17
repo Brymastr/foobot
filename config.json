@@ -1,0 +1,26 @@
+{
+  "db": "mongodb://db/foobot",
+  "route": "https://foobot.dorsaydevelopment.ca/webhook",
+  "route_token": "token",
+  "port": 80,
+  "log_level": "info",
+  "log_directory": "./logs",
+
+  "telegram": {
+    "token": "223951341:AAGsPCHjO44E9OEHEvWMtUS3k73l4KKXoRQ",
+    "url": "https://api.telegram.org/bot"
+  },
+  "messenger": {
+
+  },
+  "slack": {
+
+  },
+  "skype": {
+
+  },
+  "google": {
+    "flights_api": "https://www.googleapis.com/qpxExpress/v1/trips",
+    "flights_key": "AIzaSyAETu5_M7s9w8a1g2YE-FwBuHvbTHP1u7A"
+  }
+}
