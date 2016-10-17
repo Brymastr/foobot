@@ -3,7 +3,7 @@
   "route": "https://foobot.dorsaydevelopment.ca/webhook",
   "route_token": "token",
   "port": 80,
-  "log_level": "info",
+  "log_level": "debug",
   "log_directory": "./logs",
 
   "telegram": {
@@ -22,5 +22,8 @@
   "google": {
     "flights_api": "https://www.googleapis.com/qpxExpress/v1/trips",
     "flights_key": "AIzaSyAETu5_M7s9w8a1g2YE-FwBuHvbTHP1u7A"
+  },
+  "canada_post": {
+
   }
 }
