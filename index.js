@@ -1,15 +1,16 @@
 // Require libraries
-const mongoose = require('mongoose');
-const express = require('express');
-const http = require('http');
-const bodyParser = require('body-parser');
-const schedule = require('node-schedule');
-const processing = require('./processing');
-const bot = require('./services/telegramBotApi');
-const methodOverride = require('method-override');
-const uuid = require('node-uuid');
-const log = require('./logger');
-const natural = require('natural');  
+const 
+  mongoose = require('mongoose'),
+  express = require('express'),
+  http = require('http'),
+  bodyParser = require('body-parser'),
+  schedule = require('node-schedule'),
+  processing = require('./processing'),
+  bot = require('./services/telegramBotApi'),
+  methodOverride = require('method-override'),
+  uuid = require('node-uuid'),
+  log = require('./logger'),
+  natural = require('natural');  
 
 // App setup
 var app = express();
