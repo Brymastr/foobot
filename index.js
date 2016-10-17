@@ -10,9 +10,14 @@ const
   methodOverride = require('method-override'),
   uuid = require('node-uuid'),
   log = require('./logger'),
-  natural = require('natural');  
+  natural = require('natural'),
+  init = require('./init');
+var config = require('./config.json');
 
-// App setup
+// Initiate application configuration (because there's a lot of it)
+config = init.init(config);
+
+// Express setup
 var app = express();
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({type:'application/json'}));

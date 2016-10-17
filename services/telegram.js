@@ -9,7 +9,7 @@ const token = process.env.FOOBOT_TOKEN || '223951341:AAGsPCHjO44E9OEHEvWMtUS3k73
 const telegram = 'https://api.telegram.org/bot' + token;
 
 // Send a message
-exports.sendMessage = function(message, done) {
+exports.sendMessage = (message, done) => {
   request.post(telegram + '/sendMessage', {
     json: {
       chat_id: message.chat_id,
@@ -24,7 +24,7 @@ exports.sendMessage = function(message, done) {
 };
 
 // Set the webhook so that messages are sent to this api
-exports.setWebhook = function(url = '', certPath) {
+exports.setWebhook = (url = '', certPath) => {
   let formData;
   if(url != '') {
     request.post({
@@ -48,7 +48,7 @@ exports.setWebhook = function(url = '', certPath) {
 };
 
 // Get updates manually when the webhook is not set
-exports.getUpdates = function(timeout, limit, offset, done) {
+exports.getUpdates = (timeout, limit, offset, done) => {
   var result = [];
   var queryString = telegram + '/getUpdates?limit=' + limit + '&timeout=' + timeout + '&offset=' + offset;
   request.get(queryString, function(err, response, body) {
