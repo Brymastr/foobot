@@ -55,8 +55,7 @@ exports.processUpdate = function(update, classifier, cb) {
   let message = this.conform(update);
   message.topic = classifier.classify(message.text);
   // Save ALL messages  
-  messagesController.createMessage(message, (m) => log.debug(`createMessage returned`));
-  console.log('after')
+  messagesController.createMessage(message, (m) => {});
   // Actions
   if(message.action != undefined) {
     if(message.action == 'edit')
@@ -82,6 +81,12 @@ exports.processUpdate = function(update, classifier, cb) {
       //   cb(data);
       // });
       cb(message);
+    } else if(message.topic == 'track') {
+      // TODO: get the tracking number and query canada post for tracking info. Assign to message text
+      actions.trackPackage(message.text, (info) => {
+        message.response = info;
+        cb(message);
+      });
     } else {
       cb(message);
     }
@@ -99,7 +104,7 @@ exports.processUpdate = function(update, classifier, cb) {
       message.response = actions.iAmFoobot();
       cb(message);
     } else if(message.text.match(/(remind me)/i)) {
-      message.response = 'You fucking wish';
+      message.response = 'I\'m not smart enough for that yet.';
       cb(message);
     } else {
       // Return the message in case it's boring and doesn't make foobot do anything
