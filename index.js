@@ -20,13 +20,11 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({type:'application/json'}));
 app.use(methodOverride());
 
-// Configurations
-ngrok.connect((err, url) => {
-  config.url = url;
-  config = init.init(config);
-
-log.logLevel = config.log_level;
-log.debug(`Route token: ${config.route_token}`);
+// Logging middleware
+app.use('*', (req, res, next) => {
+  log.info(`${req.method}: ${req.baseUrl}`);
+  next();
+});
 
 // CORS
 app.use((req, res, next) => {
@@ -35,16 +33,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// Logging middleware
-app.use('*', (req, res, next) => {
-  log.info(`${req.method}: ${req.baseUrl}`);
-  // log.debug(req.body);
-  next();
-});
+// Configurations
+ngrok.connect(config.port, (err, url) => {
+  config.url = url + '/webhook';
+  config = init.init(config);
+
+log.logLevel = config.log_level;
+log.debug(`Route token: ${config.route_token}`);
 
 // Routes + classifier
 natural.BayesClassifier.load('classifier.json', null, (err, classifier) => {  
-  let routes = require('./routes')(config.route_token, classifier);
+  let routes = require('./routes')(config, classifier);
   app.use('/', routes);
 });
 
@@ -58,8 +57,6 @@ mongoose.connection.on('open', () => {
 http.createServer(app).listen(config.port, () => {
   log.info(`server listening on port ${config.port}`);
 });
-
-// maybe put everything inside callback from ngrok
 
 // Telegram
 if(config.telegram != undefined) {

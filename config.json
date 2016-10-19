@@ -3,7 +3,7 @@
   "url": null,
   "route_token": "token",
   "port": 9000,
-  "log_level": "debug",
+  "log_level": "info",
   "log_directory": "./logs",
   "cert_path": "/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt",
 
