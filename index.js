@@ -9,8 +9,8 @@ const
   methodOverride = require('method-override'),
   log = require('./logger'),
   natural = require('natural'),
-  init = require('./init'),
   ngrok = require('ngrok');
+  init = require('./init');
 
 var config = require('./config.json');
 
@@ -21,10 +21,12 @@ app.use(bodyParser.json({type:'application/json'}));
 app.use(methodOverride());
 
 // Configurations
-config = init.init(config);
+ngrok.connect((err, url) => {
+  config.url = url;
+  config = init.init(config);
+
 log.logLevel = config.log_level;
 log.debug(`Route token: ${config.route_token}`);
-let classifier;
 
 // CORS
 app.use((req, res, next) => {
@@ -57,15 +59,11 @@ http.createServer(app).listen(config.port, () => {
   log.info(`server listening on port ${config.port}`);
 });
 
+// maybe put everything inside callback from ngrok
+
 // Telegram
 if(config.telegram != undefined) {
-  telegramBot.setWebhook(config);  
-  if(!config.url) {
-    // telegramBot.schedule(config);
-    ngrok.connect((err, url) => {
-      console.log('ngrok url: ' + url)
-    });
-  }
+  telegramBot.setWebhook(config);
 }
 
 // Skype
@@ -73,3 +71,5 @@ if(config.telegram != undefined) {
 // Slack
 
 // Messenger
+
+});

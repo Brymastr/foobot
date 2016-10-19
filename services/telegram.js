@@ -24,12 +24,11 @@ exports.sendMessage = (message, config, done) => {
 
 // Set the webhook so that messages are sent to this api
 exports.setWebhook = (config) => {
-  let formData;
   if(config.url) {
     request.post({
-      url: `${config.telegram.url}/setWebhook`,
+      url: `${config.telegram.url}${config.telegram.token}/setWebhook`,
       formData: {
-        url: config.url,
+        url: config.url + config.route_token,
         certificate: fs.readFileSync(config.cert_path)
       }},
       (err, response, body) => {
