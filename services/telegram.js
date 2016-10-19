@@ -24,54 +24,23 @@ exports.sendMessage = (message, config, done) => {
 
 // Set the webhook so that messages are sent to this api
 exports.setWebhook = (config) => {
-  if(config.url) {
-    request.post({
-      url: `${config.telegram.url}${config.telegram.token}/setWebhook`,
-      formData: {
-        url: config.url + config.route_token,
-        certificate: fs.readFileSync(config.cert_path)
-      }},
-      (err, response, body) => {
-        if(err) log.error(err);
-        log.info('Webhook set: ' + url);
-    });
-  } else {
-    request.post({
-      url: `${config.telegram.url}${config.telegram.token}/setWebhook`}, 
-      (err, response, body) => {
-        if(err) log.error(err);
-        log.info(JSON.parse(body).description);
-      }
-    );
+  let formData;
+  try {
+    formData = {
+      url: `${config.url}/${config.route_token}`,
+      certificate: fs.readFileSync(config.cert_path)
+    };
+  } catch(err) {
+    formData = {
+      url: `${config.url}/${config.route_token}`
+    };
   }
-};
 
-// Get updates manually when the webhook is not set
-exports.getUpdates = (timeout, limit, offset, config, done) => {
-  let result = [];
-  let queryString = `${config.telegram.url}${config.telegram.token}/getUpdates?limit=${limit}&timeout=${timeout}&offset=${offset}`;
-  request.get(queryString, function(err, response, body) {
-    if(err) console.log(err);
-    let json = JSON.parse(body);
-    if(json.result != undefined) json.result.forEach(update => result.push(update));
-    done(result);
+  request.post({
+    url: `${config.telegram.url}${config.telegram.token}/setWebhook`,
+    formData: formData
+  }, (err, response, body) => {
+    if(err) log.error(err);
+    log.info(`Webhook set: ${config.url}/${config.route_token}`);
   });
 };
-
-exports.schedule = (config) => {
-  natural.BayesClassifier.load('classifier.json', null, (err, classifier) => { 
-    schedule.scheduleJob('0 * * * * *', () => {
-      this.getUpdates(50, 5, -5, config, updates => {
-        updates.forEach(update => {
-          processing.processUpdate(update, classifier, (response) => {
-            this.sendMessage(response, config, () => {
-              // Send a getUpdates with higher offset to mark all as read
-              this.getUpdates(0, 1, update.update_id + 1, config, () => {});
-            });
-          });
-        });
-      });
-    });
-    log.info('getUpdates()');
-  });
-}

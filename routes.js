@@ -6,7 +6,7 @@ const
   messagesController = require('./controllers/messagesController');
 
 
-module.exports = (routeToken, classifier) => {
+module.exports = (config, classifier) => {
   var router = express.Router();
 
   // Turn the 'update' into a local 'message' object
@@ -20,12 +20,12 @@ module.exports = (routeToken, classifier) => {
 
   router.post('/webhook/:token', (req, res) => {
     processing.processUpdate(req.body, classifier, (response) => {
-      if(req.params.token != routeToken) {
+      if(req.params.token != config.route_token) {
         log.info('Invalid route token');
         res.sendStatus(401);
       } else if(response != undefined) {
         log.debug('Response: ' + response);
-        bot.sendMessage(response, () => res.sendStatus(200));
+        bot.sendMessage(response, config, () => res.sendStatus(200));
       } else {
         res.sendStatus(200);
       }
