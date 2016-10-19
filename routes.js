@@ -1,11 +1,12 @@
-const bot = require('./services/telegram');
-const processing = require('./processing');
-const express = require('express');
-const log = require('./logger');
-const messagesController = require('./controllers/messagesController');
+const 
+  bot = require('./services/telegram'),
+  processing = require('./processing'),
+  express = require('express'),
+  log = require('./logger'),
+  messagesController = require('./controllers/messagesController');
 
 
-module.exports = function(routeToken, classifier) {
+module.exports = (routeToken, classifier) => {
   var router = express.Router();
 
   // Turn the 'update' into a local 'message' object
