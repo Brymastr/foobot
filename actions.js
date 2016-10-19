@@ -3,7 +3,7 @@
  * decides what to do, and then forwards the request to the appropriate action in this module.
  */
 
-const googleAPI = require('./services/googleApi');
+const googleAPI = require('./services/google');
 const canadaPost = require('./services/canadaPost');
 const urban = require('urban');
 const log = require('./logger');

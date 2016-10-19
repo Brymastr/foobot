@@ -1,10 +1,11 @@
 {
-  "db": "mongodb://db/foobot",
-  "route": "https://foobot.dorsaydevelopment.ca/webhook",
+  "db": "mongodb://localhost/foobot",
+  "url": null,
   "route_token": "token",
-  "port": 80,
+  "port": 9000,
   "log_level": "debug",
   "log_directory": "./logs",
+  "cert_path": "/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt",
 
   "telegram": {
     "token": "223951341:AAGsPCHjO44E9OEHEvWMtUS3k73l4KKXoRQ",

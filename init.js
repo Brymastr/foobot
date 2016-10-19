@@ -14,5 +14,7 @@ exports.init = config => {
   if(process.env.FOOBOT_LOG_LEVEL != undefined) config.log_level = process.env.FOOBOT_LOG_LEVEL;
 
   // Route token
-  if(config.url != null && config.url != undefined) config.route_token = uuid.v4()
+  if(config.url != null && config.url != undefined) config.route_token = uuid.v4();
+
+  return config;
 }
