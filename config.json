@@ -14,7 +14,7 @@
   "messenger": {
     "url": "https://graph.facebook.com/v2.6/me/messages",
     "page_access_token": "EAAYrLA0uYyIBAC6Psnm2bZCZAQOGp0CySEP6mlCJZBh75VwTGuP9ZAwlsHhWVmGPeP5aN20tSteUOXy20OXCERBjm9kvkhUTRJRDBaX1yjU6VEY2wDa8YOZBlUIO8b4XUYLWAN0gNZADZCiWPJxqtwDsq7jITNgjeS1W1ldIrLi3gZDZD",
-    "webhook_token": "skf&ueo0999#J$v.#mm?)23gas4$5vJK!=ka+`/3hf"
+    "webhook_token": "skf&ueo0999#Jv.#mm?)23gas45vJK!=ka+`/3hf"
   },
   "slack": {
 
