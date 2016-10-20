@@ -4,12 +4,14 @@ const
   messagesController = require('./controllers/messagesController'),
   log = require('./logger'),
   actions = require('./actions'),
-  telegram = require('./services/telegram');
+  telegram = require('./services/telegram')
+  messenger = require('./services/messenger');
 
 exports.conform = (update, platform) => {
   let message;
 
   if(platform == 'telegram') message = telegram.conform(update);
+  else if(platform == 'messenger') message = messenger.conform(update);
 
   message.source = platform;
   return message;
@@ -20,7 +22,7 @@ exports.processUpdate = (update, platform, classifier, cb) => {
     There is a heirarchy in which messages are processed
     1. Action - Edited messages, Callback Queries, and other good stuff
     2. Topic - What the classifier thinks of the message contents
-    3. Message content - If 1 and 2 are null, then maybe respond based on the actual text of the message
+    3. Content - If 1 and 2 are null, then maybe respond based on the actual text of the message
   */
 
   // Conform to my message model
@@ -65,7 +67,7 @@ exports.processUpdate = (update, platform, classifier, cb) => {
     }
   }
 
-  // Message content
+  // Content
   else {
     if(message.text.match(/(define)/i)) {
       const word = message.text.split(/(define)/i)[2];
@@ -80,7 +82,7 @@ exports.processUpdate = (update, platform, classifier, cb) => {
       message.response = 'I\'m not smart enough for that yet.';
       cb(message);
     } else {
-      // Return the message in case it's boring and doesn't make foobot do anything
+      // No Action, Topic, or interesting Content. Just callback with the incoming message
       cb(message);
     }
   }
@@ -88,7 +90,9 @@ exports.processUpdate = (update, platform, classifier, cb) => {
 
 // one sendMessage to rule them all
 exports.sendMessage = (message, config, done) => {
-  log.info(`Message response => ${message.response}`)
+  log.info(`Message response => ${message.response}`);
   if(message.source == 'telegram')
     telegram.sendMessage(message, config, body => {done(body)});
+  else if(message.source == 'messenger')
+    messenger.sendMessage(message, config, body => {done(body)});    
 }

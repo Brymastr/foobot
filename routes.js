@@ -16,17 +16,31 @@ module.exports = (config, classifier) => {
 
   // Reference message id in other objects. Reminders should know which message they came from
 
-  router.post('/webhook/:token', (req, res) => {
-    processing.processUpdate(req.body, 'telegram', classifier, (response) => {
-      if(req.params.token != config.route_token) {
-        log.info('Invalid route token');
-        res.sendStatus(401);
-      } else if(response != undefined) {
-        processing.sendMessage(response, config, () => res.sendStatus(200));
+  router.post('/webhook/:source/:token', (req, res) => {
+
+    if(req.params.token != config.route_token && (req.params.source == 'messenger' && req.params.token != 'messenger')) {
+      log.error('Invalid route token');
+      res.sendStatus(403);
+      return;
+    }
+
+    processing.processUpdate(req.body, req.params.source, classifier, (response) => {
+      if(response.response != undefined) { // Don't really care about the response for now
+        processing.sendMessage(response, config, response => res.sendStatus(200));
       } else {
         res.sendStatus(200);
       }
     });
+  });
+
+  // Messenger
+  router.get('/webhook/messenger/:token', (req, res) => {
+    if (req.query['hub.mode'] === 'subscribe' 
+    && req.query['hub.verify_token'] === config.messenger.webhook_token) {
+      res.status(200).send(req.query['hub.challenge']);
+    } else {
+      res.sendStatus(403);
+    }  
   });
 
   router.get('/messages/:chatId?/:userId?', (req, res) => {
@@ -47,7 +61,7 @@ module.exports = (config, classifier) => {
       log.debug(result);
       res.send(result);
     });
-  })
+  });
   
   return router;
 };
