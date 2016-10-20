@@ -4,13 +4,14 @@ const
   messagesController = require('./controllers/messagesController'),
   log = require('./logger'),
   actions = require('./actions'),
-  telegram = require('./services/telegram');
+  telegram = require('./services/telegram')
+  messenger = require('./services/messenger');
 
 exports.conform = (update, platform) => {
   let message;
 
   if(platform == 'telegram') message = telegram.conform(update);
-  else if(platform == 'messenger') message = facebook.conform(update);
+  else if(platform == 'messenger') message = messenger.conform(update);
 
   message.source = platform;
   return message;
@@ -92,4 +93,6 @@ exports.sendMessage = (message, config, done) => {
   log.info(`Message response => ${message.response}`);
   if(message.source == 'telegram')
     telegram.sendMessage(message, config, body => {done(body)});
+  else if(message.source == 'messenger')
+    messenger.sendMessage(message, config, body => {done(body)});    
 }

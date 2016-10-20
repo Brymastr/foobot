@@ -16,17 +16,16 @@ module.exports = (config, classifier) => {
 
   // Reference message id in other objects. Reminders should know which message they came from
 
-  router.route('/webhook/:source/:token', (req, res) => {
+  router.post('/webhook/:source/:token', (req, res) => {
 
-    if(req.params.token != config.route_token 
-    || (req.params.source == 'messenger' && req.token != 'messenger')) {
+    if(req.params.token != config.route_token && (req.params.source == 'messenger' && req.params.token != 'messenger')) {
       log.error('Invalid route token');
       res.sendStatus(403);
       return;
     }
 
     processing.processUpdate(req.body, req.params.source, classifier, (response) => {
-      if(response != undefined) { // Don't really care about the response for now
+      if(response.response != undefined) { // Don't really care about the response for now
         processing.sendMessage(response, config, response => res.sendStatus(200));
       } else {
         res.sendStatus(200);

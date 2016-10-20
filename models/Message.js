@@ -9,13 +9,13 @@ var Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
 
 module.exports = mongoose.model('Message', Schema({
-  message_id: Number,
+  message_id: String,
   text: String,
   date: Date,
   user: Object,
   chat_id: Number,
   chat_name: String,
-  update_id: Number,
+  update_id: String,
   topic: String,
   response: String,     // Text to use as reponse message
   reply_markup: Object, // Use with response, for inline keyboards

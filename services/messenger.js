@@ -15,8 +15,8 @@ exports.conform = update => {
     date: update.timestamp
   });
 
-  if(update.messagingEvent.postback) message.text = 'postback event';
-  else if(update.messagingEvent.optin)
+  if(update.postback) message.text = 'postback event';
+  else if(update.optin) message.text = 'optin event';
 
   return message;
 }
@@ -31,7 +31,7 @@ exports.sendMessage = (message, config, done) => {
         id: message.chat_id,
       },
       message: {
-        text: message.text
+        text: message.response
       }
     }
   }, (err, response, body) => {
