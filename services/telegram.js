@@ -41,7 +41,7 @@ exports.setWebhook = (config) => {
     formData: formData
   }, (err, response, body) => {
     if(err) log.error(err);
-    log.info(`Webhook set: ${config.url}/${config.route_token}`);
+    log.info(`Telegram webhook set: ${config.url}/${config.route_token}`);
   });
 };
 

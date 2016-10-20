@@ -16,7 +16,7 @@ module.exports = (config, classifier) => {
 
   // Reference message id in other objects. Reminders should know which message they came from
 
-  router.post('/webhook/:token', (req, res) => {
+  router.route('/webhook/:token', (req, res) => {
     processing.processUpdate(req.body, 'telegram', classifier, (response) => {
       if(req.params.token != config.route_token) {
         log.info('Invalid route token');
@@ -27,6 +27,18 @@ module.exports = (config, classifier) => {
         res.sendStatus(200);
       }
     });
+  });
+
+  router.get('/webhook', (req, res) => {
+    const fb_token = 'crazy_token_to_verify_my_ownership';
+    if (req.query['hub.mode'] === 'subscribe' &&
+      req.query['hub.verify_token'] === fb_token) {
+      console.log("Validating webhook");
+      res.status(200).send(req.query['hub.challenge']);
+    } else {
+      console.error("Failed validation. Make sure the validation tokens match.");
+      res.sendStatus(403);
+    }  
   });
 
   router.get('/messages/:chatId?/:userId?', (req, res) => {
@@ -47,7 +59,7 @@ module.exports = (config, classifier) => {
       log.debug(result);
       res.send(result);
     });
-  })
+  });
   
   return router;
 };

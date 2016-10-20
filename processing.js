@@ -88,7 +88,7 @@ exports.processUpdate = (update, platform, classifier, cb) => {
 
 // one sendMessage to rule them all
 exports.sendMessage = (message, config, done) => {
-  log.info(`Message response => ${message.response}`)
+  log.info(`Message response => ${message.response}`);
   if(message.source == 'telegram')
     telegram.sendMessage(message, config, body => {done(body)});
 }
