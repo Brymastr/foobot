@@ -1,4 +1,4 @@
-# foo-bot
+# foobot
 Telegram (more coming soon) bot for messing around
 
 ### TODO:

@@ -1,61 +1,34 @@
-const Message = require('./models/Message');
-const InlineKeyboardButton = require('./models/InlineKeyboardButton');
-const strings = require('./strings');
-const messagesController = require('./controllers/messagesController');
-const log = require('./logger');
-const actions = require('./actions');
+const 
+  InlineKeyboardButton = require('./models/InlineKeyboardButton'),
+  strings = require('./strings'),
+  messagesController = require('./controllers/messagesController'),
+  log = require('./logger'),
+  actions = require('./actions'),
+  telegram = require('./services/telegram');
 
+exports.conform = (update, platform) => {
+  let message;
 
-// Make the message into a local message without nulls
-exports.conform = function(update) {
-  let message = new Message({
-    update_id: update.update_id
-  });
-  if(update.edited_message != undefined) {
-    message.message_id = update.edited_message.message_id;
-    message.date = update.edited_message.date;
-    message.user = update.edited_message.from;
-    message.chat_id = update.edited_message.chat.id;
-    message.chat_name = update.edited_message.chat.first_name;
-    message.action = 'edit';
-  } else if(update.message != undefined) {
-    message.message_id = update.message.message_id;
-    message.date = update.message.date;
-    message.user = update.message.from;
-    message.chat_id = update.message.chat.id;
-    message.chat_name = update.message.chat.first_name;
-    message.text = update.message.text;
-  } else if(update.callback_query != undefined) {
-    message.message_id = update.callback_query.message.message_id;
-    message.user = update.callback_query.from;
-    message.chat_id = update.callback_query.message.chat.id;
-    message.chat_name = update.callback_query.message.chat.first_name;
-    message.text = update.callback_query.message.text;
-    message.action = update.callback_query.data;
-  }
+  if(platform == 'telegram') message = telegram.conform(update);
 
-  if(message.text == undefined)
-    message.text = '';
-
+  message.source = platform;
   return message;
 }
 
-exports.processUpdate = function(update, classifier, cb) {
+exports.processUpdate = (update, platform, classifier, cb) => {
   /*
-    There are three ways of deciding what to do.
     There is a heirarchy in which messages are processed
     1. Action - Edited messages, Callback Queries, and other good stuff
     2. Topic - What the classifier thinks of the message contents
     3. Message content - If 1 and 2 are null, then maybe respond based on the actual text of the message
-
-    The callback object from this method is the message that will be sent to the telegram api
   */
 
   // Conform to my message model
-  let message = this.conform(update);
+  let message = this.conform(update, platform);
   message.topic = classifier.classify(message.text);
   // Save ALL messages  
-  messagesController.createMessage(message, (m) => {});
+  messagesController.createMessage(message, m => {});
+
   // Actions
   if(message.action != undefined) {
     if(message.action == 'edit')
@@ -112,3 +85,10 @@ exports.processUpdate = function(update, classifier, cb) {
     }
   }
 };
+
+// one sendMessage to rule them all
+exports.sendMessage = (message, config, done) => {
+  log.info(`Message response => ${message.response}`)
+  if(message.source == 'telegram')
+    telegram.sendMessage(message, config, body => {done(body)});
+}
