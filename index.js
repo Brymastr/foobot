@@ -37,36 +37,35 @@ app.use((req, res, next) => {
 ngrok.connect(config.port, (err, url) => {
   config.url = url + '/webhook';
   config = init.init(config);
+  if(process.env.FOOBOT_URL != undefined) ngrok.disconnect(url);
 
-log.logLevel = config.log_level;
-log.debug(`Route token: ${config.route_token}`);
+  log.logLevel = config.log_level;
+  log.debug(`Route token: ${config.route_token}`);
 
-// Routes + classifier
-natural.BayesClassifier.load('classifier.json', null, (err, classifier) => {  
-  let routes = require('./routes')(config, classifier);
-  app.use('/', routes);
-});
+  // Routes + classifier
+  natural.BayesClassifier.load('classifier.json', null, (err, classifier) => {  
+    let routes = require('./routes')(config, classifier);
+    app.use('/', routes);
+  });
 
-// MongoDB connection
-mongoose.connect(config.db);
-mongoose.connection.on('open', () => {
-  console.log(`Mongo connection is open. Connected to: ${config.db}`);
-});
+  // MongoDB connection
+  mongoose.connect(config.db);
+  mongoose.connection.on('open', () => {
+    console.log(`Connected to mongodb at: ${config.db}`);
+  });
 
-// Start server
-http.createServer(app).listen(config.port, () => {
-  log.info(`server listening on port ${config.port}`);
-});
+  // Start server
+  app.listen(config.port);
 
-// Telegram
-if(config.telegram != undefined) {
-  telegramBot.setWebhook(config);
-}
+  // Telegram
+  if(config.telegram != undefined) {
+    telegramBot.setWebhook(config);
+  }
 
-// Skype
+  // Skype
 
-// Slack
+  // Slack
 
-// Messenger
+  // Messenger
 
 });
