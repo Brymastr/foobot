@@ -10,3 +10,8 @@ Telegram (more coming soon) bot for messing around
 - [ ] Facebook messenger support
 - [ ] Facebook login for single user across all bot types
 - [ ] Somewhere to hide secrets
+
+### Notes:
+Control flow:
+```
+Index => Routes => Processing => Source-specific Service => Actions => callback all the way to routes

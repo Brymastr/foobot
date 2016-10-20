@@ -3,14 +3,14 @@
  * decides what to do, and then forwards the request to the appropriate action in this module.
  */
 
-const googleAPI = require('./services/google');
-const canadaPost = require('./services/canadaPost');
-const urban = require('urban');
-const log = require('./logger');
-const strings = require('./strings');
-const textParser = require('./textParser');
-
-const fs = require('fs');
+const 
+  google = require('./services/google'),
+  canadaPost = require('./services/canadaPost'),
+  urban = require('urban'),
+  log = require('./logger'),
+  strings = require('./strings'),
+  fs = require('fs'),
+  textParser = require('./textParser');
 
 
 this.kanye = 'I miss the old kanye';
@@ -21,7 +21,7 @@ this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
 
 // Google QPX Flights api
 exports.flights = (message, cb) => {
-  googleAPI.getFlights(message, result => {
+  google.getFlights(message, result => {
     message.response = result;
     cb(message);
   });
@@ -33,24 +33,6 @@ exports.iMissTheOldKanye = () => {
   return kanye[Math.floor(Math.random() * (kanye.length - 1))]
 };
 
-// Update foobot
-exports.update = (message) => {
-  message.response = strings.$('update');
-  message.reply_markup = {
-    inline_keyboard: [[
-      new InlineKeyboardButton({
-        text: strings.$('updateYes'),
-        callback_data: 'confirm'
-      }),
-      new InlineKeyboardButton({
-        text: strings.$('updateNo'),
-        callback_data: 'deny'
-      })
-    ]]
-  }
-  return message;
-};
-
 // Lookup a definition from urban dictionary
 exports.define = (message, word, cb) => {
   urban(word).first(data => {
@@ -60,6 +42,7 @@ exports.define = (message, word, cb) => {
   });
 };
 
+// Package tracking
 exports.trackPackage = (messageText, cb) => {
   let trackingNumber = messageText.match(/(\d|[A-Z]){10,16}/g);
   canadaPost.trackPackage(trackingNumber, (info) => {

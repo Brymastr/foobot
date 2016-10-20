@@ -27,7 +27,7 @@ exports.setWebhook = (config) => {
   let formData;
   try {
     formData = {
-      url: `${config.url}/${config.route_token}`,
+      url: `${config.url}/telegram/${config.route_token}`,
       certificate: fs.readFileSync(config.cert_path)
     };
   } catch(err) {
@@ -41,8 +41,9 @@ exports.setWebhook = (config) => {
     formData: formData
   }, (err, response, body) => {
     if(err) log.error(err);
-    log.info(`Telegram webhook set: ${config.url}/${config.route_token}`);
+    log.info(`Telegram webhook set: ${config.url}/telegram/${config.route_token}`);
   });
+  
 };
 
 // Make the message into a local message without nulls

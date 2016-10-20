@@ -16,27 +16,30 @@ module.exports = (config, classifier) => {
 
   // Reference message id in other objects. Reminders should know which message they came from
 
-  router.route('/webhook/:token', (req, res) => {
-    processing.processUpdate(req.body, 'telegram', classifier, (response) => {
-      if(req.params.token != config.route_token) {
-        log.info('Invalid route token');
-        res.sendStatus(401);
-      } else if(response != undefined) {
-        processing.sendMessage(response, config, () => res.sendStatus(200));
+  router.route('/webhook/:source/:token', (req, res) => {
+
+    if(req.params.token != config.route_token 
+    || (req.params.source == 'messenger' && req.token != 'messenger')) {
+      log.error('Invalid route token');
+      res.sendStatus(403);
+      return;
+    }
+
+    processing.processUpdate(req.body, req.params.source, classifier, (response) => {
+      if(response != undefined) { // Don't really care about the response for now
+        processing.sendMessage(response, config, response => res.sendStatus(200));
       } else {
         res.sendStatus(200);
       }
     });
   });
 
-  router.get('/webhook', (req, res) => {
-    const fb_token = 'crazy_token_to_verify_my_ownership';
-    if (req.query['hub.mode'] === 'subscribe' &&
-      req.query['hub.verify_token'] === fb_token) {
-      console.log("Validating webhook");
+  // Messenger
+  router.get('/webhook/messenger/:token', (req, res) => {
+    if (req.query['hub.mode'] === 'subscribe' 
+    && req.query['hub.verify_token'] === config.messenger.webhook_token) {
       res.status(200).send(req.query['hub.challenge']);
     } else {
-      console.error("Failed validation. Make sure the validation tokens match.");
       res.sendStatus(403);
     }  
   });
