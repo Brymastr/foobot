@@ -25,14 +25,15 @@ exports.sendMessage = (message, config, done) => {
 // Set the webhook so that messages are sent to this api
 exports.setWebhook = (config) => {
   let formData;
+  const url = `${config.url}/telegram/${config.route_token}`;
   try {
     formData = {
-      url: `${config.url}/${config.route_token}`,
+      url: url,
       certificate: fs.readFileSync(config.cert_path)
     };
   } catch(err) {
     formData = {
-      url: `${config.url}/${config.route_token}`
+      url: url
     };
   }
 
@@ -41,8 +42,9 @@ exports.setWebhook = (config) => {
     formData: formData
   }, (err, response, body) => {
     if(err) log.error(err);
-    log.info(`Webhook set: ${config.url}/${config.route_token}`);
+    log.info(`Telegram webhook set: ${url}`);
   });
+  
 };
 
 // Make the message into a local message without nulls
