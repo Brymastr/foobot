@@ -4,20 +4,19 @@ const
 
 exports.init = config => {
 
-  // Database connection
+  // General
   if(process.env.FOOBOT_DB_CONN != undefined) config.db = process.env.FOOBOT_DB_CONN;
-
-  // Port to run foobot on
   if(process.env.FOOBOT_PORT != undefined) config.port = process.env.FOOBOT_PORT;
-
-  // Log level
   if(process.env.FOOBOT_LOG_LEVEL != undefined) config.log_level = process.env.FOOBOT_LOG_LEVEL;
-
-  // Address of foobot himself
   if(process.env.FOOBOT_URL != undefined) config.url = process.env.FOOBOT_URL;
 
-  // Route token
+  // Telegram
+  if(process.env.FOOBOT_TOKEN != undefined) config.telegram.token = process.env.FOOBOT_TOKEN;
   config.route_token = uuid.v4();
+
+  // Messenger
+  if(process.env.FOOBOT_MESSENGER_WEBHOOK_TOKEN != undefined) config.messenger.webhook_token = process.env.FOOBOT_MESSENGER_WEBHOOK_TOKEN;
+  if(process.env.FOOBOT_PAGE_ACCESS_TOKEN != undefined) config.messenger.page_access_token = process.env.FOOBOT_PAGE_ACCESS_TOKEN;
 
   return config;
 }
