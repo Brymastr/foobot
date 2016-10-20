@@ -1,7 +1,7 @@
 {
   "db": "mongodb://localhost/foobot",
   "url": null,
-  "route_token": "token",
+  "route_token": null,
   "port": 9000,
   "log_level": "info",
   "log_directory": "./logs",
