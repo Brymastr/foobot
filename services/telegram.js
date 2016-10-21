@@ -23,7 +23,7 @@ exports.sendMessage = (message, config, done) => {
 };
 
 // Set the webhook so that messages are sent to this api
-exports.setWebhook = (config) => {
+exports.setWebhook = config => {
   let formData;
   const url = `${config.url}/telegram/${config.route_token}`;
   try {
