@@ -33,6 +33,6 @@ for(i = 0; i < 50; i++)
 
 classifier.train();
 
-classifier.save('classifier.json', function(err, classifier) {  
+classifier.save('classifier.json', (err, classifier) => {  
   log.info('classifier trained and saved to classifier.json');
 }); 
