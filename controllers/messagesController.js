@@ -5,8 +5,9 @@ Improvements:
   - Error handling
 */  
 
-const log = require('../logger');
-const Message = require('../models/Message');
+const 
+  log = require('../logger'),
+  Message = require('../models/Message');
 
 // Save an incoming message to the database
 exports.createMessage = (message, cb) => {
