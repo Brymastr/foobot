@@ -4,8 +4,7 @@ const
   fs = require('fs'),
   log = require('../logger'),
   natural = require('natural'),
-  processing = require('../processing'),
-  schedule = require('node-schedule');
+  processing = require('../processing');
 
 // Send a message
 exports.sendMessage = (message, config, done) => {
