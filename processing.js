@@ -5,7 +5,8 @@ const
   log = require('./logger'),
   actions = require('./actions'),
   telegram = require('./services/telegram')
-  messenger = require('./services/messenger');
+  messenger = require('./services/messenger')
+  sentiment = require('sentiment');
 
 exports.conform = (update, platform) => {
   let message;
@@ -28,6 +29,8 @@ exports.processUpdate = (update, platform, classifier, cb) => {
   // Conform to my message model
   let message = this.conform(update, platform);
   message.topic = classifier.classify(message.text);
+  message.sentiment = sentiment(message.text).score;
+
   // Save ALL messages  
   messagesController.createMessage(message, m => {});
 
@@ -76,7 +79,8 @@ exports.processUpdate = (update, platform, classifier, cb) => {
       message.response = actions.iMissTheOldKanye();
       cb(message);
     } else if(message.text.match(/(foobot)/i)) {
-      message.response = actions.iAmFoobot();
+      if(message.sentiment < -1) message.response = `Whoa ${message.user.first_name}, No need to be so negative`
+      else message.response = actions.iAmFoobot();
       cb(message);
     } else if(message.text.match(/(remind me)/i)) {
       message.response = 'I\'m not smart enough for that yet.';
