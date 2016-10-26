@@ -7,6 +7,8 @@ const
 exports.conform = update => {
   console.dir(update);
   update = update.entry[0].messaging[0];
+  if(!update.message.text) update.message.text = '';
+
   let message = new Message({
     update_id: update.message.mid,
     message_id: update.message.mid, // not sure what I need message_id for vs update_id
