@@ -10,7 +10,7 @@ exports.scrapeEpisodeUrls = (cb) => {
     let episodes = [];
     $('b a').each((i, element) => {
       var a = $(element);
-      list.push(a.attr('href'));
+      episodes.push(a.attr('href'));
     });    
     fs.writeFile(`${this.path}/episodeUrls.txt`, episodes.join(require('os').EOL), () => {
       console.log(`Episode URLs written to ${this.path}/episodeUrls.txt`);
@@ -27,28 +27,35 @@ exports.scrapeEpisodeTranscripts = cb => {
 
   fs.readFile(`${this.path}/episodeUrls.txt`, 'utf-8', (err, data) => {
     let episodes = data.split(require('os').EOL);
-    // episodes.forEach(episode => {
-      request(url + episodes[0], (err, response, html) => {
-        let $ = cheerio.load(html);
-        let lines = [];
 
-        $('#mw-content-text p b, #mw-content-text p b a').each((i, element) => {
-          let l = $(element).parent().text();
-          let quote = l.split(/\(.*\) .{1}/)[1];
-          if(quote != undefined) {
-            quote = quote.replace(/\[.*\] /, '');
-            console.dir(quote.trim());
-            lines.push(quote.trim());
-          }
-          
-        });
+    for(var number = 0; number < episodes.length; number++) {
+      let episode = episodes[number];
+      getEpisode(url + episode, `${this.path}/${String('000' + number).slice(-3)}_${episode.split(':')[1]}.txt`, () => {
+        // console.log('done')
+      })   
+    }
+  });
+}
 
-        fs.writeFile(`${this.path}/${episodes[0].split(':')[1]}.txt`, lines.join(require('os').EOL), () => {
-          console.log(`Quote from ${episodes[0]} written to ${this.path}/${episodes[0].split(':')[1]}.txt`);
-        });
-        
-        
+function getEpisode(url, filename, cb) {
+  request(url, (err, response, html) => {
+    if(!html) console.log(err, url);
+    else {
+      let $ = cheerio.load(html);
+      let lines = [];
+
+      $('div.poem p b, div.poem p b a').each((i, element) => {
+        let l = $(element).parent().text();
+        let quote = l.split(/\(.*\) .{1}/)[1];
+        if(quote != undefined) {
+          quote = quote.replace(/\[.*\] /, '');
+          lines.push(quote.trim());
+        }
       });
-    // });
+
+      fs.writeFile(filename, lines.join(require('os').EOL), () => {
+        console.log(`${filename} complete`);
+      });
+    }
   });
 }
