@@ -29,6 +29,7 @@ exports.scrapeEpisodeTranscripts = cb => {
     let episodes = data.split(require('os').EOL);
 
     for(var number = 0; number < episodes.length; number++) {
+      // if(number != 72) continue;
       let episode = episodes[number];
       getEpisode(url + episode, `${this.path}/${String('000' + number).slice(-3)}_${episode.split(':')[1]}.txt`, () => {
         // console.log('done')
@@ -44,18 +45,23 @@ function getEpisode(url, filename, cb) {
       let $ = cheerio.load(html);
       let lines = [];
 
-      $('div.poem p b, div.poem p b a').each((i, element) => {
-        let l = $(element).parent().text();
-        let quote = l.split(/\(.*\) .{1}/)[1];
-        if(quote != undefined) {
-          quote = quote.replace(/\[.*\] /, '');
-          lines.push(quote.trim());
-        }
+      $('div.poem p, #mw-content-text p').each((i, element) => {
+        let l = $(element).text();
+        // console.log(l)
+        let quote = l
+          .replace(/\[[a-z0-9,.?_ '-]*\]/ig, '')
+          .replace(/\([a-z0-9,.?_: '-]*\)/ig, '')
+          .replace(/\s{2,}/g, ' ')
+          .replace(/[^\x00-\x7F]/g, '');
+        lines.push(quote.trim());
+        // console.log(quote.trim());
       });
 
       fs.writeFile(filename, lines.join(require('os').EOL), () => {
         console.log(`${filename} complete`);
+
       });
     }
+    cb();
   });
 }
