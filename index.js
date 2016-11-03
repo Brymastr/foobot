@@ -62,7 +62,7 @@ ngrok.connect(config.port, (err, url) => {
   app.listen(config.port);
 
   // Telegram
-  if(config.telegram != undefined) {
+  if(config.telegram) {
     telegramBot.setWebhook(config);
   }
 

@@ -18,5 +18,9 @@ exports.init = config => {
   if(process.env.FOOBOT_MESSENGER_WEBHOOK_TOKEN != undefined) config.messenger.webhook_token = process.env.FOOBOT_MESSENGER_WEBHOOK_TOKEN;
   if(process.env.FOOBOT_PAGE_ACCESS_TOKEN != undefined) config.messenger.page_access_token = process.env.FOOBOT_PAGE_ACCESS_TOKEN;
 
+  // Facebook
+  if(process.env.FOOBOT_FACEBOOK_APP_ID != undefined) config.facebook.app_id = process.env.FOOBOT_FACEBOOK_APP_ID;
+  if(process.env.FOOBOT_FACEBOOK_APP_SECRET) config.facebook.app_secret = process.env.FOOBOT_FACEBOOK_APP_SECRET;
+
   return config;
 }
