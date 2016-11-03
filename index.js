@@ -10,7 +10,8 @@ const
   log = require('./logger'),
   natural = require('natural'),
   ngrok = require('ngrok');
-  init = require('./init');
+  init = require('./init')
+  passport = require('passport');
 
 var config = require('./config.json');
 
@@ -19,6 +20,7 @@ var app = express();
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({type:'application/json'}));
 app.use(methodOverride());
+app.use(passport.initialize());
 
 // Logging middleware
 app.use('*', (req, res, next) => {
@@ -42,8 +44,10 @@ ngrok.connect(config.port, (err, url) => {
   log.logLevel = config.log_level;
   log.debug(`Route token: ${config.route_token}`);
 
+  require('./config/passport')(config, passport);
+
   // Routes + classifier
-  natural.BayesClassifier.load('classifier.json', null, (err, classifier) => {  
+  natural.BayesClassifier.load('classifier.json', null, (err, classifier) => { 
     let routes = require('./routes')(config, classifier);
     app.use('/', routes);
   });

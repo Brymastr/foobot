@@ -6,8 +6,7 @@ Improvements:
 
 const 
   mongoose = require('mongoose'),
-  Schema = mongoose.Schema,
-  ObjectId = Schema.ObjectId;
+  Schema = mongoose.Schema;
 
 module.exports = mongoose.model('Message', Schema({
   message_id: String,

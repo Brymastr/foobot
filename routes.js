@@ -43,6 +43,21 @@ module.exports = (config, classifier) => {
     }  
   });
 
+  // Phonehome
+  router.post('/remember', (req, res) => {
+    // save a 'remember' object to the database
+
+    // first use case is saving home IP. Generic 'remember' object
+    log.info(req.body);
+    res.send('Eventually saving stuff');
+  });
+
+  // Facebook auth
+  router.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
+    (req, res) => {res.redirect('/auth/facebook/token?access_token=' + req.user.facebook_token)}
+  );
+
   router.get('/messages/:chatId?/:userId?', (req, res) => {
     if(req.params.chatId == undefined && req.params.userId == undefined) 
       messagesController.getAllMessages(messages => res.json(messages));
