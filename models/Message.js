@@ -43,7 +43,6 @@ module.exports = mongoose.model('Message', Schema({
             username: message.platform_from.username
           }, _user => {
             message.user_id = _user._id;
-            console.log(_user)
             next();
           });
 

@@ -35,7 +35,6 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
   // Save ALL messages  
   messagesController.createMessage(message, (m, u) => {
 
-     console.log(m)
     // Actions
     if(m.action != undefined) {
       if(m.action == 'edit')
