@@ -12,15 +12,16 @@ module.exports = (config, passport) => {
       callbackURL: config.url + '/auth/facebook/callback',
       passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
-      console.log(req.params)
-      console.log(req.body)
-      console.log(req.query)
+      console.dir(profile)
+      console.dir(accessToken)
+      console.dir(req.query.code)
+      // TODO: Get user id from request somehow
       // usersController.getUser(req.params.user_id, user => {
       //   user.facebook_id = profile.id;
       //   user.facebook_token = accessToken;
       //   user.save((err, doc) => {done(err, doc)})
       // });
-      done(err, 'hey there');
+      done('Facebook auth not complete');
     }
   ));
 

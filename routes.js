@@ -60,8 +60,9 @@ module.exports = (config, passport, classifier) => {
 
   router.get('/auth/facebook/token', (req, res) => {
     let access_token = req.query.access_token;
-    log.debug(req.body)
+    log.debug(access_token)
     log.debug(req.params)
+    log.debug(req.query)
     // lookup user
     // save access_token to user.facebook_token
     // maybe login user to facebook and save id to user object
