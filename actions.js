@@ -52,12 +52,12 @@ exports.trackPackage = (messageText, cb) => {
 };
 
 // Facebook login
-exports.facebookLogin = (message) => {
-  message.response = 'Here you go';
+exports.facebookLogin = message => {
+  message.response = 'One Facebook please!';
   message.reply_markup = {
     inline_keyboard: [[{
       text: 'Login to Facebook',
-      url: 'https://api.foobot.dorsaydevelopment.ca/auth/facebook/${message.user_id}'
+      url: `https://api.foobot.dorsaydevelopment.ca/auth/facebook/${message.user_id}`
     }]]
   }
 

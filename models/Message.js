@@ -2,6 +2,7 @@
 Message object which helps define a global schema to work with throughout the app
 Improvements:
   - Naming
+  - Consolidate
 */  
 
 const 
@@ -28,29 +29,37 @@ module.exports = mongoose.model('Message', Schema({
   source: String,       // Platform the message was received from. eg Telegram, Messenger, Slack, etc... 
   reply_to: String      // In telegram, the message_id to reply to. Just assign message_id to this val to make it a reply message
 })
-  .pre('save', next => {
+  .pre('save', function(next) {
     let message = this;
 
-    // Create a new user if this message doesn't have a user_id (user has never sent a message to foobot, this is the first)
-    if(!message.user_id) {
-      let id;
-      let user;
-      if(message.source == 'telegram') {
-        usersController.createUser({
-          telegram_id: message.from.id,
-          first_name: message.from.first_name,
-          last_name: message.from.last_name,
-          username: message.from.username
-        }, () => {next()});
-      } else if(message.source == 'messenger') {
-        usersController.createUser({
-          facebook_id: message.from.id//,
-          // first_name: message.from.first_name,
-          // last_name: message.from.last_name,
-          // username: message.from.username
-        }, () => {next()});
+    usersController.getUserByPlatformId(message.platform_from.id, user => {
+      if(!user) {
+
+        if(message.source == 'telegram') {
+          usersController.createUser({
+            telegram_id: message.platform_from.id,
+            first_name: message.platform_from.first_name,
+            last_name: message.platform_from.last_name,
+            username: message.platform_from.username
+          }, _user => {
+            message.user_id = _user._id;
+            next();
+          });
+
+        } else if(message.source == 'messenger') {
+          usersController.createUser({
+            facebook_id: message.platform_from.id
+          }, _user => {
+            message.user_id = _user._id;
+            next();
+          });
+        }
+
+      } else {
+        message.user_id = user._id;
+        next();
       }
-      next();
-    }
+
+    });
   })
 );

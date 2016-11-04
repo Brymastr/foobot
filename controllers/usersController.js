@@ -19,3 +19,9 @@ exports.getUser = (id, cb) => {
     cb(user);
   });
 };
+
+exports.getUserByPlatformId = (id, cb) => {
+  User.findOne({$or: [{'telegram_id': id}]}, (err, user) => {
+    cb(user);
+  });
+}
