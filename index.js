@@ -48,7 +48,7 @@ ngrok.connect(config.port, (err, url) => {
 
   // Routes + classifier
   natural.BayesClassifier.load('classifier.json', null, (err, classifier) => { 
-    let routes = require('./routes')(config, classifier);
+    let routes = require('./routes')(config, passport, classifier);
     app.use('/', routes);
   });
 

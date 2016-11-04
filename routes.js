@@ -6,7 +6,7 @@ const
   usersController = require('./controllers/usersController');
 
 
-module.exports = (config, classifier) => {
+module.exports = (config, passport, classifier) => {
   var router = express.Router();
 
   // Turn the 'update' into a local 'message' object

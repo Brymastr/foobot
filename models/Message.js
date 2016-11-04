@@ -31,7 +31,7 @@ module.exports = mongoose.model('Message', Schema({
 })
   .pre('save', function(next) {
     let message = this;
-
+    let id;
     usersController.getUserByPlatformId(message.platform_from.id, user => {
       if(!user) {
 
@@ -46,13 +46,13 @@ module.exports = mongoose.model('Message', Schema({
             next();
           });
 
-        // } else if(message.source == 'messenger') {
-        //   usersController.createUser({
-        //     facebook_id: message.chat_id
-        //   }, _user => {
-        //     message.user_id = _user._id;
-        //     next();
-        //   });
+        } else if(message.source == 'messenger') {
+          usersController.createUser({
+            facebook_id: message.chat_id
+          }, _user => {
+            message.user_id = _user._id;
+            next();
+          });
         }
 
       } else {
