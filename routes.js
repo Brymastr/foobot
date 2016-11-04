@@ -46,15 +46,12 @@ module.exports = (config, classifier) => {
   // Phonehome
   router.post('/remember', (req, res) => {
     // save a 'remember' object to the database
-
     // first use case is saving home IP. Generic 'remember' object
     log.info(req.body);
     res.send('Eventually saving stuff');
   });
 
   // Facebook auth
-  router.get('/auth/facebook/:user_id', passport.authenticate('facebook'));
-
   router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
     (req, res) => {res.redirect(`/auth/facebook/token?access_token=${req.user.facebook_token}`)}
@@ -67,7 +64,10 @@ module.exports = (config, classifier) => {
     // lookup user
     // save access_token to user.facebook_token
     // maybe login user to facebook and save id to user object
+    res.sendStatus(200);
   });
+
+  router.get('/auth/facebook/:user_id', passport.authenticate('facebook'));  
 
   router.get('/messages/:chatId?/:userId?', (req, res) => {
     if(req.params.chatId == undefined && req.params.userId == undefined) 

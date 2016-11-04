@@ -22,5 +22,8 @@ exports.init = config => {
   if(process.env.FOOBOT_FACEBOOK_APP_ID != undefined) config.facebook.app_id = process.env.FOOBOT_FACEBOOK_APP_ID;
   if(process.env.FOOBOT_FACEBOOK_APP_SECRET) config.facebook.app_secret = process.env.FOOBOT_FACEBOOK_APP_SECRET;
 
+  // Canada Post
+  if(process.env.FOOBOT_CANADA_POST_AUTH != undefined) config.canada_post.auth = process.env.FOOBOT_CANADA_POST_AUTH;
+
   return config;
 }
