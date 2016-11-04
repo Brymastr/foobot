@@ -12,6 +12,7 @@ module.exports = (config, passport) => {
       callbackURL: config.url + '/auth/facebook/callback',
       passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
+      console.log('FACEBOOK AUTH CALLBACK REQUEST' + req);
       usersController.getUser(req.params.user_id, user => {
         user.facebook_id = profile.id;
         user.facebook_token = accessToken;

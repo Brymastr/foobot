@@ -2,7 +2,8 @@ const
   processing = require('./processing'),
   express = require('express'),
   log = require('./logger'),
-  messagesController = require('./controllers/messagesController');
+  messagesController = require('./controllers/messagesController'),
+  usersController = require('./controllers/usersController');
 
 
 module.exports = (config, classifier) => {
@@ -69,6 +70,7 @@ module.exports = (config, classifier) => {
 
   router.get('/auth/facebook/:user_id', passport.authenticate('facebook'));  
 
+  // Messages
   router.get('/messages/:chatId?/:userId?', (req, res) => {
     if(req.params.chatId == undefined && req.params.userId == undefined) 
       messagesController.getAllMessages(messages => res.json(messages));
