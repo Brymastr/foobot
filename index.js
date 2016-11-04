@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 
 // Configurations
 ngrok.connect(config.port, (err, url) => {
-  config.url = url + '/webhook';
+  config.url = url;
   config = init.init(config);
   if(process.env.FOOBOT_URL != undefined) ngrok.disconnect(url);
 

@@ -19,7 +19,7 @@ exports.conform = (update, platform) => {
   return message;
 }
 
-exports.processUpdate = (update, platform, classifier, cb) => {
+exports.processUpdate = (update, platform, classifier, config, cb) => {
   /*
     There is a heirarchy in which messages are processed
     1. Action - Edited messages, Callback Queries, and other good stuff
@@ -83,7 +83,7 @@ exports.processUpdate = (update, platform, classifier, cb) => {
         m.response = 'I\'m not smart enough for that yet.';
         cb(m);
       } else if(m.text.match(/(facebook)/i)) { // change this to a topic classification trigger after testing
-        m = actions.facebookLogin(m);
+        m = actions.facebookLogin(config, m);
         cb(m);
       } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
         if(m.sentiment < -1) m.response = `Whoa ${m.user.first_name}, No need to be so negative`;

@@ -24,7 +24,7 @@ module.exports = (config, classifier) => {
       return;
     }
 
-    processing.processUpdate(req.body, req.params.source, classifier, message => {
+    processing.processUpdate(req.body, req.params.source, classifier, config, message => {
       if(message.response || message.reply_markup) { // Don't really care about the response for now
         processing.sendMessage(message, config, () => res.sendStatus(200));
       } else {
