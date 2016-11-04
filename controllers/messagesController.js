@@ -7,14 +7,18 @@ Improvements:
 
 const 
   log = require('../logger'),
-  Message = require('../models/Message');
+  Message = require('../models/Message'),
+  usersController = require('./usersController');
 
 // Save an incoming message to the database
 exports.createMessage = (message, cb) => {
   message.save((err, _message) => {
-    if(err) log.error(`Error saving message: ${err}`);
-    else log.info(`Message saved => ${_message.text}`);
-    cb(_message);
+    usersController.getUser(_message.user_id, user => {
+      if(err) log.error(`Error saving message: ${err}`);
+      else log.info(`Message saved => ${_message.text}`);
+      cb(_message, user);
+    })
+    
   });
 }
 

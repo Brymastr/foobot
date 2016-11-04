@@ -33,8 +33,9 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
   message.sentiment = sentiment(message.text).score;
 
   // Save ALL messages  
-  messagesController.createMessage(message, m => {
-     
+  messagesController.createMessage(message, (m, u) => {
+
+     console.log(m)
     // Actions
     if(m.action != undefined) {
       if(m.action == 'edit')
@@ -86,7 +87,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         m = actions.facebookLogin(config, m);
         cb(m);
       } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
-        if(m.sentiment < -1) m.response = `Whoa ${m.user.first_name}, No need to be so negative`;
+        if(m.sentiment < -1) m.response = `Whoa ${u.first_name}, No need to be so negative`;
         else m.response = actions.iAmFoobot();
         cb(m);
       } else {
