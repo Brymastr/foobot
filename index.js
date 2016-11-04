@@ -44,7 +44,7 @@ ngrok.connect(config.port, (err, url) => {
   log.logLevel = config.log_level;
   log.debug(`Route token: ${config.route_token}`);
 
-  require('./config/passport')(config, passport);
+  require('./passport')(config, passport);
 
   // Routes + classifier
   natural.BayesClassifier.load('classifier.json', null, (err, classifier) => { 

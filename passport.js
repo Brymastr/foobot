@@ -1,25 +1,21 @@
 const 
   passport = require('passport'),
   FacebookStrategy = require('passport-facebook').Strategy,
-  BearerStrategy = require('bearer-strategy').Strategy
-  User = require('./models/User');
+  BearerStrategy = require('passport-http-bearer').Strategy
+  usersController = require('./controllers/usersController');
 
 module.exports = (config, passport) => {
 
   passport.use(new FacebookStrategy({
       clientID: config.facebook.app_id,
       clientSecret: config.facebook.app_secret,
-      callbackURL: config.url + '/auth/facebook/callback'
-    }, (accessToken, refreshToken, profile, done) => {
-      User.findOrCreate({facebook_id: profile.id}, (err, user) => {
-        if(user) {
-          user.facebook_token = accessToken;
-          user.save((err, doc) => {
-            done(err, doc);
-          });
-        } else {
-          done(err, result);
-        }
+      callbackURL: config.url + '/auth/facebook/callback',
+      passReqToCallback: true
+    }, (req, accessToken, refreshToken, profile, done) => {
+      usersController.getUser(req.params.user_id, user => {
+        user.facebook_id = profile.id;
+        user.facebook_token = accessToken;
+        user.save((err, doc) => {done(err, doc)})
       });
     }
   ));

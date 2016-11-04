@@ -13,6 +13,7 @@ exports.sendMessage = (message, config, done) => {
       chat_id: message.chat_id,
       text: message.response,
       reply_markup: message.reply_markup,
+      reply_to_message_id: message.reply_to,
       parse_mode: 'Markdown'
     }
   }, (err, response, body) => {
@@ -54,20 +55,20 @@ exports.conform = update => {
   if(update.edited_message != undefined) {
     message.message_id = update.edited_message.message_id;
     message.date = update.edited_message.date;
-    message.user = update.edited_message.from;
+    message.platform_id = update.edited_message.from.id;
     message.chat_id = update.edited_message.chat.id;
     message.chat_name = update.edited_message.chat.first_name;
     message.action = 'edit';
   } else if(update.message != undefined) {
     message.message_id = update.message.message_id;
     message.date = update.message.date;
-    message.user = update.message.from;
+    message.platform_id = update.message.from.id;
     message.chat_id = update.message.chat.id;
     message.chat_name = update.message.chat.first_name;
     message.text = update.message.text;
   } else if(update.callback_query != undefined) {
     message.message_id = update.callback_query.message.message_id;
-    message.user = update.callback_query.from;
+    message.platform_id = update.callback_query.from.id;
     message.chat_id = update.callback_query.message.chat.id;
     message.chat_name = update.callback_query.message.chat.first_name;
     message.text = update.callback_query.message.text;

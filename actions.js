@@ -36,8 +36,9 @@ exports.iMissTheOldKanye = () => {
 // Lookup a definition from urban dictionary
 exports.define = (message, word, cb) => {
   urban(word).first(data => {
-    if(data == undefined) data = {definition: 'The library I used for Urban Dictionary lookups is having a down day, probably', example: 'No example'}
-    message.response = `*Definition:* ${data.definition}\n*Example:* ${data.example}`;
+    if(!data) data = {definition: 'The library I used for Urban Dictionary lookups is having a down day, probably'}
+    if(message.source == 'telegram') message.response = `*Definition:* ${data.definition}\n*Example:* ${data.example}`;
+    else message.response = `Here's what Urban Dictionary has to say\n: ${data.definition}`;
     cb(message);
   });
 };
@@ -48,9 +49,22 @@ exports.trackPackage = (messageText, cb) => {
   canadaPost.trackPackage(trackingNumber, (info) => {
     cb(info);
   });
-}
+};
+
+// Facebook login
+exports.facebookLogin = (message) => {
+  message.response = 'Here you go';
+  message.reply_markup = {
+    inline_keyboard: [[{
+      text: 'Login to Facebook',
+      url: 'https://api.foobot.dorsaydevelopment.ca/auth/facebook/${message.user_id}'
+    }]]
+  }
+
+  return message;
+};
 
 // Foobot is self aware
 exports.iAmFoobot = () => {
   return strings.$('meta');
-}
+};

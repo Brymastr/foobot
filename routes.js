@@ -24,9 +24,9 @@ module.exports = (config, classifier) => {
       return;
     }
 
-    processing.processUpdate(req.body, req.params.source, classifier, (response) => {
-      if(response.response != undefined) { // Don't really care about the response for now
-        processing.sendMessage(response, config, response => res.sendStatus(200));
+    processing.processUpdate(req.body, req.params.source, classifier, message => {
+      if(message.response || message.reply_markup) { // Don't really care about the response for now
+        processing.sendMessage(message, config, () => res.sendStatus(200));
       } else {
         res.sendStatus(200);
       }
@@ -53,10 +53,21 @@ module.exports = (config, classifier) => {
   });
 
   // Facebook auth
+  router.get('/auth/facebook/:user_id', passport.authenticate('facebook'));
+
   router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
-    (req, res) => {res.redirect('/auth/facebook/token?access_token=' + req.user.facebook_token)}
+    (req, res) => {res.redirect(`/auth/facebook/token?access_token=${req.user.facebook_token}`)}
   );
+
+  router.get('/auth/facebook/token', (req, res) => {
+    let access_token = req.query.access_token;
+    log.debug(req.body)
+    log.debug(req.params)
+    // lookup user
+    // save access_token to user.facebook_token
+    // maybe login user to facebook and save id to user object
+  });
 
   router.get('/messages/:chatId?/:userId?', (req, res) => {
     if(req.params.chatId == undefined && req.params.userId == undefined) 
