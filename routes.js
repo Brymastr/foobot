@@ -57,6 +57,7 @@ module.exports = (config, passport, classifier) => {
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
     (req, res) => {
       console.dir(req.params);
+      console.dir(req.query);
       console.dir(req.user);
       // TODO: probably save user stuff here
       res.redirect(`/auth/facebook/token?access_token=${req.user.facebook_token}`)
@@ -75,9 +76,10 @@ module.exports = (config, passport, classifier) => {
   });
 
   router.get('/auth/facebook/:user_id', (req, res, next) => {
-    console.log('before: ' + req.params.user_id);
-    passport.authenticate('facebook')(req, res, next);
-  });  
+    passport.authenticate('facebook', {
+      state: JSON.stringify({user_id: req.params.user_id})
+    })(req, res, next);
+  });
 
   // Messages
   router.get('/messages/:chatId?/:userId?', (req, res) => {

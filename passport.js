@@ -13,6 +13,8 @@ module.exports = (config, passport) => {
       passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
       // TODO: Get user id from request somehow
+      console.dir(req.params)
+      console.dir(req.query)
       console.log('inside Strategy definition verify function')
       // usersController.getUser(req.params.user_id, user => {
       //   user.facebook_id = profile.id;
