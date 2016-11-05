@@ -56,8 +56,8 @@ module.exports = (config, passport, classifier) => {
   router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
     (req, res) => {
-      console.log('after: ' + req.params);
-      console.log('user: ' + req.user);
+      console.dir(req.params);
+      console.dir(req.user);
       // TODO: probably save user stuff here
       res.redirect(`/auth/facebook/token?access_token=${req.user.facebook_token}`)
     }
