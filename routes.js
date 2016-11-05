@@ -55,21 +55,29 @@ module.exports = (config, passport, classifier) => {
   // Facebook auth
   router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
-    (req, res) => {res.redirect(`/auth/facebook/token?access_token=${req.user.facebook_token}`)}
+    (req, res) => {
+      console.log('after: ' + req.params);
+      console.log('user: ' + req.user);
+      // TODO: probably save user stuff here
+      res.redirect(`/auth/facebook/token?access_token=${req.user.facebook_token}`)
+    }
   );
 
   router.get('/auth/facebook/token', (req, res) => {
     let access_token = req.query.access_token;
-    log.debug(access_token)
-    log.debug(req.params)
-    log.debug(req.query)
+    // log.debug(access_token)
+    // log.debug(req.params)
+    // log.debug(req.query)
     // lookup user
     // save access_token to user.facebook_token
     // maybe login user to facebook and save id to user object
     res.sendStatus(200);
   });
 
-  router.get('/auth/facebook/:user_id', passport.authenticate('facebook'));  
+  router.get('/auth/facebook/:user_id', (req, res, next) => {
+    console.log('before: ' + req.params.user_id);
+    passport.authenticate('facebook')(req, res, next);
+  });  
 
   // Messages
   router.get('/messages/:chatId?/:userId?', (req, res) => {

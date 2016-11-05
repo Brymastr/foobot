@@ -12,16 +12,14 @@ module.exports = (config, passport) => {
       callbackURL: config.url + '/auth/facebook/callback',
       passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
-      console.dir(profile)
-      console.dir(accessToken)
-      console.dir(req.query.code)
       // TODO: Get user id from request somehow
+      console.log('inside Strategy definition verify function')
       // usersController.getUser(req.params.user_id, user => {
       //   user.facebook_id = profile.id;
       //   user.facebook_token = accessToken;
       //   user.save((err, doc) => {done(err, doc)})
       // });
-      done('Facebook auth not complete');
+      done(null, profile);
     }
   ));
 
