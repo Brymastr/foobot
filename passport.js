@@ -12,16 +12,12 @@ module.exports = (config, passport) => {
       callbackURL: config.url + '/auth/facebook/callback',
       passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
-      // TODO: Get user id from request somehow
-      console.dir(req.params)
-      console.dir(req.query)
-      console.log('inside Strategy definition verify function')
-      // usersController.getUser(req.params.user_id, user => {
-      //   user.facebook_id = profile.id;
-      //   user.facebook_token = accessToken;
-      //   user.save((err, doc) => {done(err, doc)})
-      // });
-      done(null, profile);
+      done(null, {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        facebook_id: profile.id,
+        platform_id: JSON.parse(req.query.state).id.access_token
+      });
     }
   ));
 

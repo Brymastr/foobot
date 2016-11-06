@@ -60,18 +60,12 @@ module.exports = (config, passport, classifier) => {
       console.dir(req.query);
       console.dir(req.user);
       // TODO: probably save user stuff here
-      res.redirect(`/auth/facebook/token?access_token=${req.user.facebook_token}`)
+      res.redirect(`/auth/facebook/token?access_token=${req.user.access_token}&platform_id=${req.user.platform_id}`)
     }
   );
 
   router.get('/auth/facebook/token', (req, res) => {
-    let access_token = req.query.access_token;
-    // log.debug(access_token)
-    // log.debug(req.params)
-    // log.debug(req.query)
-    // lookup user
-    // save access_token to user.facebook_token
-    // maybe login user to facebook and save id to user object
+    log.debug(req.query);
     res.sendStatus(200);
   });
 
