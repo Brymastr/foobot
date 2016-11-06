@@ -57,7 +57,7 @@ exports.facebookLogin = (config, message) => {
   message.reply_markup = {
     inline_keyboard: [[{
       text: 'Login to Facebook',
-      url: `${config.url}/auth/facebook/${message.user_id}`
+      url: `${config.url}/auth/facebook/${message.user_id}/${message.chat_id}`
     }]]
   }
 

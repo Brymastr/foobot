@@ -12,11 +12,17 @@ module.exports = (config, passport) => {
       callbackURL: config.url + '/auth/facebook/callback',
       passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
-      done(null, {
-        access_token: accessToken,
-        refresh_token: refreshToken,
-        facebook_id: profile.id,
-        platform_id: req.query.state
+      console.log(req.query.state);
+      let params = JSON.parse(req.query.state);
+      console.log(req.query.state);      
+      
+      usersController.getUserByPlatformId(params.user_id, user => {
+        user.facebook_id = profile.id;
+        user.facebook_token = accessToken;
+        user.save((err, doc) => {
+          doc.chat_id = params.chat_id;
+          done(null, doc);
+        });
       });
     }
   ));
@@ -28,6 +34,5 @@ module.exports = (config, passport) => {
       return done(null, user, {scope: 'all'})
     });
   }));
-
 }
 

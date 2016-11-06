@@ -2,6 +2,7 @@ const
   processing = require('./processing'),
   express = require('express'),
   log = require('./logger'),
+  Message = require('./models/Message'),
   messagesController = require('./controllers/messagesController'),
   usersController = require('./controllers/usersController');
 
@@ -57,8 +58,14 @@ module.exports = (config, passport, classifier) => {
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
     (req, res) => {
       console.dir(req.user);
-      // TODO: probably save user stuff here
-      res.redirect(`/auth/facebook/token?access_token=${req.user.access_token}&platform_id=${req.user.platform_id}`)
+      // TODO: send message to chat id it came from
+      let message = new Message({
+        response: 'Logged in',
+        chat_id: req.user.chat_id,
+      });
+      processing.sendMessage(message, config, () => {
+        res.redirect(`/auth/facebook/token?access_token=${req.user.access_token}&platform_id=${req.user.platform_id}`);
+      });        
     }
   );
 
@@ -72,9 +79,9 @@ module.exports = (config, passport, classifier) => {
     })
   });
 
-  router.get('/auth/facebook/:user_id', (req, res, next) => {
+  router.get('/auth/facebook/:user_id/:chat_id', (req, res, next) => {
     passport.authenticate('facebook', {
-      state: req.params.user_id
+      state: encodeURIComponent(JSON.stringify({user_id: req.params.user_id, chat_id: req.params.chat_id}))
     })(req, res, next);
   });
 
