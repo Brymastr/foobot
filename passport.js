@@ -16,7 +16,7 @@ module.exports = (config, passport) => {
         access_token: accessToken,
         refresh_token: refreshToken,
         facebook_id: profile.id,
-        platform_id: JSON.parse(req.query.state).id.access_token
+        platform_id: JSON.parse(req.query.state).id
       });
     }
   ));
