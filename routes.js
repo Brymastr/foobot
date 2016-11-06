@@ -63,13 +63,18 @@ module.exports = (config, passport, classifier) => {
   );
 
   router.get('/auth/facebook/token', (req, res) => {
-    log.debug(req.query);
-    res.sendStatus(200);
+    let access_token = req.query.access_token;
+    let platform_id = req.query.platform_id;
+    // TODO: Find user by platform id and add access_token to user
+    res.send({
+      access_token: access_token,
+      platform_id: platform_id
+    })
   });
 
   router.get('/auth/facebook/:user_id', (req, res, next) => {
     passport.authenticate('facebook', {
-      state: JSON.stringify({user_id: req.params.user_id})
+      state: req.params.user_id
     })(req, res, next);
   });
 
