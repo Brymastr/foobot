@@ -1,5 +1,4 @@
 const
-  passport = require('passport'),
   FacebookStrategy = require('passport-facebook').Strategy,
   BearerStrategy = require('passport-http-bearer').Strategy,
   usersController = require('./controllers/usersController');
@@ -15,7 +14,6 @@ module.exports = (config, passport) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
 
       usersController.getUser(params.user_id, user => {
-        console.dir(user.save)
         user.facebook_id = profile.id;
         user.facebook_token = accessToken;
         user.save((err, doc) => {

@@ -16,7 +16,7 @@ exports.createUser = (data, cb) => {
 };
 
 exports.getUser = (id, cb) => {
-  User.find({ _id: id }, (err, user) => {
+  User.findOne({ _id: id }, (err, user) => {
     cb(user);
   });
 };
