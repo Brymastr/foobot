@@ -22,6 +22,20 @@ exports.sendMessage = (message, config, done) => {
   });
 };
 
+exports.editMessage = (message, config, done) => {
+  request.post(`${config.telegram.url}${config.telegram.token}/editMessageText`, {
+    json: {
+      chat_id: message.chat_id,
+      text: message.text,
+      reply_markup: message.reply_markup,
+      parse_mode: 'Markdown'
+    }
+  }, (err, response, body) => {
+    if(err) log.error(err);    
+    done(body);
+  });
+}
+
 // Set the webhook so that messages are sent to this api
 exports.setWebhook = config => {
   let formData;

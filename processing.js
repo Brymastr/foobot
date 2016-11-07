@@ -105,4 +105,11 @@ exports.sendMessage = (message, config, done) => {
     telegram.sendMessage(message, config, body => {done(body)});
   else if(message.source == 'messenger')
     messenger.sendMessage(message, config, body => {done(body)});    
-}
+};
+
+exports.editMessage = (message, config, done) => {
+  log.debug(`Edit message`);
+  message.reply_markup = '';
+  if(message.source == 'telegram')
+    telegram.editMessageText(message, config, body => done(body));
+};

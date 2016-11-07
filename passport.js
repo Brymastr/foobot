@@ -13,7 +13,7 @@ module.exports = (config, passport) => {
       passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
       console.log(req.query.state);
-      let params = decodeURIComponent(JSON.parse(req.query.state));
+      let params = JSON.parse(decodeURIComponent(req.query.state));
       console.log(params);
 
       usersController.getUserByPlatformId(params.user_id, user => {
