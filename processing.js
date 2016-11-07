@@ -38,7 +38,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
     // Actions
     if(m.action) {
       if(m.action == 'edit')
-        m.response = strings.$('edit', m.user.first_name);
+        m.response = strings.$('edit');
       else if(m.action == 'confirm')
         m.response = 'This will update the docker container BUT NOT YET BECAUASE I HAVEN\'T IMPLEMENTED IT YET CHILL THE FUCK OUT I\'M WORKING ON IT OK ROBOTS DON\'T WRITE THEMSELVES OVERNIGHT';
       else if(m.action == 'deny')
