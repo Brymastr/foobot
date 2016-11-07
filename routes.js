@@ -63,10 +63,10 @@ module.exports = (config, passport, classifier) => {
   router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
     (req, res) => {
-      console.dir(req.user);
       let message = new Message({
         response: strings.$('facebookLoginSuccessful'),
         chat_id: req.user.chat_id,
+        source: 'telegram'
       });
       processing.sendMessage(message, config, () => {
         // TODO: send message to chat id it came from
