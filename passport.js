@@ -15,9 +15,7 @@ module.exports = (config, passport) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
 
       usersController.getUser(params.user_id, user => {
-        console.log(params)
-        console.log(params.user_id)
-        console.dir(user)
+        console.dir(user.save)
         user.facebook_id = profile.id;
         user.facebook_token = accessToken;
         user.save((err, doc) => {
