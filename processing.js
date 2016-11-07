@@ -66,6 +66,9 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
           m.response = info;
           cb(m);
         });
+      } else if(m.topic == 'facebook login') {
+        m = actions.facebookLogin(config, m);
+        cb(m);        
       } else {
         cb(m);
       }
@@ -81,9 +84,6 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         cb(m);
       } else if(m.text.match(/(remind) \w*/i)) {
         m.response = 'I\'m not smart enough for that yet.';
-        cb(m);
-      } else if(m.text.match(/(facebook)/i)) { // change this to a topic classification trigger after testing
-        m = actions.facebookLogin(config, m);
         cb(m);
       } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
         if(m.sentiment < -1) {
