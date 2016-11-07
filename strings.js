@@ -58,7 +58,7 @@ exports.meta = [
   'You’re a pimple on society’s ass and you’ll never amount to anything'
 ];
 
-exports.facebook.loginRequest = [
+exports.facebookLoginRequest = [
   'One Facebook Please!',
   'I once heard Facebook is the root of all evil',
   'Get at it',

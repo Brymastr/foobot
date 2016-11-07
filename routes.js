@@ -2,6 +2,7 @@ const
   processing = require('./processing'),
   express = require('express'),
   log = require('./logger'),
+  strings = require('./strings'),
   Message = require('./models/Message'),
   messagesController = require('./controllers/messagesController'),
   usersController = require('./controllers/usersController');
@@ -59,7 +60,7 @@ module.exports = (config, passport, classifier) => {
     (req, res) => {
       console.dir(req.user);
       let message = new Message({
-        response: 'Logged in',
+        response: strings.$('facebookLoginSuccessful'),
         chat_id: req.user.chat_id,
       });
       processing.sendMessage(message, config, () => {
