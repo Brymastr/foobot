@@ -58,6 +58,23 @@ exports.meta = [
   'You’re a pimple on society’s ass and you’ll never amount to anything'
 ];
 
+exports.facebook.loginRequest = [
+  'One Facebook Please!',
+  'I once heard Facebook is the root of all evil',
+  'Get at it',
+  'Do people still use this thing?'
+];
+
+exports.facebookLoginSuccessful = [
+  'Woohoo! Now I can talk to all your Facebook friends!',
+  'Wow look at all of those friends you don\'t have!',
+  'Is your sister single?',
+  'Your profile picture could use some work',
+  'Hey how about you post something interesting for once',
+  'This may be none of my business, but you looked better in highscool',
+  'Based on your 10 most recent photos, I can tell you\'ve gained some weight'
+];
+
 exports.$ = (method, str) => {
   // $ is a super hipster method name for selecting
   // a string based on a category
@@ -65,4 +82,4 @@ exports.$ = (method, str) => {
   let list = this[method];
   let response = list[Math.floor(Math.random() * list.length)];
   return response.replace(/\${.*}/, str);
-}
+};

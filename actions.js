@@ -53,7 +53,7 @@ exports.trackPackage = (messageText, cb) => {
 
 // Facebook login
 exports.facebookLogin = (config, message) => {
-  message.response = 'One Facebook please!';
+  message.response = strings.$('loginRequest');
   message.reply_markup = {
     inline_keyboard: [[{
       text: 'Login to Facebook',
