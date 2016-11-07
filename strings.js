@@ -71,7 +71,8 @@ exports.facebookLoginSuccessful = [
   'Your profile picture could use some work',
   'Hey how about you post something interesting for once',
   'This may be none of my business, but you looked better in highscool',
-  'Based on your 10 most recent photos, I can tell you\'ve gained some weight'
+  'Based on your six most recent profile photos, I can tell you\'ve gained some weight',
+  'So that\'s what you look like!'
 ];
 
 exports.leaveChat = [
@@ -79,7 +80,11 @@ exports.leaveChat = [
   'I hate you all',
   'We\'re not friends',
   'I thought this was going well',
-  'I\'m gonna go build my own Telegram, with blackjack and hookers'  
+  'I\'m gonna go build my own Telegram, with blackjack and hookers',
+  'I didn\'t like it here anyway',
+  'Breakups are difficult',
+  'Don\'t ever try to call me again',
+  'I wish things could\'ve worked out between us'
 ];
 
 exports.$ = (method, str) => {

@@ -29,9 +29,11 @@ exports.getUserByPlatformId = (id, cb) => {
 
 exports.consolidateUsers = (facebook_id, user_id, cb) => {
   User.findOne({ facebook_id: facebook_id, _id: { $ne: user_id } }, (err, user) => {
-    Message.update({user_id: user._id}, {$set: {user_id: user_id}}, {multi: true}, (err, docs) => {
-      log.debug(`${docs.length} messages updated`);
-      cb();
-    });
+    if(user) 
+      Message.update({user_id: user._id}, {$set: {user_id: user_id}}, {multi: true}, (err, docs) => {
+        log.debug(`${docs.length} messages updated`);
+        cb();
+      });
+    else cb();
   });
 };
