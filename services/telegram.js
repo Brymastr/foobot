@@ -61,6 +61,17 @@ exports.setWebhook = config => {
   
 };
 
+exports.leaveChat = (chat_id, config, done) => {
+  request.post(`${config.telegram.url}${config.telegram.token}/leaveChat`, {
+    json: {
+      chat_id: chat_id
+    }
+  }, (err, response, body) => {
+    if(err) log.error(err);    
+    done(body);
+  });
+};
+
 // Make the message into a local message without nulls
 exports.conform = update => {
   let message = new Message({

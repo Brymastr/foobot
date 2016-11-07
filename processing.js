@@ -36,7 +36,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
   messagesController.createMessage(message, (m, u) => {
 
     // Actions
-    if(m.action != undefined) {
+    if(m.action) {
       if(m.action == 'edit')
         m.response = strings.$('edit', m.user.first_name);
       else if(m.action == 'confirm')
@@ -49,7 +49,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
     } 
     
     // Topics
-    else if(m.topic != undefined && m.topic != 'else') {
+    else if(m.topic && m.topic != 'else') {
       if(m.topic == 'update') {
         /** Deprecated **/
         // message = actions.update(message);
@@ -86,8 +86,10 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         m = actions.facebookLogin(config, m);
         cb(m);
       } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
-        if(m.sentiment < -1) m.response = `Whoa ${u.first_name}, No need to be so negative`;
-        else m.response = actions.iAmFoobot();
+        if(m.sentiment < -1) {
+          m.response = strings.$('leaveChat');
+          m.topic = 'leave chat';
+        } else m.response = actions.iAmFoobot();
         cb(m);
       } else {
         // No Action, Topic, or interesting Content. Just callback with the incoming message

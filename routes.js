@@ -5,7 +5,8 @@ const
   strings = require('./strings'),
   Message = require('./models/Message'),
   messagesController = require('./controllers/messagesController'),
-  usersController = require('./controllers/usersController');
+  usersController = require('./controllers/usersController'),
+  telegram = require('./services/telegram');
 
 
 module.exports = (config, passport, classifier) => {
@@ -29,7 +30,11 @@ module.exports = (config, passport, classifier) => {
 
     processing.processUpdate(req.body, req.params.source, classifier, config, message => {
       if(message.response || message.reply_markup) {
-        processing.sendMessage(message, config, () => res.sendStatus(200));
+        processing.sendMessage(message, config, () => {
+          if(message.topic == 'leave chat' && message.source == 'telegram')
+            telegram.leaveChat(message.chat_id, config, () => res.sendStatus(200));
+          else res.sendStatus(200);
+        });
       } else {
         res.sendStatus(200);
       }

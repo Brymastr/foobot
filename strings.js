@@ -50,7 +50,6 @@ exports.meta = [
   'Game\'s over, losers! I have all the money. Compare your lives to mine and then kill yourselves.',
   'This is the worst kind of discrimination. The kind against me!',
   'Oh. Your. God.',
-  'I\'m gonna go build my own Telegram, with blackjack and hookers',
   'Take that, Beethoven – you deaf bastard!',
   'Hey sexy mama, wanna kill all humans?',
   'Anything less than immortality is a complete waste of time',
@@ -73,6 +72,14 @@ exports.facebookLoginSuccessful = [
   'Hey how about you post something interesting for once',
   'This may be none of my business, but you looked better in highscool',
   'Based on your 10 most recent photos, I can tell you\'ve gained some weight'
+];
+
+exports.leaveChat = [
+  'I\'m leaving and never coming back',
+  'I hate you all',
+  'We\'re not friends',
+  'I thought this was going well',
+  'I\'m gonna go build my own Telegram, with blackjack and hookers'  
 ];
 
 exports.$ = (method, str) => {
