@@ -27,7 +27,7 @@ module.exports = (config, passport, classifier) => {
     }
 
     processing.processUpdate(req.body, req.params.source, classifier, config, message => {
-      if(message.response || message.reply_markup) { // Don't really care about the response for now
+      if(message.response || message.reply_markup) {
         processing.sendMessage(message, config, () => res.sendStatus(200));
       } else {
         res.sendStatus(200);
@@ -58,26 +58,26 @@ module.exports = (config, passport, classifier) => {
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
     (req, res) => {
       console.dir(req.user);
-      // TODO: send message to chat id it came from
       let message = new Message({
         response: 'Logged in',
         chat_id: req.user.chat_id,
       });
       processing.sendMessage(message, config, () => {
-        res.redirect(`/auth/facebook/token?access_token=${req.user.access_token}&platform_id=${req.user.platform_id}`);
+        // TODO: send message to chat id it came from
+        let post_auth = `
+          <script type="text/javascript">
+            if (window.opener) {
+              window.opener.focus();
+              if(window.opener.loginCallBack) {
+                window.opener.loginCallBack();
+              }
+            }
+            window.close();
+          </script>`;
+        res.send(post_auth);
       });        
     }
   );
-
-  router.get('/auth/facebook/token', (req, res) => {
-    let access_token = req.query.access_token;
-    let platform_id = req.query.platform_id;
-    // TODO: Find user by platform id and add access_token to user
-    res.send({
-      access_token: access_token,
-      platform_id: platform_id
-    })
-  });
 
   router.get('/auth/facebook/:user_id/:chat_id', (req, res, next) => {
     passport.authenticate('facebook', {

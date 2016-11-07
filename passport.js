@@ -1,7 +1,7 @@
-const 
+const
   passport = require('passport'),
   FacebookStrategy = require('passport-facebook').Strategy,
-  BearerStrategy = require('passport-http-bearer').Strategy
+  BearerStrategy = require('passport-http-bearer').Strategy,
   usersController = require('./controllers/usersController');
 
 module.exports = (config, passport) => {
@@ -14,14 +14,17 @@ module.exports = (config, passport) => {
     }, (req, accessToken, refreshToken, profile, done) => {
       console.log(req.query.state);
       let params = JSON.parse(req.query.state);
-      console.log(req.query.state);      
-      
+      console.log(params);
+
       usersController.getUserByPlatformId(params.user_id, user => {
         user.facebook_id = profile.id;
         user.facebook_token = accessToken;
         user.save((err, doc) => {
           doc.chat_id = params.chat_id;
-          done(null, doc);
+          // delete other users
+          usersController.consolidateUsers(user.facebook_id, doc._id, () => {
+            done(null, doc);
+          });
         });
       });
     }
