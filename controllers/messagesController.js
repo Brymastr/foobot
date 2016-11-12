@@ -17,8 +17,7 @@ exports.createMessage = (message, cb) => {
       if(err) log.error(`Error saving message: ${err}`);
       else log.info(`Message saved => ${_message.text}`);
       cb(_message, user);
-    })
-    
+    });
   });
 }
 

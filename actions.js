@@ -10,7 +10,8 @@ const
   log = require('./logger'),
   strings = require('./strings'),
   fs = require('fs'),
-  textParser = require('./textParser');
+  textParser = require('./textParser'),
+  membersController = require('./models/membersController');
 
 
 this.kanye = 'I miss the old kanye';

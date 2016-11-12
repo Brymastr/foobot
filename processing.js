@@ -66,6 +66,8 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
           m.response = info;
           cb(m);
         });
+      } else if(m.topic == 'member berries') {
+        membersController.saveMember(m, () => {cb(m)})
       } else {
         cb(m);
       }
@@ -78,9 +80,6 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         actions.define(m, word, (result) => cb(result));
       } else if(m.text.match(/(kanye)/i)) {
         m.response = actions.iMissTheOldKanye();
-        cb(m);
-      } else if(m.text.match(/(remind) \w*/i)) {
-        m.response = 'I\'m not smart enough for that yet.';
         cb(m);
       } else if(m.text.match(/(facebook)/i)) { // change this to a topic classification trigger after testing
         m = actions.facebookLogin(config, m);
