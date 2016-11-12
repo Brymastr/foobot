@@ -26,6 +26,13 @@ classifier.addDocument('track a package by pin', 'track');
 classifier.addDocument('track a package by tracking number', 'track');
 classifier.addDocument('track a package by tracking number #########', 'track');
 classifier.addDocument('track a package by tracking number 1234567891011', 'track');
+classifier.addDocument('login to facebook', 'facebook login');
+classifier.addDocument('I want to log in to facebook', 'facebook login');
+classifier.addDocument('hey foobot can you log me in to facebook?', 'facebook login');
+classifier.addDocument('please log me in to facebook', 'facebook login');
+classifier.addDocument('fbook login', 'facebook login');
+classifier.addDocument('please link my facebook account', 'facebook login');
+
 
 
 for(i = 0; i < 50; i++)

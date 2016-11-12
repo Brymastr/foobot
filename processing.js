@@ -38,7 +38,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
     // Actions
     if(m.action) {
       if(m.action == 'edit')
-        m.response = strings.$('edit', m.user.first_name);
+        m.response = strings.$('edit');
       else if(m.action == 'confirm')
         m.response = 'This will update the docker container BUT NOT YET BECAUASE I HAVEN\'T IMPLEMENTED IT YET CHILL THE FUCK OUT I\'M WORKING ON IT OK ROBOTS DON\'T WRITE THEMSELVES OVERNIGHT';
       else if(m.action == 'deny')
@@ -68,6 +68,9 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         });
       } else if(m.topic == 'member berries') {
         membersController.saveMember(m, () => {cb(m)})
+      } else if(m.topic == 'facebook login') {
+        m = actions.facebookLogin(config, m);
+        cb(m);        
       } else {
         cb(m);
       }
@@ -83,7 +86,6 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         cb(m);
       } else if(m.text.match(/(facebook)/i)) { // change this to a topic classification trigger after testing
         m = actions.facebookLogin(config, m);
-        cb(m);
       } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
         if(m.sentiment < -1) {
           m.response = strings.$('leaveChat');
