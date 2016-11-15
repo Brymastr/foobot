@@ -2,11 +2,11 @@ const log = require('../logger');
 const request = require('request');
 const parseXml = require('xml2js').parseString;
 
-exports.trackPackage = (trackingNumber, cb) => {
-  request.get(`${config.canadaPost.url}/${trackingNumber}/summary`, {
+exports.trackPackage = (trackingNumber, config, cb) => {
+  request.get(`${config.canada_post.url}/${trackingNumber}/summary`, {
     headers: {
       'Accept': 'application/vnd.cpc.track+xml',
-      'Authorization': config.canadaPost.auth
+      'Authorization': config.canada_post.auth
     }
   }, (err, res, body) => {
     if(err) log.error(err);
