@@ -1,6 +1,7 @@
-var natural = require('natural'),
-  classifier = new natural.BayesClassifier();
-var log = require('./logger');
+const 
+  natural = require('natural'),
+  classifier = new natural.BayesClassifier(),
+  log = require('./logger');
 
 classifier.addDocument('my computer', 'computers');
 classifier.addDocument('this comp', 'computers');
@@ -27,15 +28,28 @@ classifier.addDocument('track a package by tracking number', 'track');
 classifier.addDocument('track a package by tracking number #########', 'track');
 classifier.addDocument('track a package by tracking number 1234567891011', 'track');
 classifier.addDocument('login to facebook', 'facebook login');
-classifier.addDocument('I want to log in to facebook', 'facebook login');
-classifier.addDocument('hey foobot can you log me in to facebook?', 'facebook login');
-classifier.addDocument('please log me in to facebook', 'facebook login');
+classifier.addDocument('can you log me in to facebook?', 'facebook login');
+classifier.addDocument('log me in to facebook', 'facebook login');
 classifier.addDocument('fbook login', 'facebook login');
-classifier.addDocument('please link my facebook account', 'facebook login');
+classifier.addDocument('link my facebook account', 'facebook login');
+classifier.addDocument('remember my qqqq qqqqq is wwwwww', 'member berries');
+classifier.addDocument('remember my pin is 1111', 'member berries');
+classifier.addDocument('remember bbbbb\'s xxxx is yyyy', 'member berries');
+classifier.addDocument('what is my bike lock combination', 'member berries query');
+classifier.addDocument('what is my qqqqq qqqq', 'member berries query');
+classifier.addDocument('what is my hhhhhhh', 'member berries query');
+classifier.addDocument('what is my address', 'member berries query');
+classifier.addDocument('what is my phone number', 'member berries query');
+classifier.addDocument('what is my phone number', 'member berries query');
+classifier.addDocument('what is my telephone number', 'member berries query');
+classifier.addDocument('what is bbbbb\'s xxxxx', 'member berries query');
+classifier.addDocument('what is bbbbb\'s xxxxx yyyyy', 'member berries query');
+classifier.addDocument('what is bbbbb\'s middle name', 'member berries query');
+classifier.addDocument('what is my ip address', 'member berries query');
+classifier.addDocument('what is my our ip address', 'member berries query');
+classifier.addDocument('what is my our home ip address', 'member berries query');
 
-
-
-for(i = 0; i < 50; i++)
+for(i = 0; i < 20; i++)
   classifier.addDocument('any words ever', 'else');
 
 classifier.train();

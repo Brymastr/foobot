@@ -10,8 +10,7 @@ const
   log = require('./logger'),
   strings = require('./strings'),
   fs = require('fs'),
-  textParser = require('./textParser'),
-  membersController = require('./models/membersController');
+  textParser = require('./textParser');
 
 
 this.kanye = 'I miss the old kanye';
@@ -45,9 +44,9 @@ exports.define = (message, word, cb) => {
 };
 
 // Package tracking
-exports.trackPackage = (messageText, cb) => {
+exports.trackPackage = (messageText, config, cb) => {
   let trackingNumber = messageText.match(/(\d|[A-Z]){10,16}/g);
-  canadaPost.trackPackage(trackingNumber, (info) => {
+  canadaPost.trackPackage(trackingNumber, config, info => {
     cb(info);
   });
 };

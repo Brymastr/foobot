@@ -6,7 +6,8 @@ const
   telegram = require('./services/telegram')
   messenger = require('./services/messenger')
   sentiment = require('sentiment'),
-  usersController = require('./controllers/usersController');
+  usersController = require('./controllers/usersController')
+  membersController = require('./controllers/membersController');
 
 exports.conform = (update, platform) => {
   let message;
@@ -34,7 +35,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
 
   // Save ALL messages  
   messagesController.createMessage(message, (m, u) => {
-
+    console.log(m.topic)
     // Actions
     if(m.action) {
       if(m.action == 'edit')
@@ -61,13 +62,20 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         // });
         cb(m);
       } else if(m.topic == 'track') {
-        // TODO: get the tracking number and query canada post for tracking info. Assign to message text
-        actions.trackPackage(m.text, (info) => {
+        actions.trackPackage(m.text, config, info => {
           m.response = info;
           cb(m);
         });
       } else if(m.topic == 'member berries') {
-        membersController.saveMember(m, () => {cb(m)})
+        membersController.saveMember(m, () => {
+          m.response = 'Oooooo I \'member!!!';
+          cb(m);
+        });
+      } else if(m.topic == 'member berries query') {
+        membersController.recall(m, member => {
+          m.response = member;
+          cb(m);
+        });
       } else if(m.topic == 'facebook login') {
         m = actions.facebookLogin(config, m);
         cb(m);        
@@ -84,8 +92,6 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
       } else if(m.text.match(/(kanye)/i)) {
         m.response = actions.iMissTheOldKanye();
         cb(m);
-      } else if(m.text.match(/(facebook)/i)) { // change this to a topic classification trigger after testing
-        m = actions.facebookLogin(config, m);
       } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
         if(m.sentiment < -1) {
           m.response = strings.$('leaveChat');
