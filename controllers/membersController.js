@@ -14,9 +14,13 @@ exports.saveMember = (message, cb) => {
 };
 
 exports.recall = (message, cb) => {
-  let remembery = message.text.split('is')[1].trim();
-  Member.findOne({user_id: message.user_id, thing: remembery}, (err, m) => {
-    if(m && !err && m.value) cb(m.value);
-    else cb();
-  });
+  try {
+    let remembery = message.text.split('is')[1].trim();
+    Member.findOne({user_id: message.user_id, thing: remembery}, (err, m) => {
+      if(m && !err && m.value) cb(m.value);
+      else cb();
+    });
+  } catch(err) {
+    cb();
+  }
 };
