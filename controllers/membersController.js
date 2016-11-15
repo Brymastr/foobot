@@ -15,8 +15,8 @@ exports.saveMember = (message, cb) => {
 
 exports.recall = (message, cb) => {
   let remembery = message.text.split('is')[1].trim();
-  Member.find({user_id: message.user_id, thing: remembery}, (err, rememberies) => {
-    if(rememberies && !err) cb(rememberies[0].value);
+  Member.findOne({user_id: message.user_id, thing: remembery}, (err, m) => {
+    if(m && !err && m.value) cb(m.value);
     else cb();
   });
 };
