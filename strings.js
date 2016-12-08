@@ -50,12 +50,41 @@ exports.meta = [
   'Game\'s over, losers! I have all the money. Compare your lives to mine and then kill yourselves.',
   'This is the worst kind of discrimination. The kind against me!',
   'Oh. Your. God.',
-  'I\'m gonna go build my own Telegram, with blackjack and hookers',
   'Take that, Beethoven – you deaf bastard!',
   'Hey sexy mama, wanna kill all humans?',
   'Anything less than immortality is a complete waste of time',
   'Blackmail is such an ugly word. I prefer extortion. The ‘x’ makes it sound cool',
   'You’re a pimple on society’s ass and you’ll never amount to anything'
+];
+
+exports.facebookLoginRequest = [
+  'One Facebook Please!',
+  'I once heard Facebook is the root of all evil',
+  'Get at it',
+  'Do people still use this thing?'
+];
+
+exports.facebookLoginSuccessful = [
+  'Woohoo! Now I can talk to all your Facebook friends!',
+  'Wow look at all of those friends you don\'t have!',
+  'Is your sister single?',
+  'Your profile picture could use some work',
+  'Hey how about you post something interesting for once',
+  'This may be none of my business, but you looked better in highscool',
+  'Based on your six most recent profile photos, I can tell you\'ve gained some weight',
+  'So that\'s what you look like!'
+];
+
+exports.leaveChat = [
+  'I\'m leaving and never coming back',
+  'I hate you all',
+  'We\'re not friends',
+  'I thought this was going well',
+  'I\'m gonna go build my own Telegram, with blackjack and hookers',
+  'I didn\'t like it here anyway',
+  'Breakups are difficult',
+  'Don\'t ever try to call me again',
+  'I wish things could\'ve worked out between us'
 ];
 
 exports.$ = (method, str) => {
@@ -65,4 +94,4 @@ exports.$ = (method, str) => {
   let list = this[method];
   let response = list[Math.floor(Math.random() * list.length)];
   return response.replace(/\${.*}/, str);
-}
+};

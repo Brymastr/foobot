@@ -10,7 +10,8 @@ const
   log = require('./logger'),
   natural = require('natural'),
   ngrok = require('ngrok');
-  init = require('./init');
+  init = require('./init')
+  passport = require('passport');
 
 var config = require('./config.json');
 
@@ -19,6 +20,7 @@ var app = express();
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({type:'application/json'}));
 app.use(methodOverride());
+app.use(passport.initialize());
 
 // Logging middleware
 app.use('*', (req, res, next) => {
@@ -35,16 +37,18 @@ app.use((req, res, next) => {
 
 // Configurations
 ngrok.connect(config.port, (err, url) => {
-  config.url = url + '/webhook';
+  config.url = url;
   config = init.init(config);
   if(process.env.FOOBOT_URL != undefined) ngrok.disconnect(url);
 
   log.logLevel = config.log_level;
   log.debug(`Route token: ${config.route_token}`);
 
+  require('./passport')(config, passport);
+
   // Routes + classifier
-  natural.BayesClassifier.load('classifier.json', null, (err, classifier) => {  
-    let routes = require('./routes')(config, classifier);
+  natural.BayesClassifier.load('classifier.json', null, (err, classifier) => { 
+    let routes = require('./routes')(config, passport, classifier);
     app.use('/', routes);
   });
 
@@ -58,7 +62,7 @@ ngrok.connect(config.port, (err, url) => {
   app.listen(config.port);
 
   // Telegram
-  if(config.telegram != undefined) {
+  if(config.telegram) {
     telegramBot.setWebhook(config);
   }
 

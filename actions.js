@@ -36,21 +36,35 @@ exports.iMissTheOldKanye = () => {
 // Lookup a definition from urban dictionary
 exports.define = (message, word, cb) => {
   urban(word).first(data => {
-    if(data == undefined) data = {definition: 'The library I used for Urban Dictionary lookups is having a down day, probably', example: 'No example'}
-    message.response = `*Definition:* ${data.definition}\n*Example:* ${data.example}`;
+    if(!data) data = {definition: 'The library I used for Urban Dictionary lookups is having a down day, probably'}
+    if(message.source == 'telegram') message.response = `*Definition:* ${data.definition}\n*Example:* ${data.example}`;
+    else message.response = `Here's what Urban Dictionary has to say\n: ${data.definition}`;
     cb(message);
   });
 };
 
 // Package tracking
-exports.trackPackage = (messageText, cb) => {
+exports.trackPackage = (messageText, config, cb) => {
   let trackingNumber = messageText.match(/(\d|[A-Z]){10,16}/g);
-  canadaPost.trackPackage(trackingNumber, (info) => {
+  canadaPost.trackPackage(trackingNumber, config, info => {
     cb(info);
   });
-}
+};
+
+// Facebook login
+exports.facebookLogin = (config, message) => {
+  message.response = strings.$('facebookLoginRequest');
+  message.reply_markup = {
+    inline_keyboard: [[{
+      text: 'Login to Facebook',
+      url: `${config.url}/auth/facebook/${message.user_id}/${message.chat_id}`
+    }]]
+  }
+
+  return message;
+};
 
 // Foobot is self aware
 exports.iAmFoobot = () => {
   return strings.$('meta');
-}
+};

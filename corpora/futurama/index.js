@@ -54,7 +54,6 @@ function getEpisode(url, filename, cb) {
           .replace(/\s{2,}/g, ' ')
           .replace(/[^\x00-\x7F]/g, '');
         lines.push(quote.trim());
-        // console.log(quote.trim());
       });
 
       fs.writeFile(filename, lines.join(require('os').EOL), () => {

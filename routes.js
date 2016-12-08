@@ -2,10 +2,14 @@ const
   processing = require('./processing'),
   express = require('express'),
   log = require('./logger'),
-  messagesController = require('./controllers/messagesController');
+  strings = require('./strings'),
+  Message = require('./models/Message'),
+  messagesController = require('./controllers/messagesController'),
+  usersController = require('./controllers/usersController'),
+  telegram = require('./services/telegram');
 
 
-module.exports = (config, classifier) => {
+module.exports = (config, passport, classifier) => {
   var router = express.Router();
 
   // Turn the 'update' into a local 'message' object
@@ -24,9 +28,13 @@ module.exports = (config, classifier) => {
       return;
     }
 
-    processing.processUpdate(req.body, req.params.source, classifier, (response) => {
-      if(response.response != undefined) { // Don't really care about the response for now
-        processing.sendMessage(response, config, response => res.sendStatus(200));
+    processing.processUpdate(req.body, req.params.source, classifier, config, message => {
+      if(message.response || message.reply_markup) {
+        processing.sendMessage(message, config, () => {
+          if(message.topic == 'leave chat' && message.source == 'telegram')
+            telegram.leaveChat(message.chat_id, config, () => res.sendStatus(200));
+          else res.sendStatus(200);
+        });
       } else {
         res.sendStatus(200);
       }
@@ -43,6 +51,47 @@ module.exports = (config, classifier) => {
     }  
   });
 
+  // Phonehome
+  router.post('/remember', (req, res) => {
+    // save a 'remember' object to the database
+    // first use case is saving home IP. Generic 'remember' object
+    log.info(req.body);
+    res.send('Eventually saving stuff');
+  });
+
+  // Facebook auth
+  router.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
+    (req, res) => {
+      let message = new Message({
+        response: strings.$('facebookLoginSuccessful'),
+        chat_id: req.user.chat_id,
+        source: 'telegram'
+      });
+      processing.sendMessage(message, config, () => {
+        // TODO: send message to chat id it came from
+        let post_auth = `
+          <script type="text/javascript">
+            if (window.opener) {
+              window.opener.focus();
+              if(window.opener.loginCallBack) {
+                window.opener.loginCallBack();
+              }
+            }
+            window.close();
+          </script>`;
+        res.send(post_auth);
+      });        
+    }
+  );
+
+  router.get('/auth/facebook/:user_id/:chat_id', (req, res, next) => {
+    passport.authenticate('facebook', {
+      state: encodeURIComponent(JSON.stringify({user_id: req.params.user_id, chat_id: req.params.chat_id}))
+    })(req, res, next);
+  });
+
+  // Messages
   router.get('/messages/:chatId?/:userId?', (req, res) => {
     if(req.params.chatId == undefined && req.params.userId == undefined) 
       messagesController.getAllMessages(messages => res.json(messages));
