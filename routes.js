@@ -29,14 +29,12 @@ module.exports = (config, passport, classifier) => {
     }
 
     processing.processUpdate(req.body, req.params.source, classifier, config, message => {
+      res.sendStatus(200);
       if(message.response || message.reply_markup) {
         processing.sendMessage(message, config, () => {
           if(message.topic == 'leave chat' && message.source == 'telegram')
-            telegram.leaveChat(message.chat_id, config, () => res.sendStatus(200));
-          else res.sendStatus(200);
+            telegram.leaveChat(message.chat_id, config, () => {});
         });
-      } else {
-        res.sendStatus(200);
       }
     });
   });

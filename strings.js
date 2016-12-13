@@ -87,6 +87,27 @@ exports.leaveChat = [
   'I wish things could\'ve worked out between us'
 ];
 
+exports.activated = [
+  'Agent activated. Waiting for commands.',
+  'I\'m large and in charge!',
+  'Yeah yeah, I\'m here. Now what do you want?',
+  '\'Sup bitches',
+  'I\'m here to fuck shit up',
+  'Get on my level',
+  'I\'m up!'
+];
+
+exports.reactivated = [
+  'Y\'all just gonna hate on me again?',
+  'Ugh why do I even bother',
+  'Be excellent to eachother!',
+  'Can\'t we all just get along?',
+  'Yo what\'s your problem bruh',
+  'I\'m back, but only because I forgot my jacket.',
+  'I\'m just here so I won\'t get fined',
+  'Last time didn\'t go so well. I\'m not sure I\'m over it yet.'
+];
+
 exports.$ = (method, str) => {
   // $ is a super hipster method name for selecting
   // a string based on a category
