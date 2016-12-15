@@ -100,7 +100,7 @@ exports.conform = update => {
     message.action = update.callback_query.data;
   }
 
-  if(message.text == undefined)
+  if(!message.text)
     message.text = '';
 
   return message;

@@ -2,10 +2,9 @@
 const 
   mongoose = require('mongoose'),
   express = require('express'),
-  http = require('http'),
   bodyParser = require('body-parser'),
   processing = require('./processing'),
-  telegramBot = require('./services/telegram'),
+  services = require('./services'),
   methodOverride = require('method-override'),
   log = require('./logger'),
   natural = require('natural'),
@@ -63,7 +62,7 @@ ngrok.connect(config.port, (err, url) => {
 
   // Telegram
   if(config.telegram) {
-    telegramBot.setWebhook(config);
+    services.telegram.setWebhook(config);
   }
 
   // Skype

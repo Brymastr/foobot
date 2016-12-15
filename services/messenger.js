@@ -10,7 +10,7 @@ exports.conform = update => {
 
   let message = new Message({
     update_id: update.message.mid,
-    message_id: update.message.mid, // not sure what I need message_id for vs update_id
+    message_id: update.message.mid,
     text: update.message.text,
     chat_id: update.sender.id,
     date: update.timestamp,

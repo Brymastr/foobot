@@ -3,7 +3,12 @@ const
   Member = require('../models/Member');
 
 exports.saveMember = (message, cb) => {
-  let member = message.text.split(/(remember|member)/i)[2].split('is').map(x => x.trim());
+  let member;
+  try {
+    member = message.text.split(/(remember|member)/i)[2].split('is').map(x => x.trim());
+  } catch(err) {
+    member = ['', ''];
+  }
   new Member({
     user_id: message.user_id,
     thing: member[0],

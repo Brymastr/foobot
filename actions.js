@@ -4,8 +4,7 @@
  */
 
 const 
-  google = require('./services/google'),
-  canadaPost = require('./services/canadaPost'),
+  services = require('./services'),
   urban = require('urban'),
   log = require('./logger'),
   strings = require('./strings'),
@@ -21,7 +20,7 @@ this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
 
 // Google QPX Flights api
 exports.flights = (message, cb) => {
-  google.getFlights(message, result => {
+  services.google.getFlights(message, result => {
     message.response = result;
     cb(message);
   });
@@ -46,7 +45,7 @@ exports.define = (message, word, cb) => {
 // Package tracking
 exports.trackPackage = (messageText, config, cb) => {
   let trackingNumber = messageText.match(/(\d|[A-Z]){10,16}/g);
-  canadaPost.trackPackage(trackingNumber, config, info => {
+  services.canadaPost.trackPackage(trackingNumber, config, info => {
     cb(info);
   });
 };

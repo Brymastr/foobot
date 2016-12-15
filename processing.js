@@ -3,8 +3,7 @@ const
   messagesController = require('./controllers/messagesController'),
   log = require('./logger'),
   actions = require('./actions'),
-  telegram = require('./services/telegram')
-  messenger = require('./services/messenger')
+  services = require('./services'),
   sentiment = require('sentiment'),
   usersController = require('./controllers/usersController')
   membersController = require('./controllers/membersController');
@@ -12,8 +11,8 @@ const
 exports.conform = (update, platform) => {
   let message;
 
-  if(platform == 'telegram') message = telegram.conform(update);
-  else if(platform == 'messenger') message = messenger.conform(update);
+  if(platform == 'telegram') message = services.telegram.conform(update);
+  else if(platform == 'messenger') message = services.messenger.conform(update);
 
   message.source = platform;
 
@@ -111,14 +110,14 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
 exports.sendMessage = (message, config, done) => {
   log.info(`Message response => ${message.response}`);
   if(message.source == 'telegram')
-    telegram.sendMessage(message, config, body => {done(body)});
+    services.telegram.sendMessage(message, config, body => {done(body)});
   else if(message.source == 'messenger')
-    messenger.sendMessage(message, config, body => {done(body)});    
+    services.messenger.sendMessage(message, config, body => {done(body)});    
 };
 
 exports.editMessage = (message, config, done) => {
   log.debug(`Edit message`);
   message.reply_markup = '';
   if(message.source == 'telegram')
-    telegram.editMessageText(message, config, body => done(body));
+    services.telegram.editMessageText(message, config, body => done(body));
 };
