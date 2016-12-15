@@ -8,8 +8,8 @@ const
   methodOverride = require('method-override'),
   log = require('./logger'),
   natural = require('natural'),
-  ngrok = require('ngrok');
-  init = require('./init')
+  ngrok = require('ngrok'),
+  init = require('./init'),
   passport = require('passport');
 
 var config = require('./config.json');

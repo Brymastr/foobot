@@ -50,12 +50,11 @@ exports.setWebhook = config => {
       url: url
     };
   }
-
   request.post({
     url: `${config.telegram.url}${config.telegram.token}/setWebhook`,
     formData: formData
   }, (err, response, body) => {
-    if(err) log.error(err);
+    if(err || body.error_code) log.error(err);
     log.info(`Telegram webhook set: ${url}`);
   });
   
@@ -67,7 +66,7 @@ exports.leaveChat = (chat_id, config, done) => {
       chat_id: chat_id
     }
   }, (err, response, body) => {
-    if(err) log.error(err);    
+    if(err) log.error(err);
     done(body);
   });
 };

@@ -5,7 +5,8 @@ const
   actions = require('./actions'),
   services = require('./services'),
   sentiment = require('sentiment'),
-  usersController = require('./controllers/usersController')
+  usersController = require('./controllers/usersController'),
+  Message = require('./models/Message'),
   membersController = require('./controllers/membersController');
 
 exports.conform = (update, platform) => {
@@ -34,7 +35,6 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
 
   // Save ALL messages  
   messagesController.createMessage(message, (m, u) => {
-    console.log(m.topic)
     // Actions
     if(m.action) {
       if(m.action == 'edit')
@@ -97,6 +97,13 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
           m.topic = 'leave chat';
         } else m.response = actions.iAmFoobot();
         cb(m);
+      } else if(m.text == '') {
+        // Message.findOne where message_id < this one and chat_id is this one
+        Message.findOne({message_id: {$lt: m.message_id}, chat_id: m.chat_id}, (err, doc) => {
+          if(doc) m.response = strings.$('reactivated');
+          else m.response = strings.$('activated');
+          cb(m);
+        });
       } else {
         // No Action, Topic, or interesting Content. Just callback with the incoming message
         cb(m);
