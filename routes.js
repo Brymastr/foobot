@@ -28,12 +28,21 @@ module.exports = (config, passport, classifier) => {
       return;
     }
 
+    
+
     processing.processUpdate(req.body, req.params.source, classifier, config, message => {
       res.sendStatus(200);
       if(message.response || message.reply_markup) {
-        processing.sendMessage(message, config, () => {
-          if(message.topic == 'leave chat' && message.source == 'telegram')
-            telegram.leaveChat(message.chat_id, config, () => {});
+        let length = message.response.length;
+        let delay = Math.random() * 3;
+        let timeout = (0.08 * length + delay) * 1000;
+        processing.sendTyping(message, config, () => {
+          setTimeout(() => {
+            processing.sendMessage(message, config, () => {
+              if(message.topic == 'leave chat' && message.source == 'telegram')
+                telegram.leaveChat(message.chat_id, config, () => {});
+            });
+          }, timeout);
         });
       }
     });

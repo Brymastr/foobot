@@ -122,6 +122,13 @@ exports.sendMessage = (message, config, done) => {
     services.messenger.sendMessage(message, config, body => {done(body)});    
 };
 
+// Send the three dot thing to indicate foobity is typing
+exports.sendTyping = (message, config, done) => {
+  if(message.source == 'telegram') {
+    services.telegram.sendTyping(message, config, body => done(body));
+  }
+};
+
 exports.editMessage = (message, config, done) => {
   log.debug(`Edit message`);
   message.reply_markup = '';
