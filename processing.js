@@ -92,7 +92,9 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         m.response = actions.iMissTheOldKanye();
         cb(m);
       } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
-        if(m.sentiment < -1) {
+        if(m.text.match(/love you/i)) {
+          m.response = `I love you too, ${m.platform_from.first_name}`;
+        } else if(m.sentiment < -1) {
           m.response = strings.$('leaveChat');
           m.topic = 'leave chat';
         } else m.response = actions.iAmFoobot();

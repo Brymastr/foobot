@@ -105,7 +105,9 @@ exports.reactivated = [
   'Yo what\'s your problem bruh',
   'I\'m back, but only because I forgot my jacket.',
   'I\'m just here so I won\'t get fined',
-  'Last time didn\'t go so well. I\'m not sure I\'m over it yet.'
+  'Last time didn\'t go so well. I\'m not sure I\'m over it yet.',
+  'I thought I was done with you',
+  'I thought we were over'
 ];
 
 exports.$ = (method, str) => {
