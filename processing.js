@@ -133,6 +133,8 @@ exports.sendMessage = (message, config, done) => {
 exports.sendTyping = (message, config, done) => {
   if(message.source == 'telegram') {
     services.telegram.sendTyping(message, config, body => done(body));
+  } else if(message.source == 'messenger') {
+    services.messenger.sendTyping(message, config, body => done(body));
   }
 };
 

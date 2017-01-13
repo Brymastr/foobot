@@ -36,10 +36,29 @@ exports.sendMessage = (message, config, done) => {
       },
       message: {
         text: message.response
-      }
+      },
+      sender_action: 'typing_off'
     }
   }, (err, response, body) => {
     if(err) log.error(err);    
     done(body);
   });
+};
+
+exports.sendTyping = (message, config, done) => {
+
+  request.post(config.messenger.url, {
+    qs: {
+      access_token: config.messenger.page_access_token
+    },
+    json: {
+      recipient: {
+        id: message.chat_id,
+      },
+      sender_action: 'typing_on'
+    }
+  }, (err, response, body) => {
+    if(err) log.error(err);    
+    done(body);
+  }); 
 };
