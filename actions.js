@@ -71,7 +71,7 @@ exports.iAmFoobot = () => {
 // URL shortening (by me)
 exports.shortenUrl = (message, config, done) => {
   let url = message.text.match(/(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])?/i);
-  if(!url) done('nah');
+  if(!url) done('');
   else {
     services.ziip.shorten(url[0], config, short => {
       done(`${config.ziip.url}/${short}`);
