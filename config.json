@@ -33,5 +33,8 @@
   "canada_post": {
     "url": "https://soa-gw.canadapost.ca/vis/track/pin",
     "auth": "Basic YzFjY2E2Y2UyMWRlMTcxZiA6YjJjNzliODJjNGIzZTJjN2E2YzA5Mw=="
+  },
+  "ziip": {
+    "url": "https://ziip.ca"
   }
 }

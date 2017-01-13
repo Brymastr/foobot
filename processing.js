@@ -45,7 +45,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         m.response = 'Nnnnooooooooooo';
       else
         m.response = 'I think I\'m supposed to do something here but I\'m not really sure what';
-      cb(m);    
+      cb(m);
     } 
     
     // Topics
@@ -60,6 +60,11 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         //   cb(data);
         // });
         cb(m);
+      } else if(m.topic == 'shorten url') {
+        actions.shortenUrl(m, config, short => {
+          m.response = short;
+          cb(m);
+        });
       } else if(m.topic == 'track') {
         actions.trackPackage(m.text, config, info => {
           m.response = info;

@@ -3,20 +3,10 @@ const
   classifier = new natural.BayesClassifier(),
   log = require('./logger');
 
-classifier.addDocument('my computer', 'computers');
-classifier.addDocument('this comp', 'computers');
-classifier.addDocument('my laptop', 'computers');
-classifier.addDocument('your computer laptop', 'computers');
 classifier.addDocument('update yourself', 'update');
 classifier.addDocument('redeploy', 'update');
 classifier.addDocument('new version of', 'update');
 classifier.addDocument('new release for', 'update');
-classifier.addDocument('let\'s play vball', 'volleyball');
-classifier.addDocument('let\'s vball', 'volleyball');
-classifier.addDocument('let\'s play', 'volleyball');
-classifier.addDocument('volleyball tonight', 'volleyball');
-classifier.addDocument('dropin at bonsor', 'volleyball');
-classifier.addDocument('dropin at bonsor', 'volleyball');
 classifier.addDocument('basically anything else', 'else');
 classifier.addDocument('lookup flights', 'flights');
 classifier.addDocument('find flights', 'flights');
@@ -48,6 +38,12 @@ classifier.addDocument('what is bbbbb\'s middle name', 'member berries query');
 classifier.addDocument('what is my ip address', 'member berries query');
 classifier.addDocument('what is my our ip address', 'member berries query');
 classifier.addDocument('what is my our home ip address', 'member berries query');
+classifier.addDocument('shorten this url https://www.domain.com/long/url/thing/to/shorten', 'shorten url');
+classifier.addDocument('can you shorten this https://www.domain.com/long/url/thing/to/shorten', 'shorten url');
+classifier.addDocument('could you shorten this', 'shorten url');
+classifier.addDocument('fix this url', 'shorten url');
+classifier.addDocument('this url is too long', 'shorten url');
+
 
 for(i = 0; i < 20; i++)
   classifier.addDocument('any words ever', 'else');

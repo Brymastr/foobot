@@ -67,3 +67,14 @@ exports.facebookLogin = (config, message) => {
 exports.iAmFoobot = () => {
   return strings.$('meta');
 };
+
+// URL shortening (by me)
+exports.shortenUrl = (message, config, done) => {
+  let url = message.text.match(/(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])?/i);
+  if(!url) done('nah');
+  else {
+    services.ziip.shorten(url[0], config, short => {
+      done(`${config.ziip.url}/${short}`);
+    });
+  }
+};

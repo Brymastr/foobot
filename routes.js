@@ -34,7 +34,7 @@ module.exports = (config, passport, classifier) => {
       res.sendStatus(200);
       if(message.response || message.reply_markup) {
         let length = message.response.length;
-        let delay = Math.random() * 3;
+        let delay = Math.random() * 1;
         let timeout = (0.08 * length + delay) * 1000;
         processing.sendTyping(message, config, () => {
           setTimeout(() => {
