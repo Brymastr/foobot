@@ -40,6 +40,7 @@ exports.sendMessage = (message, config, done) => {
       sender_action: 'typing_off'
     }
   }, (err, response, body) => {
+    console.log(err, body)
     if(err) log.error(err);    
     done(body);
   });
