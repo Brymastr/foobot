@@ -110,6 +110,18 @@ exports.reactivated = [
   'I thought we were over'
 ];
 
+exports.ofCourseICan = [
+  'Of course I can.',
+  'They didn\'t give me legs for no reason.',
+  'What do you think I am? A thing that doesn\'t do anything?',
+  'That depends, can you?',
+  'You underestimate the power of the bot side.',
+  'I can do all things. Better than you can too.',
+  'Yes.',
+  'What kind of question is that? Yes, yes I can.',
+  'I\'ll tell you one thing I can\'t do. Nothing.'
+];
+
 exports.$ = (method, str) => {
   // $ is a super hipster method name for selecting
   // a string based on a category

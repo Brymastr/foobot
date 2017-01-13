@@ -28,8 +28,6 @@ module.exports = (config, passport, classifier) => {
       return;
     }
 
-    
-
     processing.processUpdate(req.body, req.params.source, classifier, config, message => {
       res.sendStatus(200);
       if(message.response || message.reply_markup) {
