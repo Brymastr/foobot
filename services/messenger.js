@@ -36,8 +36,7 @@ exports.sendMessage = (message, config, done) => {
       },
       message: {
         text: message.response
-      },
-      sender_action: 'typing_off'
+      }
     }
   }, (err, response, body) => {
     console.log(err, body)
