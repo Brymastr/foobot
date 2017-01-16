@@ -96,6 +96,9 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
       } else if(m.text.match(/(kanye)/i)) {
         m.response = actions.iMissTheOldKanye();
         cb(m);
+      } else if(m.text.match(/(foobot|morty|mortimer) can you/i)) {
+        m.response = strings.$('ofCourseICan');
+        cb(m);
       } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
         if(m.text.match(/love you/i)) {
           m.response = `I love you too, ${m.platform_from.first_name}`;
@@ -103,9 +106,6 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
           m.response = strings.$('leaveChat');
           m.topic = 'leave chat';
         } else m.response = actions.iAmFoobot();
-        cb(m);
-      } else if(m.text.match(/foobot can you/i)) {
-        m.response = strings.$('ofCourseICan');
         cb(m);
       } else if(m.text == '') {
         // Message.findOne where message_id < this one and chat_id is this one
