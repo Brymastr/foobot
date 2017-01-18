@@ -98,13 +98,13 @@ module.exports = (config, passport, classifier) => {
 
   // Messages
   router.get('/messages/:chatId?/:userId?', (req, res) => {
-    if(req.params.chatId == undefined && req.params.userId == undefined) 
+    if(!req.params.chatId && !req.params.userId) 
       messagesController.getAllMessages(messages => res.json(messages));
-    else if(req.params.chatId != undefined && req.params.userId == undefined) 
+    else if(req.params.chatId && !req.params.userId) 
       messagesController.getMessagesForConversation(req.params.chatId, messages => res.json(messages));
-    else if(req.params.chatId == undefined && req.params.userId != undefined) 
+    else if(!req.params.chatId && req.params.userId) 
       messagesController.getMessagesForUser(req.params.userId, messages => res.json(messages));      
-    else if(req.params.chatId != undefined && req.params.userId != undefined) 
+    else if(req.params.chatId && req.params.userId) 
       messagesController.getMessagesForUserByConversation(req.params.userId, req.params.chatId, messages => res.json(messages));      
     else
       res.send('probably never');
@@ -115,6 +115,11 @@ module.exports = (config, passport, classifier) => {
       log.debug(result);
       res.send(result);
     });
+  });
+
+  router.get('/users/:userId?', (req, res) => {
+    if(!req.params.userId) usersController.getAllUserIds(users => res.json(users));
+    else usersController.getUserByPlatformId(req.params.userId, user => res.json(user));
   });
   
   return router;

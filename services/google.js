@@ -1,6 +1,7 @@
-const log = require('../logger');
-const request = require('request');
-const textParser = require('../textParser');
+const 
+  log = require('../logger'),
+  request = require('request'),
+  textParser = require('../textParser');
 
 exports.getFlights = (message, cb) => {
   const key = process.FOOBOT_GOOGLE_FLIGHTS_KEY || 'AIzaSyAETu5_M7s9w8a1g2YE-FwBuHvbTHP1u7A';

@@ -22,7 +22,7 @@ exports.getUser = (id, cb) => {
 };
 
 exports.getUserByPlatformId = (id, cb) => {
-  User.findOne({ $or: [{ 'telegram_id': id }] }, (err, user) => {
+  User.findOne({ $or: [{ 'telegram_id': id }, { 'facebook_id': id }] }, (err, user) => {
     cb(user);
   });
 };
@@ -35,5 +35,13 @@ exports.consolidateUsers = (facebook_id, user_id, cb) => {
         cb();
       });
     else cb();
+  });
+};
+
+
+// Don't keep this
+exports.getAllUserIds = cb => {
+  User.find({}, 'telegram_id', (err, users) => {
+    cb(users);
   });
 };
