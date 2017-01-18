@@ -19,7 +19,6 @@ module.exports = mongoose.model('Message', Schema({
   platform_from: Object,  // User as defined by telegram or messenger or whatever (wink wink, slack slack)
   chat_id: Number,
   chat_name: String,
-  update_id: String,
   topic: String,
   sentiment: Number,
   response: String,       // Text to use as response message
@@ -35,6 +34,7 @@ module.exports = mongoose.model('Message', Schema({
     let id;
     usersController.getUserByPlatformId(message.platform_from.id, user => {
       if(!user) {
+
 
         if(message.source == 'telegram') {
           usersController.createUser({

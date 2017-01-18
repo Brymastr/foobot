@@ -7,7 +7,8 @@ exports.createUser = (data, cb) => {
   new User({
     first_name: data.first_name,
     last_name: data.last_name,
-    telegram_id: data.telegram_id
+    telegram_id: data.telegram_id,
+    facebook_id: data.facebook_id
   }).save((err, user) => {
     if (err) log.err(`Error creating user: ${err}`);
     else log.debug(`User created: ${user}`);
