@@ -9,20 +9,25 @@ module.exports = (config, passport) => {
       clientID: config.facebook.app_id,
       clientSecret: config.facebook.app_secret,
       callbackURL: config.url + '/auth/facebook/callback',
-      passReqToCallback: true
+      passReqToCallback: true,
+      profileFields: ['id', 'birthday', 'email', 'first_name', 'last_name', 'gender', 'hometown']
     }, (req, accessToken, refreshToken, profile, done) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
 
       usersController.getUser(params.user_id, user => {
-        user.facebook_id = profile.id;
-        user.facebook_token = accessToken;
-        user.save((err, doc) => {
-          doc.chat_id = params.chat_id;
-          // delete other users
-          usersController.consolidateUsers(user.facebook_id, doc._id, () => {
-            done(null, doc);
+        if(user) {
+          user.facebook_id = profile.id;
+          user.facebook_token = accessToken;
+          user.save((err, doc) => {
+            doc.chat_id = params.chat_id;
+            // delete other users
+            usersController.consolidateUsers(user.facebook_id, doc._id, () => {
+              done(null, doc);
+            });
           });
-        });
+        } else {
+          done();
+        }
       });
     }
   ));

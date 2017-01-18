@@ -92,7 +92,8 @@ module.exports = (config, passport, classifier) => {
 
   router.get('/auth/facebook/:user_id/:chat_id', (req, res, next) => {
     passport.authenticate('facebook', {
-      state: encodeURIComponent(JSON.stringify({user_id: req.params.user_id, chat_id: req.params.chat_id}))
+      state: encodeURIComponent(JSON.stringify({user_id: req.params.user_id, chat_id: req.params.chat_id})),
+      scope: ['user_friends']
     })(req, res, next);
   });
 
@@ -119,7 +120,12 @@ module.exports = (config, passport, classifier) => {
 
   router.get('/users/:userId?', (req, res) => {
     if(!req.params.userId) usersController.getAllUserIds(users => res.json(users));
-    else usersController.getUserByPlatformId(req.params.userId, user => res.json(user));
+    else {
+      usersController.getUserByPlatformId(req.params.userId, user => {
+        if(user) res.json(user);
+        else usersController.getUser(req.params.userId, user => res.json(user));
+      });
+    }
   });
   
   return router;
