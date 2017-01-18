@@ -56,7 +56,20 @@ exports.savePhoneNumber = (message, cb) => {
 
 // Don't keep this
 exports.getAllUserIds = cb => {
-  User.find({}, 'telegram_id', (err, users) => {
+  User.find({}, 'telegram_id facebook_id', (err, users) => {
     cb(users);
   });
 };
+
+// Or this
+exports.getAllUsers = cb => {
+  User.find({}, (err, users) => {
+    cb(users);
+  });
+};
+
+exports.deleteAllUsers = cb => {
+  User.remove({}, (err, count) => {
+    cb();
+  });
+}

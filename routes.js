@@ -114,7 +114,7 @@ module.exports = (config, passport, classifier) => {
   router.delete('/messages', (req, res) => {
     messagesController.deleteMessages((result) => {
       log.debug(result);
-      res.send(result);
+      res.send(200);
     });
   });
 
@@ -127,6 +127,11 @@ module.exports = (config, passport, classifier) => {
       });
     }
   });
+
+  router.delete('/users', (req, res) => {
+    log.debug('users deleted');
+    usersController.deleteAllUsers(() => res.send(200));
+  })
   
   return router;
 };
