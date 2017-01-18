@@ -9,14 +9,30 @@ const
   log = require('./logger'),
   strings = require('./strings'),
   fs = require('fs'),
-  textParser = require('./textParser');
+  textParser = require('./textParser'),
+  usersController = require('./controllers/usersController');
 
 
-this.kanye = 'I miss the old kanye';
+this.kanye = 'I miss the old kanye'; // The most iconic of foobot features
 this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
-  if(err) data = err;
   this.kanye = data;
 });
+
+exports.linkCondo = (message, cb) => {
+  usersController.getUser(message.user_id, user => {
+    message.response = 'Open sesame';
+    message.reply_markup = {
+      keyboard: [[{
+        text: 'Link my condo account',
+        request_contact: true
+      }]],
+      resize_keyboard: true,
+      one_time_keyboard: true
+    }
+    user.action = 'phone_number';
+    user.save((err, doc) => cb(message));
+  });
+};
 
 // Google QPX Flights api
 exports.flights = (message, cb) => {
@@ -33,7 +49,7 @@ exports.iMissTheOldKanye = () => {
 };
 
 // Lookup a definition from urban dictionary
-exports.define = (message, word, cb) => {
+exports.uDic = (message, word, cb) => {
   urban(word).first(data => {
     if(!data) data = {definition: 'The library I used for Urban Dictionary lookups is having a down day, probably'}
     if(message.source == 'telegram') message.response = `*Definition:* ${data.definition}\n*Example:* ${data.example}`;
@@ -45,9 +61,7 @@ exports.define = (message, word, cb) => {
 // Package tracking
 exports.trackPackage = (messageText, config, cb) => {
   let trackingNumber = messageText.match(/(\d|[A-Z]){10,16}/g);
-  services.canadaPost.trackPackage(trackingNumber, config, info => {
-    cb(info);
-  });
+  services.canadaPost.trackPackage(trackingNumber, config, info => cb(info));
 };
 
 // Facebook login

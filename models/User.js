@@ -9,11 +9,15 @@ module.exports = mongoose.model('User', Schema({
 
   first_name: String,
   last_name: String,
+  phone_number: String,
+  email: String,
 
   telegram_username: String,
 
   facebook_token: String,
-  foobot_token: String
+  foobot_token: String,
+
+  action: String              // A pending action waiting to be fulfilled. eg. Condo waiting to be added
 })
   .pre('save', function(next) {
     var user = this;

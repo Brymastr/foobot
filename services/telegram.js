@@ -63,7 +63,7 @@ exports.setWebhook = config => {
     };
   }
   request.post({
-    url: `${config.telegram.url}${config.telegram.token}/setWebhook`,
+    url: `${config.telegram.url}${config.telegram.token}/setWebhook?allowed_updates=["message", "edited_message", "callback_query"]`,
     formData: formData
   }, (err, response, body) => {
     if(err || body.error_code) log.error(err);
@@ -88,21 +88,26 @@ exports.conform = update => {
   let message = new Message({
     update_id: update.update_id
   });
-  if(update.edited_message != undefined) {
+  if(update.edited_message) {
     message.message_id = update.edited_message.message_id;
     message.date = update.edited_message.date;
     message.platform_from = update.edited_message.from;
     message.chat_id = update.edited_message.chat.id;
     message.chat_name = update.edited_message.chat.first_name;
     message.action = 'edit';
-  } else if(update.message != undefined) {
+  } else if(update.message) {
     message.message_id = update.message.message_id;
     message.date = update.message.date;
     message.platform_from = update.message.from;
     message.chat_id = update.message.chat.id;
     message.chat_name = update.message.chat.first_name;
     message.text = update.message.text;
-  } else if(update.callback_query != undefined) {
+    if(update.message.contact) {
+      message.text = update.message.contact.phone_number;
+      message.action = 'contact';
+      message.other = {contact_telegram_id: update.message.contact.user_id}
+    }
+  } else if(update.callback_query) {
     message.message_id = update.callback_query.message.message_id;
     message.platform_from = update.callback_query.from;
     message.chat_id = update.callback_query.message.chat.id;
