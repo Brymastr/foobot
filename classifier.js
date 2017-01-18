@@ -43,6 +43,11 @@ classifier.addDocument('can you shorten this https://www.domain.com/long/url/thi
 classifier.addDocument('could you shorten this', 'shorten url');
 classifier.addDocument('fix this url', 'shorten url');
 classifier.addDocument('this url is too long', 'shorten url');
+classifier.addDocument('link my condo entry account', 'condo entry setup');
+classifier.addDocument('setup my condo account', 'condo entry setup');
+classifier.addDocument('I want to be able to unlock my condo', 'condo entry setup');
+classifier.addDocument('link my apartment entry account', 'condo entry setup');
+classifier.addDocument('connect my condo account', 'condo entry setup');
 
 
 for(i = 0; i < 20; i++)

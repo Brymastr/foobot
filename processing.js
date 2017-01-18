@@ -72,10 +72,8 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
       } else if(m.topic == 'facebook login') {
         m = actions.facebookLogin(config, m);
         cb(m);        
-      } else if(m.topic == 'new condo') {
-        // add a new condo name to the user object condo list
-        console.log('new condo');
-        cb(m);        
+      } else if(m.topic == 'condo entry setup') {
+        actions.linkCondo(m, result => cb(result));
       } else if(m.topic == 'open condo') {
         // send request to mark to unlock the door
         // phoneNumber, apartmentName, webhook, duration
@@ -97,8 +95,6 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
       } else if(m.text.match(/(foobot|morty|mortimer) can you/i)) {
         m.response = strings.$('ofCourseICan');
         cb(m);
-      } else if(m.text.match(/(condo)/i)) {
-        actions.linkCondo(m, result => cb(result));
       } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
         if(m.text.match(/love you/i)) {
           m.response = `I love you too, ${m.platform_from.first_name}`;
