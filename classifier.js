@@ -48,6 +48,12 @@ classifier.addDocument('setup my condo account', 'condo entry setup');
 classifier.addDocument('I want to be able to unlock my condo', 'condo entry setup');
 classifier.addDocument('link my apartment entry account', 'condo entry setup');
 classifier.addDocument('connect my condo account', 'condo entry setup');
+classifier.addDocument('allow access to my condo for ten minutes', 'condo entry access');
+classifier.addDocument('allow access to my apartment for ten minutes', 'condo entry access');
+classifier.addDocument('allow access to my apartment for five minutes', 'condo entry access');
+classifier.addDocument('unlock my door for five minutes', 'condo entry access');
+classifier.addDocument('unlock my apartment for five minutes', 'condo entry access');
+classifier.addDocument('unlock my condo for five minutes', 'condo entry access');
 
 
 for(i = 0; i < 20; i++)

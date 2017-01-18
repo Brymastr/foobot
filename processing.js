@@ -74,11 +74,12 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         cb(m);        
       } else if(m.topic == 'condo entry setup') {
         actions.linkCondo(m, result => cb(result));
-      } else if(m.topic == 'open condo') {
+      } else if(m.topic == 'condo entry access') {
         // send request to mark to unlock the door
         // phoneNumber, apartmentName, webhook, duration
         // POST https://api.niehe.ca/integrations/foobot
-        console.log('open condo');
+        console.log('condo entry access');
+        m.response = 'Eventually I\'ll make sure the door is unlocked';
         cb(m);
       } else {
         cb(m);
@@ -103,13 +104,13 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
           m.topic = 'leave chat';
         } else m.response = actions.iAmFoobot();
         cb(m);
-      // } else if(m.text == '') {
-      //   // Message.findOne where message_id < this one and chat_id is this one
-      //   Message.findOne({message_id: {$lt: m.message_id}, chat_id: m.chat_id}, (err, doc) => {
-      //     if(doc) m.response = strings.$('reactivated');
-      //     else m.response = strings.$('activated');
-      //     cb(m);
-      //   });
+      } else if(m.text == '') {
+        // Message.findOne where message_id < this one and chat_id is this one
+        Message.findOne({message_id: {$lt: m.message_id}, chat_id: m.chat_id}, (err, doc) => {
+          if(doc) m.response = strings.$('reactivated');
+          else m.response = strings.$('activated');
+          cb(m);
+        });
       } else {
         // No Action, Topic, or interesting Content. Just callback with the incoming message
         cb(m);
