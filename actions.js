@@ -53,6 +53,7 @@ exports.uDic = (message, word, cb) => {
   urban(word).first(data => {
     if(!data) data = {definition: 'The library I used for Urban Dictionary lookups is having a down day, probably'}
     if(message.source == 'telegram') message.response = `*Definition:* ${data.definition}\n*Example:* ${data.example}`;
+    else if(message.source == 'messenger') message.response = `Here's what Urban Dictionary has to say\n: ${data.definition}`;
     else message.response = `Here's what Urban Dictionary has to say\n: ${data.definition}`;
     cb(message);
   });
@@ -75,6 +76,7 @@ exports.facebookLogin = (config, message) => {
       }]]
     }
   } else if(message.source == 'messenger') {
+    message.response = null;
     message.reply_markup = {
       type: 'template',
       payload: {

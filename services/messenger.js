@@ -35,12 +35,12 @@ exports.sendMessage = (message, config, done) => {
         id: message.chat_id,
       },
       message: {
-        text: message.response
+        text: message.response,
+        attachment: message.reply_markup
       },
-      attachment: message.reply_markup
+      
     }
   }, (err, response, body) => {
-    console.log(err, body)
     if(err) log.error(err);    
     done(body);
   });
