@@ -31,7 +31,8 @@ module.exports = (config, passport, classifier) => {
     processing.processUpdate(req.body, req.params.source, classifier, config, message => {
       res.sendStatus(200);
       if(message.response || message.reply_markup) {
-        let length = message.response.length;
+        let length = 10;
+        if(message.response) message.response.length;
         let delay = Math.random() * 1;
         let timeout = (0.01 * length + delay) * 1000; // Human-like delay is about 0.08 seconds per character. 0.01 is much more tolerable and what you would expect from a superior being like foobot
         processing.sendTyping(message, config, () => {
