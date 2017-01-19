@@ -79,6 +79,7 @@ exports.facebookLogin = (config, message) => {
     message.reply_markup = {
       type: 'template',
       payload: {
+        template_type: 'button',
         text: 'Yep, this is how it works.',
         buttons: [{
           type: 'account_link',
