@@ -131,7 +131,7 @@ module.exports = (config, passport, classifier) => {
   router.delete('/users', (req, res) => {
     log.debug('users deleted');
     usersController.deleteAllUsers(() => res.send(200));
-  })
+  });
   
   return router;
 };

@@ -3,9 +3,9 @@ const
   Schema = mongoose.Schema;
 
 module.exports = mongoose.model('User', Schema({
-  facebook_id: String,        // If user is logged into facebook, eventually all accounts(telegram, slack, etc) will be linked to one user object
+  facebook_id: String,        // app-scoped ID for a user of the Mortimer facebook app
+  messenger_id: String,       // page-scoped ID for a user of the Mortimer page
   telegram_id: String,
-  //slack_id: String
 
   first_name: String,
   last_name: String,

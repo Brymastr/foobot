@@ -8,7 +8,7 @@ exports.createUser = (data, cb) => {
     first_name: data.first_name,
     last_name: data.last_name,
     telegram_id: data.telegram_id,
-    facebook_id: data.facebook_id
+    messenger_id: data.messenger_id
   }).save((err, user) => {
     if (err) log.err(`Error creating user: ${err}`);
     else log.debug(`User created: ${user}`);
@@ -23,21 +23,14 @@ exports.getUser = (id, cb) => {
 };
 
 exports.getUserByPlatformId = (id, cb) => {
-  User.findOne({ $or: [{ 'telegram_id': id }, { 'facebook_id': id }] }, (err, user) => {
+  User.findOne({ $or: [{ 'telegram_id': id }, { 'messenger_id': id }, { 'facebook_id': id }] }, (err, user) => {
     cb(user);
   });
 };
 
-exports.consolidateUsers = (facebook_id, user_id, cb) => {
-  User.findOne({ facebook_id: facebook_id, _id: { $ne: user_id } }, (err, user) => {
-    if(user) 
-      Message.update({user_id: user._id}, {$set: {user_id: user_id}}, {multi: true}, (err, docs) => {
-        log.debug(`${docs.length} messages updated`);
-        cb();
-      });
-    else cb();
-  });
-};
+// exports.consolidateUsers = (other_id, user_id, cb) => {
+  
+// };
 
 exports.savePhoneNumber = (message, cb) => {
   User.findOne({_id: message.user_id}, (err, user) => {
@@ -56,7 +49,7 @@ exports.savePhoneNumber = (message, cb) => {
 
 // Don't keep this
 exports.getAllUserIds = cb => {
-  User.find({}, 'telegram_id facebook_id', (err, users) => {
+  User.find({}, 'telegram_id messenger_id facebook_id', (err, users) => {
     cb(users);
   });
 };

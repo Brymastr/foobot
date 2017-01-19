@@ -34,8 +34,6 @@ module.exports = mongoose.model('Message', Schema({
     let id;
     usersController.getUserByPlatformId(message.platform_from.id, user => {
       if(!user) {
-
-
         if(message.source == 'telegram') {
           usersController.createUser({
             telegram_id: message.platform_from.id,
@@ -49,7 +47,7 @@ module.exports = mongoose.model('Message', Schema({
 
         } else if(message.source == 'messenger') {
           usersController.createUser({
-            facebook_id: message.chat_id
+            messenger_id: message.chat_id
           }, _user => {
             message.user_id = _user._id;
             next();

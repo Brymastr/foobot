@@ -20,10 +20,8 @@ module.exports = (config, passport) => {
           user.facebook_token = accessToken;
           user.save((err, doc) => {
             doc.chat_id = params.chat_id;
-            // delete other users
-            usersController.consolidateUsers(user.facebook_id, doc._id, () => {
-              done(null, doc);
-            });
+            // TODO: delete old users
+            done(null, doc);
           });
         } else {
           done();
