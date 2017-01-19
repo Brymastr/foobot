@@ -18,7 +18,6 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
     3. Content - If 1 and 2 are null, then maybe respond based on the actual text of the message
   */
   // Conform to my message model
-  console.log(update)
   let message = this.conform(update, platform);
   message.topic = classifier.classify(message.text);
   message.sentiment = sentiment(message.text).score;

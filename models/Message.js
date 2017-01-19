@@ -22,7 +22,7 @@ module.exports = mongoose.model('Message', Schema({
   topic: String,
   sentiment: Number,
   response: String,       // Text to use as response message
-  reply_markup: Object,   // Use with response, for inline keyboards
+  reply_markup: Object,   // Use with response, for buttons and keyboards and the like
   action: String,         // Process Update uses this to figure out what to do next (eg. CallbackQuery)
   type: String,           // The type of the message. Some types should be turned into other objects, like reminders
   source: String,         // Platform the message was received from. eg Telegram, Messenger, Slack, etc... 

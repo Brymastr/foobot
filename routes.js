@@ -68,13 +68,13 @@ module.exports = (config, passport, classifier) => {
   router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
     (req, res) => {
+      let params = JSON.parse(decodeURIComponent(req.query.state));
       let message = new Message({
         response: strings.$('facebookLoginSuccessful'),
         chat_id: req.user.chat_id,
-        source: 'telegram'
+        source: params.source
       });
       processing.sendMessage(message, config, () => {
-        // TODO: send message to chat id it came from
         let post_auth = `
           <script type="text/javascript">
             if (window.opener) {
@@ -90,9 +90,9 @@ module.exports = (config, passport, classifier) => {
     }
   );
 
-  router.get('/auth/facebook/:user_id/:chat_id', (req, res, next) => {
+  router.get('/auth/facebook/:source/:user_id/:chat_id', (req, res, next) => {
     passport.authenticate('facebook', {
-      state: encodeURIComponent(JSON.stringify({user_id: req.params.user_id, chat_id: req.params.chat_id})),
+      state: encodeURIComponent(JSON.stringify({user_id: req.params.user_id, chat_id: req.params.chat_id, source: req.params.source})),
       scope: ['user_friends']
     })(req, res, next);
   });

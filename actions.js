@@ -67,11 +67,24 @@ exports.trackPackage = (messageText, config, cb) => {
 // Facebook login
 exports.facebookLogin = (config, message) => {
   message.response = strings.$('facebookLoginRequest');
-  message.reply_markup = {
-    inline_keyboard: [[{
-      text: 'Login to Facebook',
-      url: `${config.url}/auth/facebook/${message.user_id}/${message.chat_id}`
-    }]]
+  if(message.source == 'telegram') {
+    message.reply_markup = {
+      inline_keyboard: [[{
+        text: 'Login to Facebook',
+        url: `${config.url}/auth/facebook/telegram/${message.user_id}/${message.chat_id}`
+      }]]
+    }
+  } else if(message.source == 'messenger') {
+    message.reply_markup = {
+      type: 'template',
+      payload: {
+        text: 'Yep, this is how it works.',
+        buttons: [{
+          type: 'account_link',
+          url: `${config.url}/auth/facebook/messenger/${message.user_id}/${message.chat_id}`
+        }]
+      }
+    }
   }
 
   return message;

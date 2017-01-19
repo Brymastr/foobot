@@ -36,7 +36,8 @@ exports.sendMessage = (message, config, done) => {
       },
       message: {
         text: message.response
-      }
+      },
+      attachment: message.reply_markup
     }
   }, (err, response, body) => {
     console.log(err, body)
