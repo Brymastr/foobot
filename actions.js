@@ -76,7 +76,6 @@ exports.facebookLogin = (config, message) => {
       }]]
     }
   } else if(message.source == 'messenger') {
-    message.response = null;
     message.reply_markup = {
       type: 'template',
       payload: {
