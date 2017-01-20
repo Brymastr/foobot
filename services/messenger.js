@@ -6,7 +6,9 @@ const
 
 exports.conform = update => {
   update = update.entry[0].messaging[0];
-  if(update.account_linking || !update.message.text) update.message.text = '';
+
+  if(update.account_linking) return new Message({action: 'account linking'});
+  if(!update.message.text) update.message.text = '';
 
   let message = new Message({
     message_id: update.message.mid,
@@ -18,8 +20,8 @@ exports.conform = update => {
     }
   });
 
-  if(update.postback) message.text = 'postback event';
-  else if(update.optin) message.text = 'optin event';
+  if(update.postback) message.text = 'postback';
+  else if(update.optin) message.text = 'optin';
 
   return message;
 }
@@ -36,8 +38,7 @@ exports.sendMessage = (message, config, done) => {
       message: {
         text: message.response,
         attachment: message.reply_markup
-      },
-      
+      }
     }
   }, (err, response, body) => {
     if(err) log.error(err);    

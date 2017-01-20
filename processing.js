@@ -33,7 +33,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
       } else if(m.action == 'contact') {
         usersController.savePhoneNumber(message, result => cb(result));
       } else {
-        m.response = 'I think I\'m supposed to do something here but I\'m not really sure what';
+        // This message doesn't warrant a response
         cb(m);
       }
     
