@@ -94,6 +94,8 @@ module.exports = (config, passport, classifier) => {
   );
 
   router.get('/auth/facebook/:source/:user_id/:chat_id', (req, res, next) => {
+    console.log(req.params)
+    console.log(req.query)
     passport.authenticate('facebook', {
       state: encodeURIComponent(JSON.stringify({user_id: req.params.user_id, chat_id: req.params.chat_id, source: req.params.source})),
       scope: ['user_friends']
