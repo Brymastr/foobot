@@ -13,10 +13,9 @@ module.exports = (config, passport) => {
       profileFields: ['id', 'birthday', 'email', 'first_name', 'last_name', 'gender', 'hometown']
     }, (req, accessToken, refreshToken, profile, done) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
-
+      console.log(req.query)
+      console.log(params)
       usersController.getUser(params.user_id, user => {
-        console.log(profile)        
-        console.log(user)
         if(user) {
           user.facebook_id = profile.id;
           user.facebook_token = accessToken;

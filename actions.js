@@ -89,7 +89,6 @@ exports.facebookLogin = (config, message) => {
       }
     }
   }
-    console.log(message);
 
   return message;
 };

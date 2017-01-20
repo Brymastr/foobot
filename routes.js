@@ -84,6 +84,10 @@ module.exports = (config, passport, classifier) => {
             }
             window.close();
           </script>`;
+        // if(message.source == 'messenger') {
+
+        //   res.redirect()
+        // }
         res.send(post_auth);
       });        
     }
