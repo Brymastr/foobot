@@ -18,8 +18,6 @@ module.exports = (config, passport, classifier) => {
   // Save to database as correct object type
   // Send back message object
 
-  // Reference message id in other objects. Reminders should know which message they came from
-
   router.post('/webhook/:source/:token', (req, res) => {
 
     if(req.params.token != config.route_token && (req.params.source == 'messenger' && req.params.token != 'messenger')) {
@@ -69,6 +67,7 @@ module.exports = (config, passport, classifier) => {
   router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
     (req, res) => {
+      console.log('CALLBACK ROUTE')
       let params = JSON.parse(decodeURIComponent(req.query.state));
       let message = new Message({
         response: strings.$('facebookLoginSuccessful'),
@@ -92,6 +91,7 @@ module.exports = (config, passport, classifier) => {
   );
 
   router.get('/auth/facebook/:source/:user_id/:chat_id', (req, res, next) => {
+    console.log('AUTH ROUTE')
     passport.authenticate('facebook', {
       state: encodeURIComponent(JSON.stringify({user_id: req.params.user_id, chat_id: req.params.chat_id, source: req.params.source})),
       scope: ['user_friends']
