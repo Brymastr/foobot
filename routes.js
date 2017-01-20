@@ -84,20 +84,23 @@ module.exports = (config, passport, classifier) => {
             }
             window.close();
           </script>`;
-        // if(message.source == 'messenger') {
-
-        //   res.redirect()
-        // }
-        res.send(post_auth);
+        if(message.source == 'messenger')
+          res.redirect(params.redirect_uri + '&authorization_code=ITWORKS')
+        else
+          res.send(post_auth);
       });        
     }
   );
 
   router.get('/auth/facebook/:source/:user_id/:chat_id', (req, res, next) => {
-    console.log(req.params)
-    console.log(req.query)
     passport.authenticate('facebook', {
-      state: encodeURIComponent(JSON.stringify({user_id: req.params.user_id, chat_id: req.params.chat_id, source: req.params.source})),
+      state: encodeURIComponent(JSON.stringify({
+        user_id: req.params.user_id,
+        chat_id: req.params.chat_id,
+        source: req.params.source,
+        account_linking_token: req.query.account_linking_token,
+        redirect_uri: req.query.redirect_uri
+      })),
       scope: ['user_friends']
     })(req, res, next);
   });
