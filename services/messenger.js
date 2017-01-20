@@ -6,10 +6,9 @@ const
 
 exports.conform = update => {
   update = update.entry[0].messaging[0];
-  if(!update.message.text) update.message.text = '';
+  if(update.account_linking || !update.message.text) update.message.text = '';
 
   let message = new Message({
-    update_id: update.message.mid,
     message_id: update.message.mid,
     text: update.message.text,
     chat_id: update.sender.id,
