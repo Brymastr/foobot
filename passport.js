@@ -15,6 +15,7 @@ module.exports = (config, passport) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
 
       usersController.getUser(params.user_id, user => {
+        console.log(profile)        
         console.log(user)
         if(user) {
           user.facebook_id = profile.id;
