@@ -1,6 +1,7 @@
 const 
   mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+  Schema = mongoose.Schema,
+  ObjectId = Schema.ObjectId;
 
 module.exports = mongoose.model('User', Schema({
   facebook_id: String,        // app-scoped ID for a user of the Mortimer facebook app
