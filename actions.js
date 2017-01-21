@@ -23,14 +23,19 @@ this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
 exports.linkCondo = (message, cb) => {
   usersController.getUser(message.user_id, user => {
     message.response = 'Open sesame';
-    message.reply_markup = {
-      keyboard: [[{
-        text: 'Link my condo account',
-        request_contact: true
-      }]],
-      resize_keyboard: true,
-      one_time_keyboard: true
+    if(message.source == 'telegram') {
+      message.reply_markup = {
+        keyboard: [[{
+          text: 'Link my condo account',
+          request_contact: true
+        }]],
+        resize_keyboard: true,
+        one_time_keyboard: true
+      }
+    } else if(message.source == 'messenger') {
+      message.response = 'This feature doesn\'t work in Messenger yet. Something about not being able to share phone numbers?';
     }
+    
     user.action = 'phone_number';
     user.save((err, doc) => cb(message));
   });
@@ -43,8 +48,6 @@ exports.openCondo = (message, phone_number, cb) => {
   let number = compromise.value(stemmed).number || 0;
   let duration = number * 1000; // start off with seconds then find appropriate multiplier
 
-  console.log(stemmed)
-  
   // get unit
   let units = textParser.parseStringForTokens(stemmed, ['second', 'minut', 'hour', 'dai', 'week', 'month', 'year', 'half', 'bit', 'while']);
   // calculate door unlock duration in miliseconds  
@@ -71,6 +74,8 @@ exports.openCondo = (message, phone_number, cb) => {
 
   if(message.response) {
     cb(message);
+  } else if(!phone_number) {
+    this.linkCondo(message, result => cb(result));
   } else {
     services.condo.open(duration, phone_number, null, null, result => {
       message.response = result;
