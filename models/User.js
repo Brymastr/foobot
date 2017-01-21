@@ -13,10 +13,12 @@ module.exports = mongoose.model('User', Schema({
   email: String,
   gender: String,
 
-  telegram_username: String,
+  username: String,
 
   facebook_token: String,
   foobot_token: String,
+
+  old_account_ids: [ObjectId],
 
   action: String              // A pending action waiting to be fulfilled. eg. Condo waiting to be added
 })

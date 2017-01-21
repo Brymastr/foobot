@@ -33,6 +33,11 @@ exports.consolidateUsers = (user, cb) => {
     if(other) {
       if(!other.messenger_id) other.messenger_id = user.messenger_id;
       if(!other.telegram_id) other.telegram_id = user.telegram_id;
+      if(!other.gender) other.gender = user.gender;
+      if(!other.phone_number) other.phone_number = user.phone_number;
+      if(!other.email) other.email = user.email;
+      if(!other.username) other.username = user.username;
+      other.old_account_ids.push(user._id);
       other.save((err, otherDoc) => {
         user.remove((err, thisDoc) => {
           cb(otherDoc);
