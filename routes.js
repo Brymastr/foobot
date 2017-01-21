@@ -18,8 +18,6 @@ module.exports = (config, passport, classifier) => {
   // Save to database as correct object type
   // Send back message object
 
-  // Reference message id in other objects. Reminders should know which message they came from
-
   router.post('/webhook/:source/:token', (req, res) => {
 
     if(req.params.token != config.route_token && (req.params.source == 'messenger' && req.params.token != 'messenger')) {
@@ -31,9 +29,10 @@ module.exports = (config, passport, classifier) => {
     processing.processUpdate(req.body, req.params.source, classifier, config, message => {
       res.sendStatus(200);
       if(message.response || message.reply_markup) {
-        let length = message.response.length;
+        let length = 10;
+        if(message.response) message.response.length;
         let delay = Math.random() * 1;
-        let timeout = (0.01 * length + delay) * 1000;   // Human-like delay is about 0.08 seconds per character. 0.01 is much more tolerable and what you would expect from a superior being like foobot
+        let timeout = (0.01 * length + delay) * 1000; // Human-like delay is about 0.08 seconds per character. 0.01 is much more tolerable and what you would expect from a superior being like foobot
         processing.sendTyping(message, config, () => {
           setTimeout(() => {
             processing.sendMessage(message, config, () => {
@@ -46,7 +45,7 @@ module.exports = (config, passport, classifier) => {
     });
   });
 
-  // Messenger
+  // Messenger verify
   router.get('/webhook/messenger/:token', (req, res) => {
     if (req.query['hub.mode'] === 'subscribe' 
     && req.query['hub.verify_token'] === config.messenger.webhook_token) {
@@ -68,13 +67,13 @@ module.exports = (config, passport, classifier) => {
   router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
     (req, res) => {
+      let params = JSON.parse(decodeURIComponent(req.query.state));
       let message = new Message({
         response: strings.$('facebookLoginSuccessful'),
         chat_id: req.user.chat_id,
-        source: 'telegram'
+        source: params.source
       });
       processing.sendMessage(message, config, () => {
-        // TODO: send message to chat id it came from
         let post_auth = `
           <script type="text/javascript">
             if (window.opener) {
@@ -85,14 +84,24 @@ module.exports = (config, passport, classifier) => {
             }
             window.close();
           </script>`;
-        res.send(post_auth);
+        if(message.source == 'messenger')
+          res.redirect(params.redirect_uri + '&authorization_code=ITWORKS')
+        else
+          res.send(post_auth);
       });        
     }
   );
 
-  router.get('/auth/facebook/:user_id/:chat_id', (req, res, next) => {
+  router.get('/auth/facebook/:source/:user_id/:chat_id', (req, res, next) => {
     passport.authenticate('facebook', {
-      state: encodeURIComponent(JSON.stringify({user_id: req.params.user_id, chat_id: req.params.chat_id}))
+      state: encodeURIComponent(JSON.stringify({
+        user_id: req.params.user_id,
+        chat_id: req.params.chat_id,
+        source: req.params.source,
+        account_linking_token: req.query.account_linking_token,
+        redirect_uri: req.query.redirect_uri
+      })),
+      scope: ['user_friends']
     })(req, res, next);
   });
 
@@ -113,13 +122,23 @@ module.exports = (config, passport, classifier) => {
   router.delete('/messages', (req, res) => {
     messagesController.deleteMessages((result) => {
       log.debug(result);
-      res.send(result);
+      res.send(200);
     });
   });
 
   router.get('/users/:userId?', (req, res) => {
     if(!req.params.userId) usersController.getAllUserIds(users => res.json(users));
-    else usersController.getUserByPlatformId(req.params.userId, user => res.json(user));
+    else {
+      usersController.getUserByPlatformId(req.params.userId, user => {
+        if(user) res.json(user);
+        else usersController.getUser(req.params.userId, user => res.json(user));
+      });
+    }
+  });
+
+  router.delete('/users', (req, res) => {
+    log.debug('users deleted');
+    usersController.deleteAllUsers(() => res.send(200));
   });
   
   return router;

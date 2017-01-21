@@ -12,11 +12,11 @@ classifier.addDocument('lookup flights', 'flights');
 classifier.addDocument('find flights', 'flights');
 classifier.addDocument('find a flight', 'flights');
 classifier.addDocument('flights from qqqqq to qqq qq for 1 people less than 2000', 'flights');
-classifier.addDocument('track package', 'track');
-classifier.addDocument('track a package by pin', 'track');
-classifier.addDocument('track a package by tracking', 'track');
-classifier.addDocument('track a package by tracking #########', 'track');
-classifier.addDocument('track a package by tracking number 1234567891011', 'track');
+classifier.addDocument('track package', 'track package');
+classifier.addDocument('track a package by pin', 'track package');
+classifier.addDocument('track a package by tracking', 'track package');
+classifier.addDocument('track a package by tracking #########', 'track package');
+classifier.addDocument('track a package by tracking number 1234567891011', 'track package');
 classifier.addDocument('login to facebook', 'facebook login');
 classifier.addDocument('can you log me in to facebook?', 'facebook login');
 classifier.addDocument('log me in to facebook', 'facebook login');
@@ -43,10 +43,30 @@ classifier.addDocument('can you shorten this https://www.domain.com/long/url/thi
 classifier.addDocument('could you shorten this', 'shorten url');
 classifier.addDocument('fix this url', 'shorten url');
 classifier.addDocument('this url is too long', 'shorten url');
+classifier.addDocument('link my condo entry account', 'condo entry setup');
+classifier.addDocument('setup my condo account', 'condo entry setup');
+classifier.addDocument('I want to be able to unlock my condo', 'condo entry setup');
+classifier.addDocument('link my apartment entry account', 'condo entry setup');
+classifier.addDocument('connect my condo account', 'condo entry setup');
+classifier.addDocument('allow access to my condo for ten minutes', 'condo entry access');
+classifier.addDocument('allow access to my apartment for ten minutes', 'condo entry access');
+classifier.addDocument('allow access to my apartment for five minutes', 'condo entry access');
+classifier.addDocument('open my door', 'condo entry access');
+classifier.addDocument('open my door for five minutes', 'condo entry access');
+classifier.addDocument('unlock my door for five minutes', 'condo entry access');
+classifier.addDocument('unlock my apartment for five minutes', 'condo entry access');
+classifier.addDocument('unlock my condo for five minutes', 'condo entry access');
+classifier.addDocument('lock my condo', 'condo entry lock');
+classifier.addDocument('lock my apartment', 'condo entry lock');
+classifier.addDocument('lock my door', 'condo entry lock');
+classifier.addDocument('close my condo', 'condo entry lock');
+classifier.addDocument('close my door', 'condo entry lock');
+classifier.addDocument('close my apartment', 'condo entry lock');
 
 
 for(i = 0; i < 20; i++)
   classifier.addDocument('any words ever', 'else');
+classifier.addDocument('when I was doing track', 'else'); // Something to make 'track' less picky
 
 classifier.train();
 

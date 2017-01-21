@@ -1,4 +1,4 @@
-exports.update = [
+const update = [
   'Do you want me to update myself?',
   'Update time!',
   'Update me like one of your french girls',
@@ -120,6 +120,15 @@ exports.ofCourseICan = [
   'Yes.',
   'What kind of question is that? Yes, yes I can.',
   'I\'ll tell you one thing I can\'t do. Nothing.'
+];
+
+exports.tooLong = [
+  'lol no.',
+  'I don\'t want to be an accessory to a crime',
+  'Is that really safe?',
+  'That\'s too long. It\'s dangerous (that\'s what she said).',
+  'That would be unsafe',
+  'This feature is already kinda questionable. Let\'s not get carried away with it.'
 ];
 
 exports.$ = (method, str) => {

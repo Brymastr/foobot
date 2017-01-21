@@ -36,5 +36,8 @@
   },
   "ziip": {
     "url": "https://ziip.ca"
+  },
+  "condo": {
+    "url": "https://api.niehe.ca/integrations/foobot"
   }
 }

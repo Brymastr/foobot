@@ -17,6 +17,7 @@
     "mongoose": "^4.4.14",
     "natural": "^0.4.0",
     "ngrok": "^2.2.3",
+    "nlp_compromise": "^6.5.3",
     "node-uuid": "^1.4.7",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",

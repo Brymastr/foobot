@@ -1,19 +1,27 @@
 const 
   mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+  Schema = mongoose.Schema,
+  ObjectId = Schema.ObjectId;
 
 module.exports = mongoose.model('User', Schema({
-  facebook_id: String,        // If user is logged into facebook, eventually all accounts(telegram, slack, etc) will be linked to one user object
+  facebook_id: String,        // app-scoped ID for a user of the Mortimer facebook app
+  messenger_id: String,       // page-scoped ID for a user of the Mortimer page
   telegram_id: String,
-  //slack_id: String
 
   first_name: String,
   last_name: String,
+  phone_number: String,
+  email: String,
+  gender: String,
 
-  telegram_username: String,
+  username: String,
 
   facebook_token: String,
-  foobot_token: String
+  foobot_token: String,
+
+  old_account_ids: [ObjectId],
+
+  action: String              // A pending action waiting to be fulfilled. eg. Condo waiting to be added
 })
   .pre('save', function(next) {
     var user = this;

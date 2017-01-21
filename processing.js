@@ -9,16 +9,6 @@ const
   Message = require('./models/Message'),
   membersController = require('./controllers/membersController');
 
-exports.conform = (update, platform) => {
-  let message;
-
-  if(platform == 'telegram') message = services.telegram.conform(update);
-  else if(platform == 'messenger') message = services.messenger.conform(update);
-
-  message.source = platform;
-
-  return message;
-}
 
 exports.processUpdate = (update, platform, classifier, config, cb) => {
   /*
@@ -27,7 +17,6 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
     2. Topic - What the classifier thinks of the message contents
     3. Content - If 1 and 2 are null, then maybe respond based on the actual text of the message
   */
-
   // Conform to my message model
   let message = this.conform(update, platform);
   message.topic = classifier.classify(message.text);
@@ -35,21 +24,21 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
 
   // Save ALL messages  
   messagesController.createMessage(message, (m, u) => {
+
     // Actions
     if(m.action) {
-      if(m.action == 'edit')
+      if(m.action == 'edit') {
         m.response = strings.$('edit');
-      else if(m.action == 'confirm')
-        m.response = 'This will update the docker container BUT NOT YET BECAUASE I HAVEN\'T IMPLEMENTED IT YET CHILL THE FUCK OUT I\'M WORKING ON IT OK ROBOTS DON\'T WRITE THEMSELVES OVERNIGHT';
-      else if(m.action == 'deny')
-        m.response = 'Nnnnooooooooooo';
-      else
-        m.response = 'I think I\'m supposed to do something here but I\'m not really sure what';
-      cb(m);
-    } 
+        cb(m);
+      } else if(m.action == 'contact') {
+        usersController.savePhoneNumber(message, result => cb(result));
+      } else {
+        // This message doesn't warrant a response
+        cb(m);
+      }
     
     // Topics
-    else if(m.topic && m.topic != 'else') {
+    } else if(m.topic && m.topic != 'else') {
       if(m.topic == 'update') {
         /** Deprecated **/
         // message = actions.update(message);
@@ -65,7 +54,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
           m.response = short;
           cb(m);
         });
-      } else if(m.topic == 'track') {
+      } else if(m.topic == 'track package') {
         actions.trackPackage(m.text, config, info => {
           m.response = info;
           cb(m);
@@ -83,23 +72,32 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
       } else if(m.topic == 'facebook login') {
         m = actions.facebookLogin(config, m);
         cb(m);        
+      } else if(m.topic == 'condo entry setup') {
+        actions.linkCondo(m, result => cb(result));
+      } else if(m.topic == 'condo entry access') {
+        actions.openCondo(m, u.phone_number, result => cb(result));
+      } else if(m.topic == 'condo entry lock') {
+        actions.closeCondo(m, u.phone_number, result => cb(result));
       } else {
         cb(m);
       }
-    }
 
     // Content
-    else {
-      if(m.text.match(/(define)/i)) {
+    } else {
+      if(m.text.match(/\b(define)\b/i)) {
         const word = m.text.split(/(define)/i)[2];
-        actions.define(m, word, (result) => cb(result));
-      } else if(m.text.match(/(kanye)/i)) {
+        actions.uDic(m, word, result => cb(result));
+      } else if(m.text.match(/\b(kanye|yeezy|yeezus|pablo)\b/i)) {
         m.response = actions.iMissTheOldKanye();
         cb(m);
-      } else if(m.text.match(/(foobot|morty|mortimer) can you/i)) {
+      } else if(m.text.match(/it('s)?\s*(is)?\s*(was)?\s*(so|pretty|really|very)\s*(hard|long)/)) {
+        m.response = 'That\'s what she said!';
+        cb(m);
+      } else if(m.text.match(/\b(foobot|morty|mortimer)\b can you/i)) {
         m.response = strings.$('ofCourseICan');
         cb(m);
-      } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
+      // all other word matching should go before this one
+      } else if(m.text.match(/\b(foobot|morty|mortimer)\b/i)) {
         if(m.text.match(/love you/i)) {
           m.response = `I love you too, ${m.platform_from.first_name}`;
         } else if(m.sentiment < -1) {
@@ -126,19 +124,14 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
 // one sendMessage to rule them all
 exports.sendMessage = (message, config, done) => {
   log.info(`Message response => ${message.response}`);
-  if(message.source == 'telegram')
-    services.telegram.sendMessage(message, config, body => {done(body)});
-  else if(message.source == 'messenger')
-    services.messenger.sendMessage(message, config, body => {done(body)});    
+  if(message.source)
+    services[message.source].sendMessage(message, config, body => {done(body)});
 };
 
 // Send the three dot thing to indicate foobity is typing
 exports.sendTyping = (message, config, done) => {
-  if(message.source == 'telegram') {
-    services.telegram.sendTyping(message, config, body => done(body));
-  } else if(message.source == 'messenger') {
-    services.messenger.sendTyping(message, config, body => done(body));
-  }
+  if(message.source)
+    services[message.source].sendTyping(message, config, body => done(body));
 };
 
 exports.editMessage = (message, config, done) => {
@@ -147,3 +140,10 @@ exports.editMessage = (message, config, done) => {
   if(message.source == 'telegram')
     services.telegram.editMessageText(message, config, body => done(body));
 };
+
+exports.conform = (update, platform) => {
+  let message;
+  message = services[platform].conform(update);
+  message.source = platform;
+  return message;
+}
