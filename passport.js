@@ -20,7 +20,7 @@ module.exports = (config, passport) => {
           user.save((err, doc) => {
             doc.chat_id = params.chat_id;
             // TODO: if there is already an account with the same facebook id, remove this one and add all IDs to the other one. Then figure out what to do with the messages this account has sent
-            done(null, doc);
+            usersController.consolidateUsers(doc, consolidated => done(null, consolidated));
           });
         } else {
           done();

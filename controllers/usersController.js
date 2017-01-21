@@ -28,9 +28,21 @@ exports.getUserByPlatformId = (id, cb) => {
   });
 };
 
-// exports.consolidateUsers = (other_id, user_id, cb) => {
-  
-// };
+exports.consolidateUsers = (user, cb) => {
+  User.findOne({facebook_id: user.facebook_id, _id: {$ne: user._id}}, (err, other) => {
+    if(other) {
+      if(!other.messenger_id) other.messenger_id = user.messenger_id;
+      if(!other.telegram_id) other.telegram_id = user.telegram_id;
+      other.save((err, otherDoc) => {
+        user.remove((err, thisDoc) => {
+          cb(otherDoc);
+        });
+      });
+    } else {
+      cb(user);
+    }
+  });
+};
 
 exports.savePhoneNumber = (message, cb) => {
   User.findOne({_id: message.user_id}, (err, user) => {
