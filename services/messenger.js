@@ -7,7 +7,7 @@ const
 exports.conform = update => {
   update = update.entry[0].messaging[0];
 
-  if(update.account_linking) return new Message({action: 'account linking'});
+  if(update.account_linking) return new Message({text: '', action: 'account linking'});
   if(!update.message.text) update.message.text = '';
 
   let message = new Message({

@@ -17,9 +17,12 @@ module.exports = (config, passport) => {
         if(user) {
           user.facebook_id = profile.id;
           user.facebook_token = accessToken;
+          if(!user.first_name) user.first_name = profile.name.givenName;
+          if(!user.last_name) user.last_name = profile.name.familyName;
+          if(!user.gender) user.gender = profile.gender;
           user.save((err, doc) => {
             doc.chat_id = params.chat_id;
-            // TODO: if there is already an account with the same facebook id, remove this one and add all IDs to the other one. Then figure out what to do with the messages this account has sent
+            // TODO: figure out what to do with the existing messages from this users. Maybe change messages so they have a platform_id instead of a mongo user_id
             usersController.consolidateUsers(doc, consolidated => done(null, consolidated));
           });
         } else {
