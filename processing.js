@@ -90,7 +90,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
       } else if(m.text.match(/\b(kanye|yeezy|yeezus|pablo)\b/i)) {
         m.response = actions.iMissTheOldKanye();
         cb(m);
-      } else if(m.tet.match(/it('s)? (was)? (so|realy|very) (hard|long)/)) {
+      } else if(m.tet.match(/it('s)?\s*(is)?\s*(was)?\s*(so|realy|very)\s*(hard|long)/)) {
         m.response = 'That\'s what she said!';
         cb(m);
       } else if(m.text.match(/\b(foobot|morty|mortimer)\b can you/i)) {
