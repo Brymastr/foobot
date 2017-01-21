@@ -5,7 +5,7 @@ const
 
 exports.getFlights = (message, cb) => {
   const key = process.FOOBOT_GOOGLE_FLIGHTS_KEY || 'AIzaSyAETu5_M7s9w8a1g2YE-FwBuHvbTHP1u7A';
-  let dict = textParser.parseStringForTokens(message.text, ['from', 'to', 'for', 'on', 'less']);
+  let dict = textParser.parseStringForTokenValues(message.text, ['from', 'to', 'for', 'on', 'less']);
   // check mandatory fields
   // parse date
 

@@ -5,12 +5,14 @@
 
 const 
   services = require('./services'),
+  natural = require('natural'),
   urban = require('urban'),
   log = require('./logger'),
   strings = require('./strings'),
   fs = require('fs'),
   textParser = require('./textParser'),
-  usersController = require('./controllers/usersController');
+  usersController = require('./controllers/usersController'),
+  compromise = require('nlp_compromise');
 
 
 this.kanye = 'I miss the old kanye'; // The most iconic of foobot features
@@ -31,6 +33,56 @@ exports.linkCondo = (message, cb) => {
     }
     user.action = 'phone_number';
     user.save((err, doc) => cb(message));
+  });
+};
+
+exports.openCondo = (message, phone_number, cb) => {
+  natural.PorterStemmer.attach();
+  let stemmed = message.text.tokenizeAndStem().join(' ');
+  
+  let number = compromise.value(stemmed).number || 0;
+  let duration = number * 1000; // start off with seconds then find appropriate multiplier
+
+  console.log(stemmed)
+  
+  // get unit
+  let units = textParser.parseStringForTokens(stemmed, ['second', 'minut', 'hour', 'dai', 'week', 'month', 'year', 'half', 'bit', 'while']);
+  // calculate door unlock duration in miliseconds  
+  if(units.includes('second')) {
+    // do nothing it's already in seconds
+  } else if(units.includes('minut')) {
+    duration *= 60;
+  } else if(units.includes('half') && units.includes('hour')) {
+    if(message.text.includes('hour and')) {number = 1; duration = 1000;}
+    number === 0 ? duration = 1800000 : duration *= 5400;
+  } else if(units.includes('hour')) {
+    duration *= 3600;
+  } else if(units.includes('dai')) {
+    duration *= 86400;
+  } else if(units.includes('week') || units.includes('month') || units.includes('year')) {
+    message.response = strings.$('tooLong');
+  } else if(units.includes('bit') || units.includes('while')) {
+    duration = 1000;
+    duration *= 900;
+  } else {
+    // No parameters. "open the door"
+    duration = 600000;
+  }
+
+  if(message.response) {
+    cb(message);
+  } else {
+    services.condo.open(duration, phone_number, null, null, result => {
+      message.response = result;
+      cb(message);
+    });
+  }
+};
+
+exports.closeCondo = (message, phone_number, cb) => {
+  services.condo.close(phone_number, null, result => {
+    message.response = result;
+    cb(message);
   });
 };
 

@@ -51,13 +51,22 @@ classifier.addDocument('connect my condo account', 'condo entry setup');
 classifier.addDocument('allow access to my condo for ten minutes', 'condo entry access');
 classifier.addDocument('allow access to my apartment for ten minutes', 'condo entry access');
 classifier.addDocument('allow access to my apartment for five minutes', 'condo entry access');
+classifier.addDocument('open my door', 'condo entry access');
+classifier.addDocument('open my door for five minutes', 'condo entry access');
 classifier.addDocument('unlock my door for five minutes', 'condo entry access');
 classifier.addDocument('unlock my apartment for five minutes', 'condo entry access');
 classifier.addDocument('unlock my condo for five minutes', 'condo entry access');
+classifier.addDocument('lock my condo', 'condo entry lock');
+classifier.addDocument('lock my apartment', 'condo entry lock');
+classifier.addDocument('lock my door', 'condo entry lock');
+classifier.addDocument('close my condo', 'condo entry lock');
+classifier.addDocument('close my door', 'condo entry lock');
+classifier.addDocument('close my apartment', 'condo entry lock');
 
 
 for(i = 0; i < 20; i++)
   classifier.addDocument('any words ever', 'else');
+classifier.addDocument('when I was doing track', 'else'); // Something to make 'track' less picky
 
 classifier.train();
 

@@ -75,28 +75,29 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
       } else if(m.topic == 'condo entry setup') {
         actions.linkCondo(m, result => cb(result));
       } else if(m.topic == 'condo entry access') {
-        // send request to mark to unlock the door
-        // phoneNumber, apartmentName, webhook, duration
-        // POST https://api.niehe.ca/integrations/foobot
-        console.log('condo entry access');
-        m.response = 'Eventually I\'ll make sure the door is unlocked';
-        cb(m);
+        actions.openCondo(m, u.phone_number, result => cb(result));
+      } else if(m.topic == 'condo entry lock') {
+        actions.closeCondo(m, u.phone_number, result => cb(result));
       } else {
         cb(m);
       }
 
     // Content
     } else {
-      if(m.text.match(/(define)/i)) {
+      if(m.text.match(/\b(define)\b/i)) {
         const word = m.text.split(/(define)/i)[2];
         actions.uDic(m, word, result => cb(result));
-      } else if(m.text.match(/(kanye|yeezy|yeezus|pablo)/i)) {
+      } else if(m.text.match(/\b(kanye|yeezy|yeezus|pablo)\b/i)) {
         m.response = actions.iMissTheOldKanye();
         cb(m);
-      } else if(m.text.match(/(foobot|morty|mortimer) can you/i)) {
+      } else if(m.tet.match(/it('s)? (was)? (so|realy|very) (hard|long)/)) {
+        m.response = 'That\'s what she said!';
+        cb(m);
+      } else if(m.text.match(/\b(foobot|morty|mortimer)\b can you/i)) {
         m.response = strings.$('ofCourseICan');
         cb(m);
-      } else if(m.text.match(/(foobot|morty|mortimer)/i)) {
+      // all other word matching should go before this one
+      } else if(m.text.match(/\b(foobot|morty|mortimer)\b/i)) {
         if(m.text.match(/love you/i)) {
           m.response = `I love you too, ${m.platform_from.first_name}`;
         } else if(m.sentiment < -1) {
