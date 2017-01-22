@@ -51,9 +51,8 @@ exports.consolidateUsers = (user, cb) => {
 
 exports.savePhoneNumber = (message, cb) => {
   User.findOne({_id: message.user_id}, (err, user) => {
-    console.log(message.other.contact_telegram_id, user.telegram_id)
     if(message.other.contact_telegram_id == user.telegram_id && user.action == 'phone_number') {
-      user.phone_number = message.text;
+      user.phone_number = `+${message.text}`;
       user.action = null;
       user.save((err, doc) => {
         message.response = 'Condo account linked';

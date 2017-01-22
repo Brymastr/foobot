@@ -22,8 +22,8 @@ this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
 
 exports.linkCondo = (message, cb) => {
   usersController.getUser(message.user_id, user => {
-    message.response = 'Open sesame';
     if(message.source == 'telegram') {
+      message.response = 'Open the doors to this plane';
       message.reply_markup = {
         keyboard: [[{
           text: 'Link my condo account',
