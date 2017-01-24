@@ -15,7 +15,7 @@ exports.init = config => {
 
   // Messenger
   if(vars.FOOBOT_MESSENGER_WEBHOOK_TOKEN) config.messenger.webhook_token = vars.FOOBOT_MESSENGER_WEBHOOK_TOKEN;
-  if(vars.FOOBOT_PAGE_ACCESS_TOKEN) config.messenger.page_access_token = vars.FOOBOT_PAGE_ACCESS_TOKEN;
+  if(vars.FOOBOT_MESSENGER_PAGE_ACCESS_TOKEN) config.messenger.page_access_token = vars.FOOBOT_MESSENGER_PAGE_ACCESS_TOKEN;
 
   // Facebook
   if(vars.FOOBOT_FACEBOOK_APP_ID) config.facebook.app_id = vars.FOOBOT_FACEBOOK_APP_ID;
