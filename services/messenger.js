@@ -1,22 +1,26 @@
 const
   request = require('request'),
   Message = require('../models/Message'),
-  fs = require('fs'),
   log = require('../logger');
 
 exports.conform = update => {
-  console.dir(update);
   update = update.entry[0].messaging[0];
+
+  if(update.account_linking) return new Message({text: '', action: 'account linking', platform_from: {id: update.sender.id}});
+  if(!update.message.text) update.message.text = '';
+
   let message = new Message({
-    update_id: update.message.mid,
-    message_id: update.message.mid, // not sure what I need message_id for vs update_id
+    message_id: update.message.mid,
     text: update.message.text,
     chat_id: update.sender.id,
-    date: update.timestamp
+    date: update.timestamp,
+    platform_from: {
+      id: update.sender.id
+    }
   });
 
-  if(update.postback) message.text = 'postback event';
-  else if(update.optin) message.text = 'optin event';
+  if(update.postback) message.text = 'postback';
+  else if(update.optin) message.text = 'optin';
 
   return message;
 }
@@ -31,11 +35,30 @@ exports.sendMessage = (message, config, done) => {
         id: message.chat_id,
       },
       message: {
-        text: message.response
+        text: message.response,
+        attachment: message.reply_markup
       }
     }
   }, (err, response, body) => {
     if(err) log.error(err);    
     done(body);
   });
+};
+
+exports.sendTyping = (message, config, done) => {
+
+  request.post(config.messenger.url, {
+    qs: {
+      access_token: config.messenger.page_access_token
+    },
+    json: {
+      recipient: {
+        id: message.chat_id,
+      },
+      sender_action: 'typing_on'
+    }
+  }, (err, response, body) => {
+    if(err) log.error(err);    
+    done(body);
+  }); 
 };

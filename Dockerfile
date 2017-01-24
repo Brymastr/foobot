@@ -1,9 +1,9 @@
-FROM node:onbuild
+FROM node:alpine
 
 WORKDIR /src
 COPY . /src
 
-RUN npm install
+RUN npm i
 
 EXPOSE 80
 CMD ["node", "classifier.js"]

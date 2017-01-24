@@ -1,0 +1,1 @@
+exports.futurama = require('./futurama');
