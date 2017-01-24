@@ -17,7 +17,7 @@ exports.sendMessage = (message, config, done) => {
       parse_mode: 'Markdown'
     }
   }, (err, response, body) => {
-    if(err) log.error(err);    
+    if(err) log.error(err);
     done(body);
   });
 };
