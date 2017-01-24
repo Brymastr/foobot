@@ -64,9 +64,12 @@ classifier.addDocument('close my door', 'condo entry lock');
 classifier.addDocument('close my apartment', 'condo entry lock');
 
 
-for(i = 0; i < 20; i++)
-  classifier.addDocument('any words ever', 'else');
-classifier.addDocument('when I was doing track', 'else'); // Something to make 'track' less picky
+// Something to make some phrases less picky
+for(i = 0; i < 20; i++) classifier.addDocument('any words ever', 'else');
+classifier.addDocument('when I was doing track', 'else');
+classifier.addDocument('https://www.imaginaryurl.com/long/path?maybe-some-query-vars=ok&stuff=iguess', 'else');
+classifier.addDocument('https://www.youtube.com/watch?v=9g2oMlszdwY', 'else');
+
 
 classifier.train();
 

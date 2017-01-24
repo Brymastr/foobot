@@ -8,17 +8,17 @@
   "cert_path": "/etc/nginx/certs/foobot.dorsaydevelopment.ca.crt",
 
   "telegram": {
-    "token": "223951341:AAGsPCHjO44E9OEHEvWMtUS3k73l4KKXoRQ",
+    "token": null,
     "url": "https://api.telegram.org/bot"
   },
   "messenger": {
     "url": "https://graph.facebook.com/v2.8/me/messages",
-    "page_access_token": "EAAYrLA0uYyIBAC6Psnm2bZCZAQOGp0CySEP6mlCJZBh75VwTGuP9ZAwlsHhWVmGPeP5aN20tSteUOXy20OXCERBjm9kvkhUTRJRDBaX1yjU6VEY2wDa8YOZBlUIO8b4XUYLWAN0gNZADZCiWPJxqtwDsq7jITNgjeS1W1ldIrLi3gZDZD",
-    "webhook_token": "skf&ueo0999#Jv.#mm?)23gas45vJK!=ka+`/3hf"
+    "page_access_token": null,
+    "webhook_token": null
   },
   "facebook": {
-    "app_id": "1736318059963170",
-    "app_secret": "13b25a5e657be4f23b352034ac6976c3"
+    "app_id": null,
+    "app_secret": null
   },
   "slack": {
 
@@ -28,16 +28,16 @@
   },
   "google": {
     "flights_api": "https://www.googleapis.com/qpxExpress/v1/trips",
-    "flights_key": "AIzaSyAETu5_M7s9w8a1g2YE-FwBuHvbTHP1u7A"
+    "flights_key": null
   },
   "canada_post": {
     "url": "https://soa-gw.canadapost.ca/vis/track/pin",
-    "auth": "Basic YzFjY2E2Y2UyMWRlMTcxZiA6YjJjNzliODJjNGIzZTJjN2E2YzA5Mw=="
+    "auth": null
   },
   "ziip": {
     "url": "https://ziip.ca"
   },
   "condo": {
-    "url": "https://api.niehe.ca/integrations/foobot"
+    "url": null
   }
 }
