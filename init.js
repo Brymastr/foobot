@@ -10,7 +10,7 @@ exports.init = config => {
   if(vars.FOOBOT_URL) config.url = vars.FOOBOT_URL;
 
   // Telegram
-  if(vars.FOOBOT_TELEGRAM_TOKEN) config.telegram.token = vars.FOOBOT_TOKEN;
+  if(vars.FOOBOT_TELEGRAM_TOKEN) config.telegram.token = vars.FOOBOT_TELEGRAM_TOKEN;
   config.route_token = uuid.v4();
 
   // Messenger
