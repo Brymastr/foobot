@@ -2,9 +2,7 @@ const
   request = require('request'),
   Message = require('../models/Message'),
   fs = require('fs'),
-  log = require('../logger'),
-  natural = require('natural'),
-  processing = require('../processing');
+  log = require('../logger');
 
 // Send a message
 exports.sendMessage = (message, config, done) => {

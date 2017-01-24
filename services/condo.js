@@ -1,6 +1,4 @@
-const
-  request = require('request'),
-  User = require('../models/User');
+const request = require('request');
 
 exports.open = (duration, phoneNumber, apartmentName, callback, done) => {
   request.post('https://api.niehe.ca/integrations/foobot', {

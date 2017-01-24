@@ -1,6 +1,7 @@
-const log = require('../logger');
-const request = require('request');
-const parseXml = require('xml2js').parseString;
+const 
+  log = require('../logger'),
+  request = require('request'),
+  parseXml = require('xml2js').parseString;
 
 exports.trackPackage = (trackingNumber, config, cb) => {
   request.get(`${config.canada_post.url}/${trackingNumber}/summary`, {
@@ -16,7 +17,7 @@ exports.trackPackage = (trackingNumber, config, cb) => {
       try {
         cb(result['tracking-summary']['pin-summary'][0]['event-description']);
       } catch(err) {
-        cb('No tracking info');
+        cb('');
       }
     });
 

@@ -6,8 +6,6 @@ const
 exports.getFlights = (message, cb) => {
   const key = process.FOOBOT_GOOGLE_FLIGHTS_KEY || 'AIzaSyAETu5_M7s9w8a1g2YE-FwBuHvbTHP1u7A';
   let dict = textParser.parseStringForTokenValues(message.text, ['from', 'to', 'for', 'on', 'less']);
-  // check mandatory fields
-  // parse date
 
   request.post(`https://www.googleapis.com/qpxExpress/v1/trips/search?key=${key}`, {
     json: {

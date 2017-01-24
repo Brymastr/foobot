@@ -17,6 +17,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
     2. Topic - What the classifier thinks of the message contents
     3. Content - If 1 and 2 are null, then maybe respond based on the actual text of the message
   */
+  
   // Conform to my message model
   let message = this.conform(update, platform);
   message.topic = classifier.classify(message.text);
@@ -45,9 +46,9 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         cb(m);
       } else if(m.topic == 'flights') {
         /** Not working: QPX returning 'limit reached' **/
-        // actions.flights(message, (data) => {
-        //   cb(data);
-        // });
+        actions.flights(message, (data) => {
+          cb(data);
+        });
         cb(m);
       } else if(m.topic == 'shorten url') {
         actions.shortenUrl(m, config, short => {

@@ -1,7 +1,6 @@
 const
   request = require('request'),
   Message = require('../models/Message'),
-  fs = require('fs'),
   log = require('../logger');
 
 exports.conform = update => {

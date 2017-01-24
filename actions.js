@@ -1,6 +1,6 @@
 /**
  * These functions are all the actions that foobot can perform. The processing module
- * decides what to do, and then forwards the request to the appropriate action in this module.
+ * decides what to do, and then forwards the messages to the appropriate action in this module.
  */
 
 const 
@@ -59,6 +59,7 @@ exports.openCondo = (message, phone_number, cb) => {
     if(message.text.includes('hour and')) {number = 1; duration = 1000;}
     number === 0 ? duration = 1800000 : duration *= 5400;
   } else if(units.includes('hour')) {
+    if(message.text.includes(' an ')) number = 1;
     duration *= 3600;
   } else if(units.includes('dai')) {
     duration *= 86400;
@@ -71,6 +72,9 @@ exports.openCondo = (message, phone_number, cb) => {
     // No parameters. "open the door"
     duration = 600000;
   }
+
+  if(duration > 86400000 && duration <= 432000000) message.response = 'I can do one day, I suppose';
+  else if(duration > 432000000) message.response = strings.$('tooLong');
 
   if(message.response) {
     cb(message);

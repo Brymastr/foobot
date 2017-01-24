@@ -1,4 +1,4 @@
-const update = [
+exports.update = [
   'Do you want me to update myself?',
   'Update time!',
   'Update me like one of your french girls',
