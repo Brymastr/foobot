@@ -9,7 +9,7 @@ exports.open = (duration, phoneNumber, apartmentName, callback, done) => {
       callback,      
       phoneNumber,
       apartmentName,
-      openMessage: strings.$('openDoor')
+      openMessage: strings.$('doorOpen')
     }
   }, (err, response, body) => {
     if(!body.apartmentName) done('Error opening the door. Maybe it\'s stuck');
