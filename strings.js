@@ -159,7 +159,10 @@ exports.doorOpen = [
   "Get in loser. We’re going shopping",
   "On Wednesdays we wear pink",
   "You smell like a baby prostitute",
-  "Oh my God, Danny DeVito! I love your work!"
+  "Oh my God, Danny DeVito! I love your work!",
+  "I am groot",
+  "I am foobot, almighty master of apartment entry systems and other silly things.",
+  "That Brycen guy though..."
 ];
 
 exports.$ = (method, str) => {
