@@ -52,7 +52,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         cb(m);
       } else if(m.topic == 'shorten url') {
         actions.shortenUrl(m, config, short => {
-          m.response = short;
+          m.response = short || 'Ziip has died, may it rest in peace';
           cb(m);
         });
       } else if(m.topic == 'track package') {

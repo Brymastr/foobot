@@ -1,15 +1,20 @@
 # foobot
-Telegram (more coming soon) bot for messing around
+Telegram and Facebook Messenger bot for messing around and general shenanigans
+
+Foobot is always developing, learning, and planning world domination.
 
 ### TODO:
-- [ ] Rename foobot to something more professional. foobot internally, but something like Mortimer externally (bot apis)
+- [x] Rename foobot to something more professional. foobot internally, but something like Mortimer externally (bot apis)
 - [x] Canada Post package tracking
 - [ ] FedEx package tracking
 - [ ] UPS package tracking
-- [ ] Memory by foobot. Get foobot to member things for you
+- [x] Memory by foobot. Get foobot to member things for you
 - [x] Facebook messenger support
-- [ ] Facebook login for single user across all bot types
-- [ ] Somewhere to hide secrets
+- [x] Facebook login for single user across all bot types
+- [x] Somewhere to hide secrets
+- [x] Automated apartment door buzzer control
+- [x] URL shortening
+- [x] Classic sassiness
 
 ### Notes:
 Control flow:
