@@ -83,6 +83,8 @@ classifier.addDocument('get my life back on track', 'else');
 classifier.addDocument('keep track of my spending habbits', 'else');
 classifier.addDocument('https://www.imaginaryurl.com/long/path?maybe-some-query-vars=ok&stuff=iguess', 'else');
 classifier.addDocument('https://www.youtube.com/watch?v=9g2oMlszdwY', 'else');
+classifier.addDocument('other words that go before this url https://www.youtube.com/watch?v=9g2oMlszdwY', 'else');
+classifier.addDocument('I feel like The Dropship: The 100 Podcast sounds pretty good, what do you think? https://www.youtube.com/watch?v=9g2oMlszdwY', 'else');
 classifier.addDocument('basically anything else', 'else');
 
 // Train the classifier

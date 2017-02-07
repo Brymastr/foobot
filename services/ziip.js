@@ -1,16 +1,21 @@
 const 
-  request = require('request'),
+  request = require('request-promise'),
   log = require('../logger');
 
-exports.shorten = (url, config, done) => {
-  request.post(`${config.ziip.url}`, {
-    json: {
-      url: url
-    }
-  }, (err, response, body) => {
-    if(err || !body.code) {
+exports.shorten = (url, config) => {
+  return new Promise((resolve, reject) => {
+    request.post(`${config.ziip.url}`, {
+      json: {
+        url: url
+      }
+    })
+    .then(body => {
+      if(!body.code) reject("no code");
+      else resolve(body.code);
+    })
+    .catch(err => {
       log.error(err);
-      done('There\'s nothing for you here.');
-    } else done(body.code);
+      reject(err);
+    });
   });
 };

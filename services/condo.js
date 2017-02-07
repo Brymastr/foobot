@@ -1,4 +1,6 @@
-const request = require('request');
+const 
+  request = require('request'),
+  strings = require('../strings');
 
 exports.open = (duration, phoneNumber, apartmentName, callback, done) => {
   request.post('https://api.niehe.ca/integrations/foobot', {
@@ -7,6 +9,8 @@ exports.open = (duration, phoneNumber, apartmentName, callback, done) => {
       callback,      
       phoneNumber,
       apartmentName,
+      openMessage: strings.$('doorOpen')
+
     }
   }, (err, response, body) => {
     if(!body.apartmentName) done('Error opening the door. Maybe it\'s stuck');
@@ -19,7 +23,7 @@ exports.close = (phoneNumber, apartmentName, done) => {
     json: {
       duration: 0,
       phoneNumber,
-      apartmentName,
+      apartmentName
     }
   }, (err, response, body) => {
     if(!body.apartmentName) done('Error locking the door. You should probably panic');

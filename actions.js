@@ -123,7 +123,7 @@ exports.uDic = (message, word, cb) => {
 // Package tracking
 exports.trackPackage = (messageText, config, cb) => {
   let trackingNumber = messageText.match(/(\d|[A-Z]){10,16}/g);
-  services.canadaPost.trackPackage(trackingNumber, config, info => cb(info));
+  services.canadaPost.trackPackage(trackingNumber, config).then(info => cb(info));
 };
 
 // Facebook login
@@ -164,8 +164,8 @@ exports.shortenUrl = (message, config, done) => {
   let url = message.text.match(/(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])?/i);
   if(!url) done('');
   else {
-    services.ziip.shorten(url[0], config, short => {
-      done(`${config.ziip.url}/${short}`);
-    });
+    services.ziip.shorten(url[0], config)
+      .then(short => done(`${config.ziip.url}/${short}`))
+      .catch(err => done());
   }
 };

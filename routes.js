@@ -45,6 +45,12 @@ module.exports = (config, passport, classifier) => {
     });
   });
 
+  router.post('/send/:chat_id', (req, res) => {
+    // TODO: get some security up in here. Need to agree with Mark on something
+    res.sendStatus(200);
+    processing.sendExternal(req.body.message, req.params.chat_id, config, message => {});
+  });
+
   // Messenger verify
   router.get('/webhook/messenger/:token', (req, res) => {
     if (req.query['hub.mode'] === 'subscribe' 

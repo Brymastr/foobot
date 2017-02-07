@@ -52,7 +52,7 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
         cb(m);
       } else if(m.topic == 'shorten url') {
         actions.shortenUrl(m, config, short => {
-          m.response = short;
+          m.response = short || 'Ziip has died, may it rest in peace';
           cb(m);
         });
       } else if(m.topic == 'track package') {
@@ -120,6 +120,19 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
     }
 
   });
+};
+
+// required in order to set source as 'external' and to choose which sendMessage to use based on chat_id format
+exports.sendExternal = (content, chat_id, config, done) => {
+  let message = new Message({
+    chat_id,
+    response: content,
+    source: 'external'
+  });
+  if(chat_id.length === 17)
+    services.messenger.sendMessage(message, config, body => done(body));
+  else  // TODO: this works until I add another chat platform
+    services.telegram.sendMessage(message, config, body => done(body));
 };
 
 // one sendMessage to rule them all
