@@ -23,10 +23,7 @@ exports.trackPackage = (trackingNumber, config) => {
           log.error(err);
           reject(err);  
         });
-
     })
     .catch(err => reject(err));
-    
   });
-  
 }

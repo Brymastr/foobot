@@ -18,5 +18,4 @@ exports.shorten = (url, config) => {
       reject(err);
     });
   });
-  
 };
