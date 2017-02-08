@@ -21,6 +21,12 @@ exports.init = config => {
   if(vars.FOOBOT_FACEBOOK_APP_ID) config.facebook.app_id = vars.FOOBOT_FACEBOOK_APP_ID;
   if(vars.FOOBOT_FACEBOOK_APP_SECRET) config.facebook.app_secret = vars.FOOBOT_FACEBOOK_APP_SECRET;
 
+  // Twitter
+  if(vars.FOOBOT_TWITTER_API_KEY) config.twitter.api_key = vars.FOOBOT_TWITTER_API_KEY;
+  if(vars.FOOBOT_TWITTER_API_SECRET) config.twitter.api_secret = vars.FOOBOT_TWITTER_API_SECRET;
+  if(vars.FOOBOT_TWITTER_ACCESS_TOKEN_KEY) config.twitter.access_token_key = vars.FOOBOT_TWITTER_ACCESS_TOKEN_KEY;
+  if(vars.FOOBOT_TWITTER_ACCESS_TOKEN_SECRET) config.twitter.access_token_secret = vars.FOOBOT_TWITTER_ACCESS_TOKEN_SECRET;
+
   // Canada Post
   if(vars.FOOBOT_CANADA_POST_AUTH) config.canada_post.auth = vars.FOOBOT_CANADA_POST_AUTH; 
 

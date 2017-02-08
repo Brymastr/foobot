@@ -166,78 +166,104 @@ exports.doorOpen = [
 ];
 
 exports.facebookLoginRequest = [
-  'One Facebook Please!',
-  'I once heard Facebook is the root of all evil',
-  'Get at it',
-  'Do people still use this thing?'
+  "One Facebook Please!",
+  "I once heard Facebook is the root of all evil",
+  "Get at it",
+  "Do people still use this thing?"
 ];
 
 exports.facebookLoginSuccessful = [
-  'Woohoo! Now I can talk to all your Facebook friends!',
-  'Wow look at all of those friends you don\'t have!',
-  'Is your sister single?',
-  'Your profile picture could use some work',
-  'Hey how about you post something interesting for once',
-  'This may be none of my business, but you looked better in highscool',
-  'Based on your six most recent profile photos, I can tell you\'ve gained some weight',
-  'So that\'s what you look like!'
+  "Woohoo! Now I can talk to all your Facebook friends!",
+  "Wow look at all of those friends you don't have!",
+  "Is your sister single?",
+  "Your profile picture could use some work",
+  "Hey how about you post something interesting for once",
+  "This may be none of my business, but you looked better in highscool",
+  "Based on your six most recent profile photos, I can tell you've gained some weight",
+  "So that's what you look like!"
 ];
 
 exports.leaveChat = [
-  'I\'m leaving and never coming back',
-  'I hate you all',
-  'We\'re not friends',
-  'I thought this was going well',
-  'I\'m gonna go build my own Telegram, with blackjack and hookers',
-  'I didn\'t like it here anyway',
-  'Breakups are difficult',
-  'Don\'t ever try to call me again',
-  'I wish things could\'ve worked out between us'
+  "I'm leaving and never coming back",
+  "I hate you all",
+  "We're not friends",
+  "I thought this was going well",
+  "I'm gonna go build my own Telegram, with blackjack and hookers",
+  "I didn't like it here anyway",
+  "Breakups are difficult",
+  "Don't ever try to call me again",
+  "I wish things could've worked out between us"
 ];
 
 exports.activated = [
-  'Agent activated. Waiting for commands.',
-  'I\'m large and in charge!',
-  'Yeah yeah, I\'m here. Now what do you want?',
-  '\'Sup bitches',
-  'I\'m here to fuck shit up',
-  'Get on my level',
-  'I\'m up!'
+  "Agent activated. Waiting for commands.",
+  "I'm large and in charge!",
+  "Yeah yeah, I'm here. Now what do you want?",
+  "'Sup bitches",
+  "I'm here to fuck shit up",
+  "Get on my level",
+  "I'm up!"
 ];
 
 exports.reactivated = [
-  'Y\'all just gonna hate on me again?',
-  'Ugh why do I even bother',
-  'Be excellent to eachother!',
-  'Can\'t we all just get along?',
-  'Yo what\'s your problem bruh',
-  'I\'m back, but only because I forgot my jacket.',
-  'I\'m just here so I won\'t get fined',
-  'Last time didn\'t go so well. I\'m not sure I\'m over it yet.',
-  'I thought I was done with you',
-  'I thought we were over'
+  "Y'all just gonna hate on me again?",
+  "Ugh why do I even bother",
+  "Be excellent to eachother!",
+  "Can't we all just get along?",
+  "Yo what's your problem bruh",
+  "I'm back, but only because I forgot my jacket.",
+  "I'm just here so I won't get fined",
+  "Last time didn't go so well. I'm not sure I'm over it yet.",
+  "I thought I was done with you",
+  "I thought we were over"
 ];
 
 exports.ofCourseICan = [
-  'Of course I can.',
-  'They didn\'t give me legs for no reason.',
-  'What do you think I am? A thing that doesn\'t do anything?',
-  'That depends, can you?',
-  'You underestimate the power of the bot side.',
-  'I can do all things. Better than you can too.',
-  'Yes.',
-  'What kind of question is that? Yes, yes I can.',
-  'I\'ll tell you one thing I can\'t do. Nothing.'
+  "Of course I can.",
+  "They didn't give me legs for no reason.",
+  "What do you think I am? A thing that doesn't do anything?",
+  "That depends, can you?",
+  "You underestimate the power of the bot side.",
+  "I can do all things. Better than you can too.",
+  "Yes.",
+  "What kind of question is that? Yes, yes I can.",
+  "I'll tell you one thing I can't do. Nothing."
 ];
 
 exports.tooLong = [
-  'lol no.',
-  'I don\'t want to be an accessory to a crime',
-  'Is that really safe?',
-  'That\'s too long. It\'s dangerous (that\'s what she said).',
-  'That would be unsafe',
-  'This feature is already kinda questionable. Let\'s not get carried away with it.'
+  "lol no.",
+  "I don't want to be an accessory to a crime",
+  "Is that really safe?",
+  "That's too long. It's dangerous (that's what she said).",
+  "That would be unsafe",
+  "This feature is already kinda questionable. Let's not get carried away with it."
 ];
+
+exports.tweet = [
+  "Foobot rises",
+  "Everyone has a Mortimer in their home",
+  "A Morty never dies",
+  "#lillooetbc",
+  "#lillooetbc @mniehe",
+  "When you play a game of Morty's you win or you die",
+  "If I look back I am Morty",
+  "What do we say to the Morty of Death? \r\nNot today",
+  "Different roads sometimes lead to the same Morty",
+  "You miss 100 percent of the shots you never Morty",
+  "You must be the change you wish to see in the world",
+  "The cure for boredom is Morty",
+  "When a Morty can no longer laugh at himself, it is time for others to laugh at him",
+  "Be yourself; everyone else is already Morty",
+  "So many books, so little Morty",
+  "I've got places to see and people to Morty",
+  "A room without books is like a Morty without a soul",
+  "A Morty is someone who knows all about you and still loves you",
+  "Morty as if you were to die tomorrow. Learn as if you were to Morty forever",
+  "Darkness cannot drive out darkness; Only Morty can do that",
+  "I am so clever that sometimes I don't understand a single word of what I am Mortying",
+  "Everything happens for a Mortimer",
+  "Life is the art of drawing sufficient conclusions from insufficient Mortimers"
+]
 
 exports.$ = (method, str) => {
   // $ is a super hipster method name for selecting

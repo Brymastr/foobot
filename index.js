@@ -10,7 +10,10 @@ const
   natural = require('natural'),
   ngrok = require('ngrok'),
   init = require('./init'),
-  passport = require('passport');
+  passport = require('passport'),
+  schedule = require('node-schedule'),
+  async = require('async'),
+  strings = require('./strings');
 
 var config = require('./config.json');
 
@@ -63,6 +66,31 @@ ngrok.connect(config.port, (err, url) => {
   if(config.telegram) {
     services.telegram.setWebhook(config);
   }
+
+  // Twitter
+  schedule.scheduleJob({
+    hour: 10,
+    minute: 30
+  }, () => {
+    async.retry({
+      times: 3,
+      interval: 2000,
+      errorFilter: err => {
+        return err === 187
+      }
+    }, (cb, results) => {
+      services.twitter.sendTweet(config, strings.$('tweet'))
+        .then(tweet => {
+          cb(tweet);
+        })
+        .catch(err => {
+          cb(new Error(err));
+        });
+    });
+  }, (err, results) => {
+    console.log(err, results);
+  });
+  
 
   // Skype
 
