@@ -3,6 +3,8 @@ const
   Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
 
+mongoose.Promise = Promise;
+
 module.exports = mongoose.model('User', Schema({
   facebook_id: String,        // app-scoped ID for a user of the Mortimer facebook app
   messenger_id: String,       // page-scoped ID for a user of the Mortimer page

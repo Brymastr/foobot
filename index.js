@@ -15,6 +15,7 @@ const
   async = require('async'),
   strings = require('./strings');
 
+mongoose.Promise = Promise;
 var config = require('./config.json');
 
 // Express setup

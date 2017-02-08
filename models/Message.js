@@ -11,6 +11,8 @@ const
   ObjectId = Schema.ObjectId,
   usersController = require('../controllers/usersController');
 
+mongoose.Promise = Promise;
+
 module.exports = mongoose.model('Message', Schema({
   message_id: String,
   text: String,
