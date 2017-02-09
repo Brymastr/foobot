@@ -69,27 +69,19 @@ ngrok.connect(config.port, (err, url) => {
   }
 
   // Twitter
-  schedule.scheduleJob({
-    hour: 10,
-    minute: 30
-  }, () => {
+  let rule = new schedule.RecurrenceRule();
+  rule.hour = 10;
+  rule.minute = 30;
+  schedule.scheduleJob(rule, () => {
     async.retry({
       times: 3,
       interval: 2000,
-      errorFilter: err => {
-        return err === 187
-      }
+      errorFilter: err => err === 187
     }, (cb, results) => {
       services.twitter.sendTweet(config, strings.$('tweet'))
-        .then(tweet => {
-          cb(tweet);
-        })
-        .catch(err => {
-          cb(new Error(err));
-        });
+        .then(tweet => cb(tweet))
+        .catch(err => cb(new Error(err)));
     });
-  }, (err, results) => {
-    console.log(err, results);
   });
   
 
