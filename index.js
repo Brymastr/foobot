@@ -14,7 +14,8 @@ const
   passport = require('passport'),
   schedule = require('node-schedule'),
   async = require('async'),
-  strings = require('./strings');
+  strings = require('./strings'),
+  rabbit = require('amqplib');
 
 mongoose.Promise = Promise;
 
@@ -90,5 +91,20 @@ ngrok.connect(config.port, (err, url) => {
   // Slack
 
   // Messenger
+
+  // Rabbit
+  rabbit.connect('amqp://localhost')
+    .then(conn => conn.createChannel())
+    .then(ch => {
+      return ch.assertQueue('message').then(fok => {
+        return ch.consume('message', msg => {
+          if (msg !== null) {
+            console.log(`Message dequeued: ${msg.content.toString()}`);
+            ch.ack(msg);
+          }
+        });
+      });
+    })
+    .catch(console.warn);
 
 });

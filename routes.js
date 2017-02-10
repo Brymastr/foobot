@@ -7,7 +7,8 @@ const
   messagesController = require('./controllers/messagesController'),
   usersController = require('./controllers/usersController'),
   telegram = require('./services/telegram'),
-  config = require('./config.json');
+  config = require('./config.json'),
+  rabbit = require('amqplib');
 
 
 module.exports = (passport, classifier) => {
@@ -29,6 +30,19 @@ module.exports = (passport, classifier) => {
 
     processing.processUpdate(req.body, req.params.source, classifier, message => {
       res.sendStatus(200);
+
+      rabbit.connect('amqp://localhost')
+        .then(conn => conn.createChannel())
+        .then(ch => {
+          return ch.assertQueue('message').then(ok => {
+            console.log(`Message queued: ${message.text}`)
+            return ch.sendToQueue('message', new Buffer(message.text));
+          });
+        })
+        .catch(console.warn);
+
+
+
       if(message.response || message.reply_markup) {
         let length = 10;
         if(message.response) message.response.length;
