@@ -14,8 +14,7 @@ const
   passport = require('passport'),
   schedule = require('node-schedule'),
   async = require('async'),
-  strings = require('./strings'),
-  rabbit = require('amqplib');
+  strings = require('./strings');
 
 mongoose.Promise = Promise;
 
@@ -91,5 +90,9 @@ ngrok.connect(config.port, (err, url) => {
   // Slack
 
   // Messenger
+
+  // Rabbit
+  services.rabbit.sub('telegram message')
+    .then(console.log);
 
 });

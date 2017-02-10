@@ -6,9 +6,10 @@ const
   Message = require('./models/Message'),
   messagesController = require('./controllers/messagesController'),
   usersController = require('./controllers/usersController'),
-  telegram = require('./services/telegram'),
-  config = require('./config.json'),
-  rabbit = require('amqplib');
+  services = require('./services'),
+  config = require('./config.json');
+
+var rabbitConnection = 
 
 
 module.exports = (passport, classifier) => {
@@ -27,17 +28,20 @@ module.exports = (passport, classifier) => {
       res.sendStatus(403);
       return;
     }
+    res.sendStatus(200);
 
     processing.processUpdate(req.body, req.params.source, classifier)
       .then(message => {
-        res.sendStatus(200);
+        return services.rabbit.pub(`${req.params.source} message`, message)
+      })
+      .then(message => {
         if(message.response || message.reply_markup)
           return processing.sendTyping(message);
         else return Promise.reject('No response');
       })
       .then(message => {
         let length = message.response.length;
-        let delay = Math.random() * 1;  // Add up to one second extra delay, set randomly for that human feel
+        let delay = Math.random() * 1; // Add up to one second extra delay, set randomly for that human feel
         let timeout = (0.02 * length + delay) * 1000; // Human-like delay is about 0.08 seconds per character. 0.02 is much more tolerable and what you would expect from a superior being like foobot
         setTimeout(() => {
           return processing.sendMessage(message);
@@ -45,7 +49,7 @@ module.exports = (passport, classifier) => {
       })
       .then(message => {
         if(message.source == 'telegram' && message.topic == 'leave chat')
-          return telegram.leaveChat(message.chat_id);
+          return services.telegram.leaveChat(message.chat_id);
         else return Promise.resolve();
       })
       .then(result => { 
@@ -80,8 +84,7 @@ module.exports = (passport, classifier) => {
 
   // Facebook auth
   router.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
-    (req, res) => {
+    passport.authenticate('facebook', {session: false, failureRedirect: '/'}), (req, res) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
       let message = new Message({
         response: strings.$('facebookLoginSuccessful'),
@@ -120,7 +123,7 @@ module.exports = (passport, classifier) => {
     })(req, res, next);
   });
 
-  // Messages
+  // Messages (this is pretty bad, don't need a route for this)
   router.get('/messages/:chatId?/:userId?', (req, res) => {
     if(!req.params.chatId && !req.params.userId) 
       messagesController.getAllMessages(messages => res.json(messages));
@@ -134,6 +137,7 @@ module.exports = (passport, classifier) => {
       res.send('probably never');
   });
 
+  // Get rid of the rest of these by v1.0
   router.delete('/messages', (req, res) => {
     messagesController.deleteMessages((result) => {
       log.debug(result);

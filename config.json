@@ -45,5 +45,8 @@
   },
   "condo": {
     "url": null
+  },
+  "rabbit": {
+    "queue": "amqp://localhost"
   }
 }
