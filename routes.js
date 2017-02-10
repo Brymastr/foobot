@@ -28,36 +28,30 @@ module.exports = (passport, classifier) => {
       return;
     }
 
-    processing.processUpdate(req.body, req.params.source, classifier, message => {
-      res.sendStatus(200);
-
-      rabbit.connect('amqp://localhost')
-        .then(conn => conn.createChannel())
-        .then(ch => {
-          return ch.assertQueue('message').then(ok => {
-            console.log(`Message queued: ${message.text}`)
-            return ch.sendToQueue('message', new Buffer(message.text));
-          });
-        })
-        .catch(console.warn);
-
-
-
-      if(message.response || message.reply_markup) {
-        let length = 10;
-        if(message.response) message.response.length;
-        let delay = Math.random() * 1;
-        let timeout = (0.01 * length + delay) * 1000; // Human-like delay is about 0.08 seconds per character. 0.01 is much more tolerable and what you would expect from a superior being like foobot
-        processing.sendTyping(message, () => {
-          setTimeout(() => {
-            processing.sendMessage(message, () => {
-              if(message.topic == 'leave chat' && message.source == 'telegram')
-                telegram.leaveChat(message.chat_id, () => {});
-            });
-          }, timeout);
-        });
-      }
-    });
+    processing.processUpdate(req.body, req.params.source, classifier)
+      .then(message => {
+        res.sendStatus(200);
+        if(message.response || message.reply_markup)
+          return processing.sendTyping(message);
+        else return Promise.reject('No response');
+      })
+      .then(message => {
+        let length = message.response.length;
+        let delay = Math.random() * 1;  // Add up to one second extra delay, set randomly for that human feel
+        let timeout = (0.02 * length + delay) * 1000; // Human-like delay is about 0.08 seconds per character. 0.02 is much more tolerable and what you would expect from a superior being like foobot
+        setTimeout(() => {
+          return processing.sendMessage(message);
+        }, timeout);
+      })
+      .then(message => {
+        if(message.source == 'telegram' && message.topic == 'leave chat')
+          return telegram.leaveChat(message.chat_id);
+        else return Promise.resolve();
+      })
+      .then(result => { 
+        if(result) log.info('Foobot left the chat');
+      })
+      .catch(log.debug); // Do something with this. Or don't, it's all going away soon anyway.
   });
 
   router.post('/send/:chat_id', (req, res) => {
@@ -158,7 +152,7 @@ module.exports = (passport, classifier) => {
   });
 
   router.delete('/users', (req, res) => {
-    log.debug('users deleted');
+    log.info('users deleted');
     usersController.deleteAllUsers(() => res.send(200));
   });
   

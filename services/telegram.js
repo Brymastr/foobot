@@ -1,5 +1,5 @@
 const 
-  request = require('request'),
+  request = require('request-promise'),
   Message = require('../models/Message'),
   fs = require('fs'),
   log = require('../logger'),
@@ -71,14 +71,13 @@ exports.setWebhook = () => {
   
 };
 
-exports.leaveChat = (chat_id, done) => {
-  request.post(`${config.telegram.url}${config.telegram.token}/leaveChat`, {
-    json: {
-      chat_id: chat_id
-    }
-  }, (err, response, body) => {
-    if(err) log.error(err);
-    done(body);
+exports.leaveChat = chat_id => {
+  return new Promise((resolve, reject) => {
+    request.post(`${config.telegram.url}${config.telegram.token}/leaveChat`, {
+      json: { chat_id }
+    })
+      .then(resolve)
+      .catch(reject)
   });
 };
 

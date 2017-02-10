@@ -57,7 +57,7 @@ ngrok.connect(config.port, (err, url) => {
   // MongoDB connection
   mongoose.connect(config.db);
   mongoose.connection.on('open', () => {
-    console.log(`Connected to mongodb at: ${config.db}`);
+    log.info(`Connected to mongodb at: ${config.db}`);
   });
 
   // Start server
@@ -91,20 +91,5 @@ ngrok.connect(config.port, (err, url) => {
   // Slack
 
   // Messenger
-
-  // Rabbit
-  rabbit.connect('amqp://localhost')
-    .then(conn => conn.createChannel())
-    .then(ch => {
-      return ch.assertQueue('message').then(fok => {
-        return ch.consume('message', msg => {
-          if (msg !== null) {
-            console.log(`Message dequeued: ${msg.content.toString()}`);
-            ch.ack(msg);
-          }
-        });
-      });
-    })
-    .catch(console.warn);
 
 });
