@@ -9,14 +9,14 @@ const
   log = require('./logger'),
   natural = require('natural'),
   ngrok = require('ngrok'),
-  init = require('./init'),
+  config = require('./config.json'),
+  init = require('./init')(config),
   passport = require('passport'),
   schedule = require('node-schedule'),
   async = require('async'),
   strings = require('./strings');
 
 mongoose.Promise = Promise;
-var config = require('./config.json');
 
 // Express setup
 var app = express();
@@ -41,16 +41,15 @@ app.use((req, res, next) => {
 // Configurations
 ngrok.connect(config.port, (err, url) => {
   config.url = url;
-  config = init.init(config);
   if(process.env.FOOBOT_URL) ngrok.disconnect(url);
 
   log.logLevel = config.log_level;
   log.debug(`Route token: ${config.route_token}`);
-  require('./passport')(config, passport);
+  require('./passport')(passport);
 
   // Routes + classifier
   natural.BayesClassifier.load('classifier.json', null, (err, classifier) => { 
-    let routes = require('./routes')(config, passport, classifier);
+    let routes = require('./routes')(passport, classifier);
     app.use('/', routes);
   });
 
@@ -65,7 +64,7 @@ ngrok.connect(config.port, (err, url) => {
 
   // Telegram
   if(config.telegram)
-    services.telegram.setWebhook(config);
+    services.telegram.setWebhook();
 
   // Twitter
   let rule = new schedule.RecurrenceRule();
@@ -77,15 +76,14 @@ ngrok.connect(config.port, (err, url) => {
       interval: 2000,
       errorFilter: err => err === 187
     }, (cb, results) => {
-      services.twitter.sendTweet(config, strings.$('tweet'))
+      services.twitter.sendTweet(strings.$('tweet'))
         .then(tweet => {
-          cb(tweet);
           log.info(`Tweet sent: ${tweet}`);
+          cb(tweet);
         })
         .catch(err => cb(new Error(err)));
     });
   });
-  
 
   // Skype
 

@@ -1,7 +1,8 @@
 const
   request = require('request'),
   Message = require('../models/Message'),
-  log = require('../logger');
+  log = require('../logger'),
+  config = require('../config.json');
 
 exports.conform = update => {
   update = update.entry[0].messaging[0];
@@ -25,7 +26,7 @@ exports.conform = update => {
   return message;
 }
 
-exports.sendMessage = (message, config, done) => {
+exports.sendMessage = (message, done) => {
   request.post(config.messenger.url, {
     qs: {
       access_token: config.messenger.page_access_token
@@ -45,7 +46,7 @@ exports.sendMessage = (message, config, done) => {
   });
 };
 
-exports.sendTyping = (message, config, done) => {
+exports.sendTyping = (message, done) => {
 
   request.post(config.messenger.url, {
     qs: {
@@ -58,7 +59,8 @@ exports.sendTyping = (message, config, done) => {
       sender_action: 'typing_on'
     }
   }, (err, response, body) => {
-    if(err) log.error(err);    
+    if(err) log.error(err);
     done(body);
-  }); 
+  });
+
 };

@@ -6,10 +6,11 @@ const
   Message = require('./models/Message'),
   messagesController = require('./controllers/messagesController'),
   usersController = require('./controllers/usersController'),
-  telegram = require('./services/telegram');
+  telegram = require('./services/telegram'),
+  config = require('./config.json');
 
 
-module.exports = (config, passport, classifier) => {
+module.exports = (passport, classifier) => {
   var router = express.Router();
 
   // Turn the 'update' into a local 'message' object
@@ -26,18 +27,18 @@ module.exports = (config, passport, classifier) => {
       return;
     }
 
-    processing.processUpdate(req.body, req.params.source, classifier, config, message => {
+    processing.processUpdate(req.body, req.params.source, classifier, message => {
       res.sendStatus(200);
       if(message.response || message.reply_markup) {
         let length = 10;
         if(message.response) message.response.length;
         let delay = Math.random() * 1;
         let timeout = (0.01 * length + delay) * 1000; // Human-like delay is about 0.08 seconds per character. 0.01 is much more tolerable and what you would expect from a superior being like foobot
-        processing.sendTyping(message, config, () => {
+        processing.sendTyping(message, () => {
           setTimeout(() => {
-            processing.sendMessage(message, config, () => {
+            processing.sendMessage(message, () => {
               if(message.topic == 'leave chat' && message.source == 'telegram')
-                telegram.leaveChat(message.chat_id, config, () => {});
+                telegram.leaveChat(message.chat_id, () => {});
             });
           }, timeout);
         });
@@ -48,7 +49,7 @@ module.exports = (config, passport, classifier) => {
   router.post('/send/:chat_id', (req, res) => {
     // TODO: get some security up in here. Need to agree with Mark on something
     res.sendStatus(200);
-    processing.sendExternal(req.body.message, req.params.chat_id, config, message => {});
+    processing.sendExternal(req.body.message, req.params.chat_id, message => {});
   });
 
   // Messenger verify
@@ -79,7 +80,7 @@ module.exports = (config, passport, classifier) => {
         chat_id: req.user.chat_id,
         source: params.source
       });
-      processing.sendMessage(message, config, () => {
+      processing.sendMessage(message, () => {
         let post_auth = `
           <script type="text/javascript">
             if (window.opener) {

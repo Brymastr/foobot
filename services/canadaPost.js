@@ -1,9 +1,10 @@
 const 
   log = require('../logger'),
   request = require('request-promise'),
-  parseXml = require('xml2js-es6-promise').parseString;
+  parseXml = require('xml2js-es6-promise').parseString,
+  config = require('../config.json');
 
-exports.trackPackage = (trackingNumber, config) => {
+exports.trackPackage = trackingNumber => {
   return new Promise((resolve, reject) => {
     request.get(`${config.canada_post.url}/${trackingNumber}/summary`, {
       headers: {

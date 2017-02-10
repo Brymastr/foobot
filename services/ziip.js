@@ -1,8 +1,9 @@
 const 
   request = require('request-promise'),
-  log = require('../logger');
+  log = require('../logger'),
+  config = require('../config.json');
 
-exports.shorten = (url, config) => {
+exports.shorten = url => {
   return new Promise((resolve, reject) => {
     request.post(`${config.ziip.url}`, {
       json: {

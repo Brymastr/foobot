@@ -12,7 +12,8 @@ const
   fs = require('fs'),
   textParser = require('./textParser'),
   usersController = require('./controllers/usersController'),
-  compromise = require('nlp_compromise');
+  compromise = require('nlp_compromise'),
+  config = require('./config.json');
 
 
 this.kanye = 'I miss the old kanye'; // The most iconic of foobot features
@@ -121,13 +122,13 @@ exports.uDic = (message, word, cb) => {
 };
 
 // Package tracking
-exports.trackPackage = (messageText, config, cb) => {
+exports.trackPackage = (messageText, cb) => {
   let trackingNumber = messageText.match(/(\d|[A-Z]){10,16}/g);
-  services.canadaPost.trackPackage(trackingNumber, config).then(info => cb(info));
+  services.canadaPost.trackPackage(trackingNumber).then(info => cb(info));
 };
 
 // Facebook login
-exports.facebookLogin = (config, message) => {
+exports.facebookLogin = message => {
   message.response = strings.$('facebookLoginRequest');
   if(message.source == 'telegram') {
     message.reply_markup = {
@@ -160,11 +161,11 @@ exports.iAmFoobot = () => {
 };
 
 // URL shortening (by me)
-exports.shortenUrl = (message, config, done) => {
+exports.shortenUrl = (message, done) => {
   let url = message.text.match(/(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])?/i);
   if(!url) done('');
   else {
-    services.ziip.shorten(url[0], config)
+    services.ziip.shorten(url[0])
       .then(short => done(`${config.ziip.url}/${short}`))
       .catch(err => done());
   }

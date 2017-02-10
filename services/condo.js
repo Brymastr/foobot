@@ -1,12 +1,13 @@
 const 
   request = require('request'),
-  strings = require('../strings');
+  strings = require('../strings'),
+  config = require('../config.json');
 
 exports.open = (duration, phoneNumber, apartmentName, callback, done) => {
-  request.post('https://api.niehe.ca/integrations/foobot', {
+  request.post(config.url, {
     json: {
       duration,
-      callback,      
+      callback,       // Mark calls this callback so I did too to save typing. I acknowledge it makes the method parameter very confusing
       phoneNumber,
       apartmentName,
       openMessage: strings.$('doorOpen')

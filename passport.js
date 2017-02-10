@@ -1,9 +1,10 @@
 const
   FacebookStrategy = require('passport-facebook').Strategy,
   BearerStrategy = require('passport-http-bearer').Strategy,
-  usersController = require('./controllers/usersController');
+  usersController = require('./controllers/usersController'),
+  config = require('./config.json');
 
-module.exports = (config, passport) => {
+module.exports = passport => {
 
   passport.use(new FacebookStrategy({
       clientID: config.facebook.app_id,

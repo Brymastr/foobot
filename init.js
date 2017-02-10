@@ -1,6 +1,6 @@
 const uuid = require('node-uuid');
 
-exports.init = config => {
+module.exports = config => {
   const vars = process.env;
 
   // General

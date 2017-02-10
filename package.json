@@ -1,14 +1,14 @@
 {
   "name": "foobot",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Everyone has a Mortimer in their home",
   "main": "index.js",
   "scripts": {
     "test": "node_modules/.bin/mocha -w",
     "train": "node classifier.js",
-    "run": "node classifier.js && node index.js"
+    "start": "node classifier.js && node index.js"
   },
-  "author": "",
+  "author": "Brycen Dorsay",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.0",
@@ -16,7 +16,6 @@
     "method-override": "^2.3.6",
     "mongoose": "^4.4.14",
     "natural": "^0.4.0",
-    "ngrok": "^2.2.3",
     "nlp_compromise": "^6.5.3",
     "node-schedule": "^1.2.0",
     "node-uuid": "^1.4.7",
@@ -37,6 +36,7 @@
     "@types/mongoose": "^4.5.38",
     "cheerio": "^0.22.0",
     "mocha": "^2.4.5",
-    "sinon": "^1.17.6"
+    "sinon": "^1.17.6",
+    "ngrok": "^2.2.3"    
   }
 }

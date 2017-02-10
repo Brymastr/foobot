@@ -7,10 +7,11 @@ const
   sentiment = require('sentiment'),
   usersController = require('./controllers/usersController'),
   Message = require('./models/Message'),
-  membersController = require('./controllers/membersController');
+  membersController = require('./controllers/membersController'),
+  config = require('./config.json');
 
 
-exports.processUpdate = (update, platform, classifier, config, cb) => {
+exports.processUpdate = (update, platform, classifier, cb) => {
   /*
     There is a heirarchy in which messages are processed
     1. Action - Edited messages, Callback Queries, and other good stuff
@@ -123,36 +124,36 @@ exports.processUpdate = (update, platform, classifier, config, cb) => {
 };
 
 // required in order to set source as 'external' and to choose which sendMessage to use based on chat_id format
-exports.sendExternal = (content, chat_id, config, done) => {
+exports.sendExternal = (content, chat_id, done) => {
   let message = new Message({
     chat_id,
     response: content,
     source: 'external'
   });
   if(chat_id.length === 17)
-    services.messenger.sendMessage(message, config, body => done(body));
+    services.messenger.sendMessage(message, body => done(body));
   else  // TODO: this works until I add another chat platform
-    services.telegram.sendMessage(message, config, body => done(body));
+    services.telegram.sendMessage(message, body => done(body));
 };
 
 // one sendMessage to rule them all
-exports.sendMessage = (message, config, done) => {
+exports.sendMessage = (message, done) => {
   log.info(`Message response => ${message.response}`);
   if(message.source)
-    services[message.source].sendMessage(message, config, body => {done(body)});
+    services[message.source].sendMessage(message, body => {done(body)});
 };
 
 // Send the three dot thing to indicate foobity is typing
-exports.sendTyping = (message, config, done) => {
+exports.sendTyping = (message, done) => {
   if(message.source)
-    services[message.source].sendTyping(message, config, body => done(body));
+    services[message.source].sendTyping(message, body => done(body));
 };
 
-exports.editMessage = (message, config, done) => {
+exports.editMessage = (message, done) => {
   log.debug(`Edit message`);
   message.reply_markup = '';
   if(message.source == 'telegram')
-    services.telegram.editMessageText(message, config, body => done(body));
+    services.telegram.editMessageText(message, body => done(body));
 };
 
 exports.conform = (update, platform) => {

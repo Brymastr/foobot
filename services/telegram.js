@@ -2,10 +2,11 @@ const
   request = require('request'),
   Message = require('../models/Message'),
   fs = require('fs'),
-  log = require('../logger');
+  log = require('../logger'),
+  config = require('../config.json');
 
 // Send a message
-exports.sendMessage = (message, config, done) => {
+exports.sendMessage = (message, done) => {
   request.post(`${config.telegram.url}${config.telegram.token}/sendMessage`, {
     json: {
       chat_id: message.chat_id,
@@ -20,7 +21,7 @@ exports.sendMessage = (message, config, done) => {
   });
 };
 
-exports.sendTyping = (message, config, done) => {
+exports.sendTyping = (message, done) => {
   request.post(`${config.telegram.url}${config.telegram.token}/sendChatAction`, {
     json: {
       chat_id: message.chat_id,
@@ -32,7 +33,7 @@ exports.sendTyping = (message, config, done) => {
   });  
 };
 
-exports.editMessage = (message, config, done) => {
+exports.editMessage = (message, done) => {
   request.post(`${config.telegram.url}${config.telegram.token}/editMessageText`, {
     json: {
       chat_id: message.chat_id,
@@ -47,7 +48,7 @@ exports.editMessage = (message, config, done) => {
 }
 
 // Set the webhook so that messages are sent to this api
-exports.setWebhook = config => {
+exports.setWebhook = () => {
   let formData;
   const url = `${config.url}/webhook/telegram/${config.route_token}`;
   try {
@@ -70,7 +71,7 @@ exports.setWebhook = config => {
   
 };
 
-exports.leaveChat = (chat_id, config, done) => {
+exports.leaveChat = (chat_id, done) => {
   request.post(`${config.telegram.url}${config.telegram.token}/leaveChat`, {
     json: {
       chat_id: chat_id
