@@ -70,11 +70,10 @@ ngrok.connect(config.port, (err, url) => {
 
   // Twitter
   let rule = new schedule.RecurrenceRule();
-  rule.hour = 10;
-  rule.minute = 30;
+  rule.second = 1;
   schedule.scheduleJob(rule, () => {
     async.retry({
-      times: 3,
+      times: 5,
       interval: 2000,
       errorFilter: err => err === 187
     }, (cb, results) => {
