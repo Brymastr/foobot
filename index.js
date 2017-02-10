@@ -64,13 +64,13 @@ ngrok.connect(config.port, (err, url) => {
   app.listen(config.port);
 
   // Telegram
-  if(config.telegram) {
+  if(config.telegram)
     services.telegram.setWebhook(config);
-  }
 
   // Twitter
   let rule = new schedule.RecurrenceRule();
-  rule.second = 1;
+  rule.hour = 10;
+  rule.minute = 30;
   schedule.scheduleJob(rule, () => {
     async.retry({
       times: 5,
@@ -78,7 +78,10 @@ ngrok.connect(config.port, (err, url) => {
       errorFilter: err => err === 187
     }, (cb, results) => {
       services.twitter.sendTweet(config, strings.$('tweet'))
-        .then(tweet => cb(tweet))
+        .then(tweet => {
+          cb(tweet);
+          log.info(`Tweet sent: ${tweet}`);
+        })
         .catch(err => cb(new Error(err)));
     });
   });
