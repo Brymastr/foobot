@@ -1,5 +1,6 @@
 // Require libraries
 const 
+  promisify = require('es6-promisify'),
   mongoose = require('mongoose'),
   express = require('express'),
   bodyParser = require('body-parser'),
@@ -7,8 +8,8 @@ const
   services = require('./services'),
   methodOverride = require('method-override'),
   log = require('./logger'),
-  natural = require('natural'),
-  ngrok = require('ngrok'),
+  loadClassifier = promisify(require('natural').BayesClassifier.load, {multiArgs: true}),
+  ngrok = promisify(require('ngrok').connect, {multiArgs: true}),
   config = require('./config.json'),
   init = require('./init')(config),
   passport = require('passport'),
@@ -24,6 +25,9 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({type:'application/json'}));
 app.use(methodOverride());
 app.use(passport.initialize());
+require('./passport')(passport);
+log.logLevel = config.log_level;
+log.debug(`Route token: ${config.route_token}`);
 
 // Logging middleware
 app.use('*', (req, res, next) => {
@@ -38,61 +42,65 @@ app.use((req, res, next) => {
   next();
 });
 
-// Configurations
-ngrok.connect(config.port, (err, url) => {
-  config.url = url;
-  if(process.env.FOOBOT_URL) ngrok.disconnect(url);
+const queuePromise = new Promise((resolve, reject) => {
+  rabbit.connect(config.rabbit.url)
+    .then(connection => connection.createChannel())
+    .then(channel => channel.assertExchange('foobot')
+    .then(resolve));
+});
 
-  log.logLevel = config.log_level;
-  log.debug(`Route token: ${config.route_token}`);
-  require('./passport')(passport);
-
-  // Routes + classifier
-  natural.BayesClassifier.load('classifier.json', null, (err, classifier) => { 
-    let routes = require('./routes')(passport, classifier);
-    app.use('/', routes);
-  });
-
-  // MongoDB connection
+const databasePromise = new Promise((resolve, reject) => {
   mongoose.connect(config.db);
   mongoose.connection.on('open', () => {
     log.info(`Connected to mongodb at: ${config.db}`);
+    resolve();
   });
+});
 
-  // Start server
+const classifierPromise = new Promise((resolve, reject) => {
+  loadClassifier('classifier.json', null, (err, classifier) => { 
+    err ? reject(err) : resolve(classifier);
+  });
+});
+
+var promises = [,
+  queuePromise,
+  classifierPromise,
+  databasePromise
+];
+  
+Promise.all(promises).then(result => {
+  let channel = result[0];
+  let classifier = result[1];
+  app.use('/', require('./routes')(passport, classifier, channel));
+
+  if(process.env.FOOBOT_URL) 
+    ngrok(config.port).then(url => config.url = url[1]);
+  
   app.listen(config.port);
+});
 
-  // Telegram
-  if(config.telegram)
-    services.telegram.setWebhook();
+// TODO: New route to request url
 
-  // Twitter
-  let rule = new schedule.RecurrenceRule();
-  rule.hour = 10;
-  rule.minute = 30;
-  schedule.scheduleJob(rule, () => {
-    async.retry({
-      times: 5,
-      interval: 2000,
-      errorFilter: err => err === 187
-    }, (cb, results) => {
-      services.twitter.sendTweet(strings.$('tweet'))
-        .then(tweet => {
-          log.info(`Tweet sent: ${tweet}`);
-          cb(tweet);
-        })
-        .catch(err => cb(new Error(err)));
-    });
+// Telegram
+if(config.telegram)
+  services.telegram.setWebhook();
+
+// Twitter
+let rule = new schedule.RecurrenceRule();
+rule.hour = 10;
+rule.minute = 30;
+schedule.scheduleJob(rule, () => {
+  async.retry({
+    times: 5,
+    interval: 2000,
+    errorFilter: err => err === 187
+  }, (cb, results) => {
+    services.twitter.sendTweet(strings.$('tweet'))
+      .then(tweet => {
+        log.info(`Tweet sent: ${tweet}`);
+        cb(tweet);
+      })
+      .catch(err => cb(new Error(err)));
   });
-
-  // Skype
-
-  // Slack
-
-  // Messenger
-
-  // Rabbit
-  services.rabbit.sub('telegram message')
-    .then(console.log);
-
 });

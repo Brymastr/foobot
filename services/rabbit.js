@@ -10,9 +10,10 @@ exports.pub = (topic, message) => {
     connection
       .then(conn => conn.createChannel())
       .then(channel => {
-        return channel.assertQueue(topic).then(ok => {
+        return channel.assertExchange(topic).then(ok => {
           console.log(`Message queued: ${message.text}`)
-          return channel.sendToQueue(topic, new Buffer(message.text));
+          channel.publish(topic, new Buffer(message.text));
+          return channel.close();
         });
       })
       .then(() => resolve(message));
@@ -20,7 +21,19 @@ exports.pub = (topic, message) => {
   .catch(reject);
 }
 
-// Subscribe messages with a given topic from RabbitMQ
+exports.createExchange = (name, channel) => {
+  return new Promise((resolve, reject) => {
+    channel.assertExchange(name)
+      .then(resolve)
+      .catch(reject);
+  });
+};
+
+exports.createQueue = (queueName, exchangeName) => {
+  
+};
+
+// Subscribe messages with a given topic fr om RabbitMQ
 exports.sub = topic => {
   return new Promise((resolve, reject) => {
     connection

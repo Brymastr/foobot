@@ -32,7 +32,7 @@ module.exports = (passport, classifier) => {
 
     processing.processUpdate(req.body, req.params.source, classifier)
       .then(message => {
-        return services.rabbit.pub(`${req.params.source} message`, message)
+        return services.rabbit.pub(`${req.params.source} message`, message);
       })
       .then(message => {
         if(message.response || message.reply_markup)
