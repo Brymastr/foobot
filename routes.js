@@ -12,7 +12,7 @@ const
 var rabbitConnection = 
 
 
-module.exports = (passport, classifier) => {
+module.exports = (passport, classifier, queueConnection) => {
   var router = express.Router();
 
   // Turn the 'update' into a local 'message' object
@@ -32,7 +32,7 @@ module.exports = (passport, classifier) => {
 
     processing.processUpdate(req.body, req.params.source, classifier)
       .then(message => {
-        return services.rabbit.pub(`${req.params.source} message`, message);
+        return services.rabbit.pub(queueConnection, `incoming.message.${message.source}`, message);
       })
       .then(message => {
         if(message.response || message.reply_markup)
@@ -61,17 +61,17 @@ module.exports = (passport, classifier) => {
   router.post('/send/:chat_id', (req, res) => {
     // TODO: get some security up in here. Need to agree with Mark on something
     res.sendStatus(200);
-    processing.sendExternal(req.body.message, req.params.chat_id, message => {});
+    processing.sendExternal(req.body.message, req.params.chat_id, message => console.log);
   });
 
   // Messenger verify
   router.get('/webhook/messenger/:token', (req, res) => {
-    if (req.query['hub.mode'] === 'subscribe' 
+    if (req.query['hub.mode'] === 'subscribe'
     && req.query['hub.verify_token'] === config.messenger.webhook_token) {
       res.status(200).send(req.query['hub.challenge']);
     } else {
       res.sendStatus(403);
-    }  
+    }
   });
 
   // Phonehome
@@ -158,6 +158,15 @@ module.exports = (passport, classifier) => {
   router.delete('/users', (req, res) => {
     log.info('users deleted');
     usersController.deleteAllUsers(() => res.send(200));
+  });
+
+  router.all('/resetTelegramWebhook', (req, res) => {
+    services.telegram.setWebhook();
+    res.sendStatus(200);
+  });
+  
+  router.get('/info/url', (req, res) => {
+    res.json({url: config.url});
   });
   
   return router;

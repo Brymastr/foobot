@@ -9,13 +9,14 @@ const
   methodOverride = require('method-override'),
   log = require('./logger'),
   loadClassifier = promisify(require('natural').BayesClassifier.load, {multiArgs: true}),
-  ngrok = promisify(require('ngrok').connect, {multiArgs: true}),
+  ngrok = promisify(require('ngrok').connect),
   config = require('./config.json'),
   init = require('./init')(config),
   passport = require('passport'),
   schedule = require('node-schedule'),
   async = require('async'),
-  strings = require('./strings');
+  strings = require('./strings'),
+  rabbit = require('amqplib');
 
 mongoose.Promise = Promise;
 
@@ -44,9 +45,12 @@ app.use((req, res, next) => {
 
 const queuePromise = new Promise((resolve, reject) => {
   rabbit.connect(config.rabbit.url)
-    .then(connection => connection.createChannel())
-    .then(channel => channel.assertExchange('foobot')
-    .then(resolve));
+    .then(connection => {
+      return connection.createChannel()
+        .then(channel => channel.assertExchange(config.rabbit.exchange_name, 'topic')
+        .then(ok => connection))
+    })
+    .then(resolve);
 });
 
 const databasePromise = new Promise((resolve, reject) => {
@@ -70,21 +74,18 @@ var promises = [,
 ];
   
 Promise.all(promises).then(result => {
-  let channel = result[0];
-  let classifier = result[1];
-  app.use('/', require('./routes')(passport, classifier, channel));
+  let connection = result[1];
+  let classifier = result[2];
+  app.use('/', require('./routes')(passport, classifier, connection));
 
-  if(process.env.FOOBOT_URL) 
-    ngrok(config.port).then(url => config.url = url[1]);
+  if(!process.env.FOOBOT_URL)
+    ngrok(config.port)
+      .then(url => config.url = url)
+      .then(services.telegram.setWebhook);
   
   app.listen(config.port);
+
 });
-
-// TODO: New route to request url
-
-// Telegram
-if(config.telegram)
-  services.telegram.setWebhook();
 
 // Twitter
 let rule = new schedule.RecurrenceRule();

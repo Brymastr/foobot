@@ -47,6 +47,7 @@
     "url": null
   },
   "rabbit": {
-    "queue": "amqp://localhost"
+    "queue": "amqp://localhost",
+    "exchange_name": "foobot"
   }
 }
