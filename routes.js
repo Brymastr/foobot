@@ -30,10 +30,9 @@ module.exports = (passport, classifier, queueConnection) => {
     }
     res.sendStatus(200);
 
+    services.rabbit.pub(queueConnection, `incoming.message.${req.params.source}`, req.body);
+
     processing.processUpdate(req.body, req.params.source, classifier)
-      .then(message => {
-        return services.rabbit.pub(queueConnection, `incoming.message.${message.source}`, message);
-      })
       .then(message => {
         if(message.response || message.reply_markup)
           return processing.sendTyping(message);

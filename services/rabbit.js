@@ -15,7 +15,8 @@ const
   c: [
     'telegram',
     'messenger',
-    'twitter'
+    'twitter',
+    'nlp'
   ]
 }
 
@@ -26,7 +27,7 @@ exports.pub = (connection, routingKey, message) => {
   return new Promise((resolve, reject) => {
     connection.createChannel()
       .then(channel => {
-        channel.publish(config.rabbit.exchange_name, routingKey, new Buffer(message.text))
+        channel.publish(config.rabbit.exchange_name, routingKey, new Buffer(JSON.stringify(message)))
         return channel;
       })
       // .then(channel => channel.close())
