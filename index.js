@@ -1,34 +1,23 @@
 // Require libraries
 const 
   promisify = require('es6-promisify'),
-  mongoose = require('mongoose'),
   express = require('express'),
   bodyParser = require('body-parser'),
-  processing = require('./processing'),
-  services = require('./services'),
   methodOverride = require('method-override'),
   log = require('./logger'),
-  loadClassifier = promisify(require('natural').BayesClassifier.load, {multiArgs: true}),
   ngrok = promisify(require('ngrok').connect),
   config = require('./config.json'),
-  init = require('./init')(config),
   passport = require('passport'),
-  schedule = require('node-schedule'),
-  async = require('async'),
-  strings = require('./strings'),
-  rabbit = require('amqplib');
-
-mongoose.Promise = Promise;
+  rabbit = require('amqplib'),
+  fork = require('child_process').fork;
 
 // Express setup
-var app = express();
-app.use(bodyParser.urlencoded({extended:true}));
-app.use(bodyParser.json({type:'application/json'}));
+const app = express();
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json({type: 'application/json'}));
 app.use(methodOverride());
 app.use(passport.initialize());
 require('./passport')(passport);
-log.logLevel = config.log_level;
-log.debug(`Route token: ${config.route_token}`);
 
 // Logging middleware
 app.use('*', (req, res, next) => {
@@ -43,65 +32,48 @@ app.use((req, res, next) => {
   next();
 });
 
-const queuePromise = new Promise((resolve, reject) => {
-  rabbit.connect(config.rabbit.url)
-    .then(connection => {
-      return connection.createChannel()
-        .then(channel => channel.assertExchange(config.rabbit.exchange_name, 'topic')
-        .then(ok => connection))
-    })
-    .then(resolve);
-});
-
-const databasePromise = new Promise((resolve, reject) => {
-  mongoose.connect(config.db);
-  mongoose.connection.on('open', () => {
-    log.info(`Connected to mongodb at: ${config.db}`);
-    resolve();
-  });
-});
-
-const classifierPromise = new Promise((resolve, reject) => {
-  loadClassifier('classifier.json', null, (err, classifier) => { 
-    err ? reject(err) : resolve(classifier);
-  });
-});
-
-var promises = [,
-  queuePromise,
-  classifierPromise,
-  databasePromise
-];
-  
-Promise.all(promises).then(result => {
-  let connection = result[1];
-  let classifier = result[2];
-  app.use('/', require('./routes')(passport, classifier, connection));
-
-  if(!process.env.FOOBOT_URL)
-    ngrok(config.port)
-      .then(url => config.url = url)
-      .then(services.telegram.setWebhook);
-  
-  app.listen(config.port);
-
-});
-
-// Twitter
-let rule = new schedule.RecurrenceRule();
-rule.hour = 10;
-rule.minute = 30;
-schedule.scheduleJob(rule, () => {
-  async.retry({
-    times: 5,
-    interval: 2000,
-    errorFilter: err => err === 187
-  }, (cb, results) => {
-    services.twitter.sendTweet(strings.$('tweet'))
-      .then(tweet => {
-        log.info(`Tweet sent: ${tweet}`);
-        cb(tweet);
+/**
+ * Create the exchange
+ * 
+ * This has to be here because the config isn't initialized 
+ * until after this promise is fulfilled
+ */
+const exchangePromise = new Promise((resolve, reject) => {
+  rabbit.connect(config.rabbit.url).then(connection => {
+    return connection.createChannel()
+      .then(channel => {
+        return channel.assertExchange(config.rabbit.exchange_name, 'topic')
+          .then(ok => channel.close());
       })
-      .catch(err => cb(new Error(err)));
-  });
+      .then(() => connection.close());
+  }).then(resolve).catch(reject);
 });
+
+// This is the main entrypoint for the app
+exchangePromise
+  .then(() => require('./startup'))
+  .then(startup => {
+
+    // Set up the basics
+    log.logLevel = config.log_level;
+    log.debug(`Route token: ${config.route_token}`);
+
+    // Use routes
+    app.use('/', require('./routes')(passport, startup.queueConnection));
+
+    // Start the express app
+    app.listen(config.port);
+
+    // Start ngrok if no URL environment variable set
+    if(!process.env.FOOBOT_URL)
+      ngrok(config.port).then(url => config.url = url);
+
+    // Subscribe to queues
+    let queues = new Map();
+    queues.set('internal', 'internal.message.nlp');
+
+    queues.forEach((value, key) => {
+      console.log(`Subscriber starting for ${value} queue`);
+      fork(__dirname + '/subscribe', [key, value], {silent: false, stdio: 'pipe'});
+    });
+  });

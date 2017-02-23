@@ -27,10 +27,9 @@ exports.pub = (connection, routingKey, message) => {
   return new Promise((resolve, reject) => {
     connection.createChannel()
       .then(channel => {
-        channel.publish(config.rabbit.exchange_name, routingKey, new Buffer(JSON.stringify(message)))
-        return channel;
-      })
-      // .then(channel => channel.close())
-      .then(resolve);
+        channel.publish(config.rabbit.exchange_name, routingKey, new Buffer(JSON.stringify(message)));
+        channel.close();
+        resolve();
+      });
   });
-}
+};

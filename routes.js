@@ -12,14 +12,8 @@ const
 var rabbitConnection = 
 
 
-module.exports = (passport, classifier, queueConnection) => {
+module.exports = (passport, queueConnection) => {
   var router = express.Router();
-
-  // Turn the 'update' into a local 'message' object
-  // Decide what type of message it is
-  //   - Maybe a different type all together based on message text
-  // Save to database as correct object type
-  // Send back message object
 
   router.post('/webhook/:source/:token', (req, res) => {
 
@@ -29,36 +23,11 @@ module.exports = (passport, classifier, queueConnection) => {
       return;
     }
     res.sendStatus(200);
-
     services.rabbit.pub(queueConnection, `incoming.message.${req.params.source}`, req.body);
-
-    processing.processUpdate(req.body, req.params.source, classifier)
-      .then(message => {
-        if(message.response || message.reply_markup)
-          return processing.sendTyping(message);
-        else return Promise.reject('No response');
-      })
-      .then(message => {
-        let length = message.response.length;
-        let delay = Math.random() * 1; // Add up to one second extra delay, set randomly for that human feel
-        let timeout = (0.02 * length + delay) * 1000; // Human-like delay is about 0.08 seconds per character. 0.02 is much more tolerable and what you would expect from a superior being like foobot
-        setTimeout(() => {
-          return processing.sendMessage(message);
-        }, timeout);
-      })
-      .then(message => {
-        if(message.source == 'telegram' && message.topic == 'leave chat')
-          return services.telegram.leaveChat(message.chat_id);
-        else return Promise.resolve();
-      })
-      .then(result => { 
-        if(result) log.info('Foobot left the chat');
-      })
-      .catch(log.debug); // Do something with this. Or don't, it's all going away soon anyway.
   });
 
   router.post('/send/:chat_id', (req, res) => {
-    // TODO: get some security up in here. Need to agree with Mark on something
+    // TODO: we must rebuild. This isn't going to work anymore
     res.sendStatus(200);
     processing.sendExternal(req.body.message, req.params.chat_id, message => console.log);
   });
@@ -82,6 +51,7 @@ module.exports = (passport, classifier, queueConnection) => {
   });
 
   // Facebook auth
+  // TODO: This may also be broken
   router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}), (req, res) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
@@ -136,6 +106,14 @@ module.exports = (passport, classifier, queueConnection) => {
       res.send('probably never');
   });
 
+  // Get the URL that foobot is living at
+  router.get('/info/webhook', (req, res) => {
+    res.json({
+      url: config.url,
+      route_token: config.route_token
+    });
+  });
+
   // Get rid of the rest of these by v1.0
   router.delete('/messages', (req, res) => {
     messagesController.deleteMessages((result) => {
@@ -160,12 +138,8 @@ module.exports = (passport, classifier, queueConnection) => {
   });
 
   router.all('/resetTelegramWebhook', (req, res) => {
-    services.telegram.setWebhook();
+    // services.telegram.setWebhook();
     res.sendStatus(200);
-  });
-  
-  router.get('/info/url', (req, res) => {
-    res.json({url: config.url});
   });
   
   return router;

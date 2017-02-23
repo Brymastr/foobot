@@ -16,9 +16,9 @@ exports.createUser = (data, cb) => {
   });
 };
 
-exports.getUser = (id, cb) => {
-  User.findOne({ _id: id }, (err, user) => {
-    cb(user);
+exports.getUser = id => {
+  return new Promise(resolve => {
+    User.findOne({ _id: id }).exec().then(resolve);
   });
 };
 
