@@ -3,7 +3,10 @@ FROM node:alpine
 WORKDIR /src
 COPY . /src
 
-RUN chmod 775 wait-for-it.sh && \
+RUN
+  apk update && \
+  apk add bash && \
+  chmod 775 wait-for-it.sh && \
   npm i --only=production
 
 EXPOSE 80
