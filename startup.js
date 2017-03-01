@@ -59,7 +59,7 @@ const createResultObject = results => {
 };
 
 module.exports = new Promise((resolve, reject) => {
-  retry(queueConnectionPromise, 'connect to rabbit', 10, 15000).then(conn => {
+  retry(queueConnectionPromise, 'connect to rabbit at' + config.rabbit.queue, 10, 15000).then(conn => {
     const promises = [
       retry(classifierPromise, 'load classifier'),
       retry(databasePromise, 'connect to mongoose'),
