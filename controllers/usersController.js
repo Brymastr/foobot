@@ -7,8 +7,7 @@ exports.createUser = (data, cb) => {
   new User({
     first_name: data.first_name,
     last_name: data.last_name,
-    telegram_id: data.telegram_id,
-    messenger_id: data.messenger_id
+    platform_id: data.platform_id,
   }).save((err, user) => {
     if (err) log.err(`Error creating user: ${err}`);
     else log.debug(`User created: ${user}`);
@@ -22,22 +21,24 @@ exports.getUser = id => {
   });
 };
 
-exports.getUserByPlatformId = (id, cb) => {
-  User.findOne({ $or: [{ 'telegram_id': id }, { 'messenger_id': id }, { 'facebook_id': id }] }, (err, user) => {
-    cb(user);
-  });
-};
+exports.getUserByPlatformId = id => new Promise(resolve => {
+  User.findOne({platform_id: {$elemMatch: {id}}}).exec().then(resolve);
+});
 
 exports.consolidateUsers = (user, cb) => {
-  User.findOne({facebook_id: user.facebook_id, _id: {$ne: user._id}}, (err, other) => {
+  let facebook_id = user.platform_id.find(p => p.name === 'facebook')
+  User.findOne({
+    platform_id: {$elemMatch: {name: 'facebook', id: facebook_id}},
+    _id: {$ne: user._id}
+  }).exec().then(other => {
     if(other) {
-      if(!other.messenger_id) other.messenger_id = user.messenger_id;
-      if(!other.telegram_id) other.telegram_id = user.telegram_id;
+      let joined = [...other.platform_id, ...user.platform_id];
+      other.platform_id = Array.from(new Set(joined));
       if(!other.gender) other.gender = user.gender;
       if(!other.phone_number) other.phone_number = user.phone_number;
       if(!other.email) other.email = user.email;
       if(!other.username) other.username = user.username;
-      other.old_account_ids.push(user._id);
+      other.old_user_ids.push(user._id);
       other.save((err, otherDoc) => {
         user.remove((err, thisDoc) => {
           cb(otherDoc);
@@ -49,36 +50,39 @@ exports.consolidateUsers = (user, cb) => {
   });
 };
 
-exports.savePhoneNumber = (message, cb) => {
-  User.findOne({_id: message.user_id}, (err, user) => {
-    if(message.other.contact_telegram_id == user.telegram_id && user.action == 'phone_number') {
-      user.phone_number = message.text.substr(1) === '+' ? message.text : '+' + message.text;
-      user.action = null;
-      user.save((err, doc) => {
-        message.response = 'Condo account linked';
-        cb(message);
-      });
-    } else cb(message);
-    
+exports.savePhoneNumber = message => {
+  return new Promise((resolve, reject) => {
+    User.findOne({_id: message.user_id}).exec().then(user => {
+      let telegramId = user.platform_id.find(p => p.name === 'telegram').id;
+      if(message.other.contact_telegram_id == telegramId && user.action == 'phone_number') {
+        user.phone_number = message.text.substr(1) === '+' ? message.text : '+' + message.text;
+        user.action = null;
+        user.save((err, doc) => {
+          message.response = 'Condo account linked';
+          resolve(message);
+        });
+      }
+    })
+    .catch(err => console.warn);
   });
 };
 
 // Don't keep this
 exports.getAllUserIds = cb => {
-  User.find({}, 'telegram_id messenger_id facebook_id', (err, users) => {
+  User.find({}, 'platform_id').exec().then(users => {
     cb(users);
   });
 };
 
 // Or this
 exports.getAllUsers = cb => {
-  User.find({}, (err, users) => {
+  User.find({}).exec().then(users => {
     cb(users);
   });
 };
 
 exports.deleteAllUsers = cb => {
-  User.remove({}, (err, count) => {
+  User.remove({}).exec().then(count => {
     cb();
   });
 }

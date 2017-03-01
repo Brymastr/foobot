@@ -6,6 +6,7 @@ const
   log = require('./logger'),
   loadClassifier = promisify(require('natural').BayesClassifier.load);
 
+require('./init')(config);
 mongoose.Promise = Promise;
 
 /**
@@ -23,12 +24,29 @@ const databasePromise = new Promise(resolve => {
 });
 
 /**
+ * Create the exchange
+ * 
+ * This has to be here because the config isn't initialized 
+ * until after this promise is fulfilled
+ */
+const exchangePromise = new Promise((resolve, reject) => {
+  rabbit.connect(config.rabbit.queue).then(connection => {
+    return connection.createChannel()
+      .then(channel => {
+        return channel.assertExchange(config.rabbit.exchange_name, 'topic')
+          .then(ok => channel.close());
+      })
+      .then(() => connection.close());
+  }).then(resolve).catch(reject);
+});
+
+/**
  * Connect to the rabbitmq service
  * 
  * Each subscriber will then open channels and assert specific queues
  */
 const queuePromise = new Promise((resolve, reject) => {
-  rabbit.connect(config.rabbit_url)
+  rabbit.connect(config.rabbit.queue)
     .then(resolve)
     .catch(reject);
 });
@@ -43,11 +61,6 @@ const classifierPromise = new Promise((resolve, reject) => {
 });
 
 /**
- * Create the config.json file based on environment variables
- */
-const configPromise = Promise.resolve(require('./init')(config));
-
-/**
  * Turn the results of the above promises into an object to be
  * forwarded to the executing process
  */
@@ -55,20 +68,21 @@ const createResultObject = results => new Promise(resolve => {
   resolve({
     queueConnection: results[1],
     classifier: results[2],
-    config: results[3]
+    config
   });
 });
 
 const promises = [
   databasePromise,
   queuePromise,
-  classifierPromise,
-  configPromise
+  classifierPromise
 ];
 
 module.exports = new Promise((resolve, reject) => {
-  Promise.all(promises)
-    .then(createResultObject)
-    .then(resolve)
-    .catch(reject);
-});
+  exchangePromise.then(() => {
+    Promise.all(promises)
+      .then(createResultObject)
+      .then(resolve)
+      .catch(reject);
+    });
+  });

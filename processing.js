@@ -30,97 +30,96 @@ exports.process = (message, classifier) => {
 
     // Save ALL messages  
     messagesController.saveMessage(message).then(m => {
-      message.normalized = true;
+      // console.log(m)
       // Actions
-      if(message.action) {
-        if(message.action == 'edit') {
-          message.response = strings.$('edit');
-          resolve(message);
-        } else if(message.action == 'contact') {
-          usersController.savePhoneNumber(message, result => resolve(result));
+      if(m.action) {
+        if(m.action == 'edit') {
+          m.response = strings.$('edit');
+          resolve(m);
+        } else if(m.action == 'contact') {
+          usersController.savePhoneNumber(m).then(result => resolve(result));
         } else {
-          // This message doesn't warrant a response
-          resolve(message);
+          resolve(m);
         }
       
       // Topics
-      } else if(message.topic && message.topic != 'else') {
-        if(message.topic == 'update') {
+      } else if(m.topic && m.topic != 'else') {
+        if(m.topic == 'update') {
           /** Deprecated **/
-          // message = actions.update(message);
-          resolve(message);
-        } else if(message.topic == 'flights') {
+          // m = actions.update(m);
+          resolve(m);
+        } else if(m.topic == 'flights') {
           /** Not working: QPX returning 'limit reached' **/
-          actions.flights(message, (data) => {
+          actions.flights(m, (data) => {
             resolve(data);
           });
-          resolve(message);
-        } else if(message.topic == 'shorten url') {
+          resolve(m);
+        } else if(m.topic == 'shorten url') {
           actions.shortenUrl(m, config, short => {
-            message.response = short || 'Ziip has died, may it rest in peace';
-            resolve(message);
+            m.response = short || 'Ziip has died, may it rest in peace';
+            resolve(m);
           });
-        } else if(message.topic == 'track package') {
-          actions.trackPackage(message.text, config, info => {
-            message.response = info;
-            resolve(message);
+        } else if(m.topic == 'track package') {
+          actions.trackPackage(m.text, config, info => {
+            m.response = info;
+            resolve(m);
           });
-        } else if(message.topic == 'member berries') {
+        } else if(m.topic == 'member berries') {
           membersController.saveMember(m, () => {
-            message.response = 'Oooooo I \'member!!!';
-            resolve(message);
+            m.response = 'Oooooo I \'member!!!';
+            resolve(m);
           });
-        } else if(message.topic == 'member berries query') {
+        } else if(m.topic == 'member berries query') {
           membersController.recall(m, member => {
-            message.response = member;
-            resolve(message);
+            m.response = member;
+            resolve(m);
           });
-        } else if(message.topic == 'facebook login') {
+        } else if(m.topic == 'facebook login') {
           m = actions.facebookLogin(config, m);
-          resolve(message);        
-        } else if(message.topic == 'condo entry setup') {
+          resolve(m);        
+        } else if(m.topic == 'condo entry setup') {
           actions.linkCondo(m, result => resolve(result));
-        } else if(message.topic == 'condo entry access') {
-          actions.openCondo(m, message.user.phone_number, result => resolve(result));
-        } else if(message.topic == 'condo entry lock') {
-          actions.closeCondo(m, message.user.phone_number, result => resolve(result));
+        } else if(m.topic == 'condo entry access') {
+          actions.openCondo(m, m.user.phone_number, result => resolve(result));
+        } else if(m.topic == 'condo entry lock') {
+          actions.closeCondo(m, m.user.phone_number, result => resolve(result));
         } else {
-          resolve(message);
+          resolve(m);
         }
 
       // Content
       } else {
-        if(message.text.match(/\b(define)\b/i)) {
-          const word = message.text.split(/(define)/i)[2];
+        if(m.text.match(/\b(define)\b/i)) {
+          const word = m.text.split(/(define)/i)[2];
           actions.uDic(m, word, result => resolve(result));
-        } else if(message.text.match(/\b(kanye|yeezy|yeezus|pablo)\b/i)) {
-          message.response = actions.iMissTheOldKanye();
-          resolve(message);
-        } else if(message.text.match(/it('s)?\s*(is)?\s*(was)?\s*(so|pretty|really|very)\s*(hard|long)/)) {
-          message.response = 'That\'s what she said!';
-          resolve(message);
-        } else if(message.text.match(/\b(foobot|morty|mortimer)\b can you/i)) {
-          message.response = strings.$('ofCourseICan');
-          resolve(message);
+        } else if(m.text.match(/\b(kanye|yeezy|yeezus|pablo)\b/i)) {
+          m.response = actions.iMissTheOldKanye();
+          resolve(m);
+        } else if(m.text.match(/it('s)?\s*(is)?\s*(was)?\s*(so|pretty|really|very)\s*(hard|long)/)) {
+          m.response = 'That\'s what she said!';
+          resolve(m);
+        } else if(m.text.match(/\b(foobot|morty|mortimer)\b can you/i)) {
+          m.response = strings.$('ofCourseICan');
+          resolve(m);
         // all other word matching should go before this one
-        } else if(message.text.match(/\b(foobot|morty|mortimer)\b/i)) {
-          if(message.text.match(/love you/i)) {
-            message.response = `I love you too, ${message.platform_fromessage.first_name}`;
-          } else if(message.sentiment < -1) {
-            message.response = strings.$('leaveChat');
-            message.topic = 'leave chat';
-          } else message.response = actions.iAmFoobot();
-          resolve(message);
-        } else if(message.text == '') {
-          // Message.findOne where message_id < this one and chat_id is this one
-          Message.findOne({message_id: {$lt: message.message_id}, chat_id: message.chat_id}, (err, doc) => {
-            if(doc) message.response = strings.$('reactivated');
-            else message.response = strings.$('activated');
-            resolve(message);
+        } else if(m.text.match(/\b(foobot|morty|mortimer)\b/i)) {
+          if(m.text.match(/love you/i)) {
+            m.response = `I love you too, ${m.platform_from.first_name}`;
+          } else if(m.sentiment < -1) {
+            m.response = strings.$('leaveChat');
+            m.topic = 'leave chat';
+          } else m.response = actions.iAmFoobot();
+          resolve(m);
+        } else if(m.text == '') {
+          // m.findOne where m_id < this one and chat_id is this one
+          m.findOne({m_id: {$lt: m.m_id}, chat_id: m.chat_id}, (err, doc) => {
+            if(doc) m.response = strings.$('reactivated');
+            else m.response = strings.$('activated');
+            resolve(m);
           });
         } else {
-          // No Action, Topic, or interesting Content. Just callback with the incoming message
-          resolve(message);
+          // No Action, Topic, or interesting Content. Just callback with the incoming m
+          resolve(m);
         }
       }
     });

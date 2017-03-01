@@ -36,5 +36,8 @@ module.exports = config => {
   // Condo entry (Mark Niehe)
   if(vars.FOOBOT_CONDO_ENTRY_URL) config.condo.url = vars.FOOBOT_CONDO_ENTRY_URL;
 
+  // Rabbit
+  if(vars.FOOBOT_RABBIT_QUEUE) config.rabbit.queue = vars.FOOBOT_RABBIT_QUEUE;
+
   return config;
 }

@@ -1,5 +1,6 @@
 const
   processing = require('./processing'),
+  config = require('./config.json'),
   queueName = process.argv[2],
   routeKey = process.argv[3];
 
@@ -18,13 +19,13 @@ const queuePromise = connection => new Promise(resolve => {
 require('./startup').then(app => {
   return queuePromise(app.queueConnection).then(() => {
     console.log(`Subscriber started for ${queueName} queue`)
-    return app.queueConnection.createChannel()
+    return app.queueConnection.createChannel();
   })
   .then(channel => {
     channel.consume(queueName, message => {
       if(!message.consumerTag) channel.ack(message);
       message = JSON.parse(message.content.toString());
-      console.log(message.text);
+      // console.log('Subscribe message.', queueName, message.text);
       processing.processUpdate(message, app.queueConnection, app.classifier);
     });
   });

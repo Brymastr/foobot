@@ -9,9 +9,6 @@ const
   services = require('./services'),
   config = require('./config.json');
 
-var rabbitConnection = 
-
-
 module.exports = (passport, queueConnection) => {
   var router = express.Router();
 
@@ -125,21 +122,25 @@ module.exports = (passport, queueConnection) => {
   router.get('/users/:userId?', (req, res) => {
     if(!req.params.userId) usersController.getAllUserIds(users => res.json(users));
     else {
-      usersController.getUserByPlatformId(req.params.userId, user => {
+      usersController.getUserByPlatformId(req.params.userId).then(user => {
         if(user) res.json(user);
-        else usersController.getUser(req.params.userId, user => res.json(user));
+        else usersController.getUser(req.params.userId).then(user => res.json(user));
       });
     }
   });
 
   router.delete('/users', (req, res) => {
     log.info('users deleted');
-    usersController.deleteAllUsers(() => res.send(200));
+    usersController.deleteAllUsers(() => res.sendStatus(200));
   });
 
   router.all('/resetTelegramWebhook', (req, res) => {
     // services.telegram.setWebhook();
     res.sendStatus(200);
+  });
+
+  router.get('/loaderio-*', (req, res) => {
+    res.sendFile(__dirname + '/loaderio');
   });
   
   return router;

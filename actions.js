@@ -23,18 +23,14 @@ this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
 
 exports.linkCondo = (message, cb) => {
   usersController.getUser(message.user_id, user => {
-    if(message.source == 'telegram') {
-      message.response = 'Open the doors to this plane';
-      message.reply_markup = {
-        keyboard: [[{
-          text: 'Link my condo account',
-          request_contact: true
-        }]],
-        resize_keyboard: true,
-        one_time_keyboard: true
-      }
-    } else if(message.source == 'messenger') {
-      message.response = 'This feature doesn\'t work in Messenger yet. Something about not being able to share phone numbers?';
+    message.response = 'Open the doors to this plane';
+    message.reply_markup = {
+      keyboard: [[{
+        text: 'Link my condo account',
+        request_contact: true
+      }]],
+      resize_keyboard: true,
+      one_time_keyboard: true
     }
     
     user.action = 'phone_number';
@@ -130,29 +126,33 @@ exports.trackPackage = (messageText, cb) => {
 // Facebook login
 exports.facebookLogin = message => {
   message.response = strings.$('facebookLoginRequest');
-  if(message.source == 'telegram') {
-    message.reply_markup = {
-      inline_keyboard: [[{
-        text: 'Login to Facebook',
-        url: `${config.url}/auth/facebook/telegram/${message.user_id}/${message.chat_id}`
-      }]]
-    }
-  } else if(message.source == 'messenger') {
-    message.response = null;
-    message.reply_markup = {
-      type: 'template',
-      payload: {
-        template_type: 'button',
-        text: 'Yep, this is how it works.',
-        buttons: [{
-          type: 'account_link',
-          url: `${config.url}/auth/facebook/messenger/${message.user_id}/${message.chat_id}`
-        }]
-      }
-    }
-  }
-
-  return message;
+  message.keyboard = [[{
+    type: 'account_link',
+    text: 'Login to Facebook',
+    url: `${config.url}/auth/facebook/${message.source}/${message.user_id}/${message.chat_id}`
+  }]];
+  return message;  
+  // if(message.source == 'telegram') {
+  //   message.reply_markup = {
+  //     inline_keyboard: [[{
+  //       text: 'Login to Facebook',
+  //       url: `${config.url}/auth/facebook/telegram/${message.user_id}/${message.chat_id}`
+  //     }]]
+  //   }
+  // } else if(message.source == 'messenger') {
+  //   message.response = null;
+  //   message.reply_markup = {
+  //     type: 'template',
+  //     payload: {
+  //       template_type: 'button',
+  //       text: 'Yep, this is how it works.',
+  //       buttons: [{
+  //         type: 'account_link',
+  //         url: `${config.url}/auth/facebook/messenger/${message.user_id}/${message.chat_id}`
+  //       }]
+  //     }
+  //   }
+  // }
 };
 
 // Foobot is self aware

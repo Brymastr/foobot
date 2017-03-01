@@ -17,7 +17,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json({type: 'application/json'}));
 app.use(methodOverride());
 app.use(passport.initialize());
-require('./passport')(passport);
 
 // Logging middleware
 app.use('*', (req, res, next) => {
@@ -32,48 +31,30 @@ app.use((req, res, next) => {
   next();
 });
 
-/**
- * Create the exchange
- * 
- * This has to be here because the config isn't initialized 
- * until after this promise is fulfilled
- */
-const exchangePromise = new Promise((resolve, reject) => {
-  rabbit.connect(config.rabbit.url).then(connection => {
-    return connection.createChannel()
-      .then(channel => {
-        return channel.assertExchange(config.rabbit.exchange_name, 'topic')
-          .then(ok => channel.close());
-      })
-      .then(() => connection.close());
-  }).then(resolve).catch(reject);
-});
-
 // This is the main entrypoint for the app
-exchangePromise
-  .then(() => require('./startup'))
-  .then(startup => {
+require('./startup').then(startup => {
+  
+  // Set up the basics
+  log.logLevel = config.log_level;
+  log.debug(`Route token: ${config.route_token}`);
 
-    // Set up the basics
-    log.logLevel = config.log_level;
-    log.debug(`Route token: ${config.route_token}`);
+  // Use routes
+  require('./passport')(passport);
+  app.use('/', require('./routes')(passport, startup.queueConnection));
 
-    // Use routes
-    app.use('/', require('./routes')(passport, startup.queueConnection));
+  // Start the express app
+  app.listen(config.port);
 
-    // Start the express app
-    app.listen(config.port);
+  // Start ngrok if no URL environment variable set
+  if(!process.env.FOOBOT_URL)
+    ngrok(config.port).then(url => config.url = url);
 
-    // Start ngrok if no URL environment variable set
-    if(!process.env.FOOBOT_URL)
-      ngrok(config.port).then(url => config.url = url);
+  // Subscribe to queues
+  let queues = new Map();
+  queues.set('internal', 'internal.message.nlp');
 
-    // Subscribe to queues
-    let queues = new Map();
-    queues.set('internal', 'internal.message.nlp');
-
-    queues.forEach((value, key) => {
-      console.log(`Subscriber starting for ${value} queue`);
-      fork(__dirname + '/subscribe', [key, value], {silent: false, stdio: 'pipe'});
-    });
+  queues.forEach((value, key) => {
+    console.log(`Subscriber starting for ${value} queue`);
+    fork(__dirname + '/subscribe', [key, value], {silent: false, stdio: 'pipe'});
   });
+});

@@ -14,7 +14,6 @@ const
 exports.saveMessage = message => {
   return new Promise((resolve, reject) => {
     Message.create(message)
-      .then(doc => usersController.getUser(doc.user_id))
       .then(resolve)
       .catch(err => {
         log.error(`Error saving message: ${err}`);
