@@ -6,7 +6,6 @@ const
   log = require('./logger'),
   loadClassifier = promisify(require('natural').BayesClassifier.load);
 
-require('./init')(config);
 mongoose.Promise = Promise;
 
 /**
@@ -16,73 +15,78 @@ mongoose.Promise = Promise;
  * and then it can be used in subsequent modules along the execution chain
  */
 const databasePromise = new Promise(resolve => {
-  mongoose.connect(config.db);
-  mongoose.connection.on('open', () => {
-    log.info(`Connected to mongodb at: ${config.db}`);
-    resolve();
-  });
-});
-
-/**
- * Create the exchange
- * 
- * This has to be here because the config isn't initialized 
- * until after this promise is fulfilled
- */
-const exchangePromise = new Promise((resolve, reject) => {
-  rabbit.connect(config.rabbit.queue).then(connection => {
-    return connection.createChannel()
-      .then(channel => {
-        return channel.assertExchange(config.rabbit.exchange_name, 'topic')
-          .then(ok => channel.close());
-      })
-      .then(() => connection.close());
-  }).then(resolve).catch(reject);
-});
-
-/**
- * Connect to the rabbitmq service
- * 
- * Each subscriber will then open channels and assert specific queues
- */
-const queuePromise = new Promise((resolve, reject) => {
-  rabbit.connect(config.rabbit.queue)
+  mongoose.connect(config.db)
     .then(resolve)
-    .catch(reject);
+    .catch(err => {throw new Error(err)});
 });
 
 /**
  * Load the classifier json from disk
  */
-const classifierPromise = new Promise((resolve, reject) => {
-  loadClassifier('classifier.json', null)
-    .then(resolve)
-    .catch(reject);
-});
+const classifierPromise = loadClassifier('classifier.json', null);
+    
+/**
+ * Connect to the rabbitmq service
+ * 
+ * Each subscriber will then open channels and assert specific queues
+ */
+const queueConnectionPromise = rabbit.connect(config.rabbit.queue);
+
+
+/**
+ * Create the exchange
+ * 
+ */
+const exchangePromise = conn => {
+  return new Promise((resolve, reject) => {
+    conn.createChannel().then(channel => {
+      return channel.assertExchange(config.rabbit.exchange_name, 'topic')
+        .then(ok => channel.close());
+    })
+    .then(resolve).catch(err => {throw new Error('eeeerrror')});
+  });
+};
 
 /**
  * Turn the results of the above promises into an object to be
  * forwarded to the executing process
  */
-const createResultObject = results => new Promise(resolve => {
-  resolve({
-    queueConnection: results[1],
-    classifier: results[2],
-    config
+const createResultObject = results => {
+  return Promise.resolve({
+    classifier: results[0],
+    queueConnection: results[3]
+  });
+};
+
+module.exports = new Promise((resolve, reject) => {
+  retry(queueConnectionPromise, 'connect to rabbit', 10, 15000).then(conn => {
+    const promises = [
+      retry(classifierPromise, 'load classifier'),
+      retry(databasePromise, 'connect to mongoose'),
+      retry(exchangePromise(conn), 'create rabbit exchange')
+    ];
+    
+    Promise.all(promises)
+      .then(results => {
+        results.push(conn);
+        return createResultObject(results)
+      })
+      .then(resolve)
+      .catch(reject);
   });
 });
 
-const promises = [
-  databasePromise,
-  queuePromise,
-  classifierPromise
-];
-
-module.exports = new Promise((resolve, reject) => {
-  exchangePromise.then(() => {
-    Promise.all(promises)
-      .then(createResultObject)
-      .then(resolve)
-      .catch(reject);
+/**
+ * Retry a promise
+ */
+function retry(promise, message, attempts = 5, interval = 500) {
+  return new Promise((resolve, reject) => {
+    promise.then(resolve).catch(err => {
+      if(attempts === 0) throw new Error('Max retries reached for ' + message);
+      else setTimeout(() => {
+        console.log('retry ' + message);
+        return retry(promise, message, --attempts, interval).then(resolve);
+      }, interval);
     });
   });
+}

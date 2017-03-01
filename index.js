@@ -11,6 +11,11 @@ const
   rabbit = require('amqplib'),
   fork = require('child_process').fork;
 
+require('./init')(config);
+require('./passport')(passport);
+log.logLevel = config.log_level;
+log.debug(`Route token: ${config.route_token}`);
+
 // Express setup
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -31,30 +36,23 @@ app.use((req, res, next) => {
   next();
 });
 
-// This is the main entrypoint for the app
+// Startup
+app.listen(config.port);
+if(!process.env.FOOBOT_URL)
+  ngrok(config.port).then(url => config.url = url);
+
+// Everything that needs a database, message queue, or classifier
 require('./startup').then(startup => {
   
-  // Set up the basics
-  log.logLevel = config.log_level;
-  log.debug(`Route token: ${config.route_token}`);
-
   // Use routes
-  require('./passport')(passport);
   app.use('/', require('./routes')(passport, startup.queueConnection));
-
-  // Start the express app
-  app.listen(config.port);
-
-  // Start ngrok if no URL environment variable set
-  if(!process.env.FOOBOT_URL)
-    ngrok(config.port).then(url => config.url = url);
 
   // Subscribe to queues
   let queues = new Map();
   queues.set('internal', 'internal.message.nlp');
 
   queues.forEach((value, key) => {
-    console.log(`Subscriber starting for ${value} queue`);
+    console.log(`Subscriber starting for ${key} queue`);
     fork(__dirname + '/subscribe', [key, value], {silent: false, stdio: 'pipe'});
   });
 });
