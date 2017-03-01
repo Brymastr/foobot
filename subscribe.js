@@ -4,6 +4,8 @@ const
   queueName = process.argv[2],
   routeKey = process.argv[3];
 
+require('./init')(config);
+
 // Create the queue before subscribing
 const queuePromise = connection => new Promise(resolve => {
   return connection.createChannel().then(channel => {
