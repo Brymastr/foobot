@@ -43,7 +43,7 @@ const exchangePromise = () => new Promise((resolve, reject) => {
         .then(ok => channel.close());
     })
     .then(() => conn.close())
-    .then(resolve).catch(err => {throw new Error(err)});
+    .then(resolve);
   });
 });
 
