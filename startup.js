@@ -14,7 +14,7 @@ mongoose.Promise = Promise;
  * This connection only needs to be established once upon process creation 
  * and then it can be used in subsequent modules along the execution chain
  */
-const databasePromise = new Promise(resolve => {
+const databasePromise = () => new Promise(resolve => {
   mongoose.connect(config.db)
     .then(resolve)
     .catch(err => {throw new Error(err)});
@@ -23,14 +23,14 @@ const databasePromise = new Promise(resolve => {
 /**
  * Load the classifier json from disk
  */
-const classifierPromise = loadClassifier('classifier.json', null);
+const classifierPromise = () => loadClassifier('classifier.json', null);
     
 /**
  * Connect to the rabbitmq service
  * 
  * Each subscriber will then open channels and assert specific queues
  */
-const queueConnectionPromise = rabbit.connect(config.rabbit.queue);
+const queueConnectionPromise = () => rabbit.connect(config.rabbit.queue);
 
 
 /**
@@ -81,7 +81,7 @@ module.exports = new Promise((resolve, reject) => {
  */
 function retry(promise, message, attempts = 5, interval = 500) {
   return new Promise((resolve, reject) => {
-    promise.then(resolve).catch(err => {
+    promise().then(resolve).catch(err => {
       console.log(err)
       if(attempts === 0) throw new Error('Max retries reached for ' + message);
       else setTimeout(() => {
