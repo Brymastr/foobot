@@ -32,20 +32,20 @@ const classifierPromise = () => loadClassifier('classifier.json', null);
  */
 const queueConnectionPromise = () => rabbit.connect(config.rabbit.queue);
 
-
 /**
  * Create the exchange
  * 
  */
-const exchangePromise = conn => {
-  return new Promise((resolve, reject) => {
-    conn.createChannel().then(channel => {
+const exchangePromise = () => new Promise((resolve, reject) => {
+  rabbit.connect(config.rabbit.queue).then(conn => {
+    return conn.createChannel().then(channel => {
       return channel.assertExchange(config.rabbit.exchange_name, 'topic')
         .then(ok => channel.close());
     })
-    .then(resolve).catch(err => {throw new Error('eeeerrror')});
+    .then(() => conn.close())
+    .then(resolve).catch(err => {throw new Error(err)});
   });
-};
+});
 
 /**
  * Turn the results of the above promises into an object to be
@@ -63,7 +63,7 @@ module.exports = new Promise((resolve, reject) => {
     const promises = [
       retry(classifierPromise, 'load classifier'),
       retry(databasePromise, 'connect to mongoose'),
-      retry(exchangePromise(conn), 'create rabbit exchange')
+      retry(exchangePromise, 'create rabbit exchange')
     ];
     
     Promise.all(promises)
