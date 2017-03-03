@@ -13,10 +13,6 @@ module.exports = config => {
   if(vars.FOOBOT_TELEGRAM_TOKEN) config.telegram.token = vars.FOOBOT_TELEGRAM_TOKEN;
   config.route_token = uuid.v4();
 
-  // Messenger
-  if(vars.FOOBOT_MESSENGER_WEBHOOK_TOKEN) config.messenger.webhook_token = vars.FOOBOT_MESSENGER_WEBHOOK_TOKEN;
-  if(vars.FOOBOT_MESSENGER_PAGE_ACCESS_TOKEN) config.messenger.page_access_token = vars.FOOBOT_MESSENGER_PAGE_ACCESS_TOKEN;
-
   // Facebook
   if(vars.FOOBOT_FACEBOOK_APP_ID) config.facebook.app_id = vars.FOOBOT_FACEBOOK_APP_ID;
   if(vars.FOOBOT_FACEBOOK_APP_SECRET) config.facebook.app_secret = vars.FOOBOT_FACEBOOK_APP_SECRET;

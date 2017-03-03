@@ -11,11 +11,6 @@
     "token": null,
     "url": "https://api.telegram.org/bot"
   },
-  "messenger": {
-    "url": "https://graph.facebook.com/v2.8/me/messages",
-    "page_access_token": null,
-    "webhook_token": null
-  },
   "facebook": {
     "app_id": null,
     "app_secret": null
