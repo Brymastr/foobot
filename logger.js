@@ -1,4 +1,4 @@
-const fs = require('fs');
+// const fs = require('fs');
 
 this.logLevel;
 this.logDir = process.env.FOOBOT_LOG_DIR || './logs';

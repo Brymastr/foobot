@@ -13,11 +13,13 @@
   "dependencies": {
     "amqplib": "^0.5.1",
     "body-parser": "^1.15.0",
+    "compression": "^1.6.2",
     "es6-promisify": "^5.0.0",
     "express": "^4.13.4",
     "method-override": "^2.3.6",
     "mongoose": "^4.4.14",
     "natural": "^0.4.0",
+    "ngrok": "^2.2.3",
     "nlp_compromise": "^6.5.3",
     "node-schedule": "^1.2.0",
     "node-uuid": "^1.4.7",
@@ -25,13 +27,12 @@
     "passport-facebook": "^2.1.1",
     "passport-http-bearer": "^1.0.1",
     "request": "^2.72.0",
-    "request-promise": "^4.1.1",
+    "request-promise-native": "^1.0.3",
     "sentiment": "^2.1.0",
     "twitter": "^1.7.0",
     "urban": "^0.3.1",
     "xml2js": "^0.4.17",
-    "xml2js-es6-promise": "^1.1.1",
-    "ngrok": "^2.2.3"    
+    "xml2js-es6-promise": "^1.1.1"
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",

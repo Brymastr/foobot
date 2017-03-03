@@ -1,6 +1,6 @@
 const 
   log = require('../logger'),
-  request = require('request-promise'),
+  request = require('request-promise-native'),
   parseXml = require('xml2js-es6-promise').parseString,
   config = require('../config.json');
 

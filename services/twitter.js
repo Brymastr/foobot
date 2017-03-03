@@ -1,5 +1,5 @@
 const
-  request = require('request-promise'),
+  request = require('request-promise-native'),
   Twitter = require('twitter'),
   config = require('../config.json'),
   schedule = require('node-schedule');

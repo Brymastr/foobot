@@ -8,7 +8,7 @@ const
   ngrok = promisify(require('ngrok').connect),
   config = require('./config.json'),
   passport = require('passport'),
-  rabbit = require('amqplib'),
+  compression = require('compression'),
   fork = require('child_process').fork;
 
 require('./init')(config);
@@ -22,10 +22,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json({type: 'application/json'}));
 app.use(methodOverride());
 app.use(passport.initialize());
+app.use(compression());
 
 // Logging middleware
 app.use('*', (req, res, next) => {
-  log.info(`${req.method}: ${req.baseUrl}`);
+  log.debug(`${req.method}: ${req.baseUrl}`);
   next();
 });
 
@@ -43,7 +44,7 @@ if(!process.env.FOOBOT_URL)
 
 // Everything that needs a database, message queue, or classifier
 require('./startup').then(startup => {
-  
+
   // Use routes
   app.use('/', require('./routes')(passport, startup.queueConnection));
 
@@ -52,7 +53,7 @@ require('./startup').then(startup => {
   queues.set('internal', 'internal.message.nlp');
 
   queues.forEach((value, key) => {
-    console.log(`Subscriber starting for ${key} queue`);
+    log.debug(`Subscriber starting for ${key} queue`);
     fork(__dirname + '/subscribe', [key, value], {silent: false, stdio: 'pipe'});
   });
 });
