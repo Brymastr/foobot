@@ -27,7 +27,7 @@ require('./startup').then(app => {
     channel.consume(queueName, message => {
       if(!message.consumerTag) channel.ack(message);
       message = JSON.parse(message.content.toString());
-      // console.log('Subscribe message.', queueName, message.text);
+      console.log('Subscribe message', queueName, message.text);
       processing.processUpdate(message, app.queueConnection, app.classifier);
     });
   });
