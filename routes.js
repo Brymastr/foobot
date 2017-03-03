@@ -20,7 +20,6 @@ module.exports = (passport, queueConnection) => {
       return;
     }
     res.sendStatus(200);
-    console.log('Publish message', req.params.source, req.body)
     services.rabbit.pub(queueConnection, `incoming.message.${req.params.source}`, req.body);
   });
 

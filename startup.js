@@ -82,10 +82,8 @@ module.exports = new Promise((resolve, reject) => {
 function retry(promise, message, attempts = 5, interval = 500) {
   return new Promise((resolve, reject) => {
     promise().then(resolve).catch(err => {
-      console.log(err)
       if(attempts === 0) throw new Error('Max retries reached for ' + message);
       else setTimeout(() => {
-        console.log('retry ' + message);
         return retry(promise, message, --attempts, interval).then(resolve);
       }, interval);
     });
