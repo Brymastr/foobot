@@ -21,22 +21,22 @@ this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
   this.kanye = data;
 });
 
-exports.linkCondo = (message, cb) => {
-  usersController.getUser(message.user_id, user => {
+exports.linkCondo = message => new Promise(resolve => {
+  usersController.getUser(message.user_id).then(user => {
     message.response = 'Open the doors to this plane';
     message.reply_markup = {
       keyboard: [[{
         text: 'Link my condo account',
-        request_contact: true
+        type: 'request_contact'
       }]],
       resize_keyboard: true,
       one_time_keyboard: true
     }
     
     user.action = 'phone_number';
-    user.save((err, doc) => cb(message));
+    user.save().then(resolve);
   });
-};
+});
 
 exports.openCondo = (message, phone_number, cb) => {
   natural.PorterStemmer.attach();
@@ -129,7 +129,8 @@ exports.facebookLogin = message => {
   message.keyboard = [[{
     type: 'account_link',
     text: 'Login to Facebook',
-    url: `${config.url}/auth/facebook/${message.source}/${message.user_id}/${message.chat_id}`
+    url: `${config.url}/auth/facebook/${message.source}/${message.user_id}/${message.chat_id}`,
+    data: null
   }]];
   return message;  
   // if(message.source == 'telegram') {

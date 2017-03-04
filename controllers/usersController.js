@@ -15,11 +15,9 @@ exports.createUser = (data, cb) => {
   });
 };
 
-exports.getUser = id => {
-  return new Promise(resolve => {
-    User.findOne({ _id: id }).exec().then(resolve);
-  });
-};
+exports.getUser = id => new Promise(resolve => {
+  User.findOne({ _id: id }).exec().then(resolve);
+});
 
 exports.getUserByPlatformId = id => new Promise(resolve => {
   User.findOne({platform_id: {$elemMatch: {id}}}).exec().then(resolve);

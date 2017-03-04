@@ -25,11 +25,13 @@ module.exports = mongoose.model('Message', Schema({
   action: String,         // Process Update uses this to figure out what to do next (eg. CallbackQuery)
   sentiment: Number,
   response: String,       // Text to use as response message
-  keyboard: [[{
-    type: String,
-    text: String,
-    url: String
-  }]],
+  keyboard: Array,
+  // [[{
+  //   type: String,
+  //   text: String,
+  //   url: String,
+  //   data: String
+  // }]],
   source: String,         // Platform the message was received from. eg Telegram, Messenger, Slack, etc... 
   other: Object           // Temporary stuff like telegram_id on contact sharing
 })

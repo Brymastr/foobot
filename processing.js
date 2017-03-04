@@ -30,7 +30,6 @@ exports.process = (message, classifier) => {
 
     // Save ALL messages  
     messagesController.saveMessage(message).then(m => {
-      // console.log(m)
       // Actions
       if(m.action) {
         if(m.action == 'edit') {
@@ -44,11 +43,7 @@ exports.process = (message, classifier) => {
       
       // Topics
       } else if(m.topic && m.topic != 'else') {
-        if(m.topic == 'update') {
-          /** Deprecated **/
-          // m = actions.update(m);
-          resolve(m);
-        } else if(m.topic == 'flights') {
+        if(m.topic == 'flights') {
           /** Not working: QPX returning 'limit reached' **/
           actions.flights(m, (data) => {
             resolve(data);
