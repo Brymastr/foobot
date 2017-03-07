@@ -23,7 +23,7 @@ module.exports = passport => {
           if(!user.gender) user.gender = profile.gender;
           user.save((err, doc) => {
             doc.chat_id = params.chat_id;
-            usersController.consolidateUsers(doc, consolidated => done(null, consolidated));
+            usersController.consolidateUsers(doc).then(consolidated => done(null, consolidated));
           });
         } else {
           done();

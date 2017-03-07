@@ -23,30 +23,28 @@ exports.getUserByPlatformId = id => new Promise(resolve => {
   User.findOne({platform_id: {$elemMatch: {id}}}).exec().then(resolve);
 });
 
-exports.consolidateUsers = (user, cb) => {
-  let facebook_id = user.platform_id.find(p => p.name === 'facebook')
+exports.consolidateUsers = user => new Promise(resolve => {
+  let facebook_id = user.platform_id.find(p => p.name === 'facebook');
+  console.log(facebook_id)
   User.findOne({
-    platform_id: {$elemMatch: {name: 'facebook', id: facebook_id}},
+    platform_id: {$elemMatch: {name: 'facebook', id: facebook_id.id}},
     _id: {$ne: user._id}
   }).exec().then(other => {
     if(other) {
       let joined = [...other.platform_id, ...user.platform_id];
-      other.platform_id = Array.from(new Set(joined));
-      if(!other.gender) other.gender = user.gender;
-      if(!other.phone_number) other.phone_number = user.phone_number;
-      if(!other.email) other.email = user.email;
-      if(!other.username) other.username = user.username;
+      other = Object.assign(user, other);
       other.old_user_ids.push(user._id);
-      other.save((err, otherDoc) => {
-        user.remove((err, thisDoc) => {
-          cb(otherDoc);
-        });
+      other.platform_id = Array.from(new Set(joined));
+
+      other.save().then(otherDoc => {
+        user.remove().then(thisDoc => resolve(otherDoc));
       });
+
     } else {
-      cb(user);
+      resolve(user);
     }
   });
-};
+});
 
 exports.savePhoneNumber = message => {
   return new Promise((resolve, reject) => {
