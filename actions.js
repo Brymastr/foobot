@@ -38,7 +38,7 @@ exports.linkCondo = message => new Promise(resolve => {
 exports.openCondo = (message, cb) => {
   usersController.getUser(message.user_id).then(user => {
     console.log(user)
-    if(!user.phone_number) throw new Error('no phone number');
+    if(!user.phone_number) throw new Error('setup required');
     let phone_number = user.phone_number;
 
     natural.PorterStemmer.attach();
@@ -84,7 +84,10 @@ exports.openCondo = (message, cb) => {
       });
     }
   }).catch(err => {
-    this.linkCondo(message).then(cb);
+    console.log(err);
+    if(err === 'setup required')
+      this.linkCondo(message).then(cb);
+    else cb(message);
   });
   
 };

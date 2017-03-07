@@ -36,7 +36,7 @@ exports.process = (message, classifier) => {
           m.response = strings.$('edit');
           resolve(m);
         } else if(m.action == 'contact') {
-          usersController.savePhoneNumber(m).then(result => resolve(result));
+          usersController.savePhoneNumber(m).then(resolve);
         } else {
           resolve(m);
         }
