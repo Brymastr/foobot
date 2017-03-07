@@ -3,6 +3,9 @@ const
   config = require('./init')(require('./config.json')),
   queueName = process.argv[2],
   routeKey = process.argv[3];
+  url = process.argv[4];
+
+config.url = url;
 
 // Create the queue before subscribing
 const queuePromise = connection => new Promise(resolve => {

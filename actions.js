@@ -15,7 +15,6 @@ const
   compromise = require('nlp_compromise'),
   config = require('./config.json');
 
-
 this.kanye = 'I miss the old kanye'; // The most iconic of foobot features
 this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
   this.kanye = data;
@@ -139,28 +138,7 @@ exports.facebookLogin = message => {
     url: `${config.url}/auth/facebook/${message.source}/${message.user_id}/${message.chat_id}`,
     data: null
   }]];
-  return message;  
-  // if(message.source == 'telegram') {
-  //   message.reply_markup = {
-  //     inline_keyboard: [[{
-  //       text: 'Login to Facebook',
-  //       url: `${config.url}/auth/facebook/telegram/${message.user_id}/${message.chat_id}`
-  //     }]]
-  //   }
-  // } else if(message.source == 'messenger') {
-  //   message.response = null;
-  //   message.reply_markup = {
-  //     type: 'template',
-  //     payload: {
-  //       template_type: 'button',
-  //       text: 'Yep, this is how it works.',
-  //       buttons: [{
-  //         type: 'account_link',
-  //         url: `${config.url}/auth/facebook/messenger/${message.user_id}/${message.chat_id}`
-  //       }]
-  //     }
-  //   }
-  // }
+  return message;
 };
 
 // Foobot is self aware

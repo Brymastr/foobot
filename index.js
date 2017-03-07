@@ -59,7 +59,7 @@ ngrok()
 
     queues.forEach((value, key) => {
       log.debug(`Subscriber starting for ${key} queue`);
-      fork(__dirname + '/subscribe', [key, value], {silent: false, stdio: 'pipe'});
+      fork(__dirname + '/subscribe', [key, value, config.url], {silent: false, stdio: 'pipe'});
     });
     console.log('startup complete');
   });

@@ -70,8 +70,7 @@ exports.process = (message, classifier) => {
             resolve(m);
           });
         } else if(m.topic == 'facebook login') {
-          m = actions.facebookLogin(config, m);
-          resolve(m);        
+          resolve(actions.facebookLogin(m));        
         } else if(m.topic == 'condo entry setup') {
           actions.linkCondo(m).then(resolve);
         } else if(m.topic == 'condo entry access') {
