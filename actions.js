@@ -22,7 +22,6 @@ this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
 });
 
 exports.linkCondo = message => new Promise(resolve => {
-  console.log(message, user)
   usersController.getUser(message.user_id).then(user => {
     console.log(message, user)
     
@@ -79,7 +78,7 @@ exports.openCondo = (message, phone_number, cb) => {
   if(message.response) {
     cb(message);
   } else if(!phone_number) {
-    this.linkCondo(message, result => cb(result));
+    this.linkCondo(message).then(result => cb(result));
   } else {
     services.condo.open(duration, phone_number, null, null, result => {
       message.response = result;

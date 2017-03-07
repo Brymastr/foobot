@@ -73,7 +73,7 @@ exports.process = (message, classifier) => {
           m = actions.facebookLogin(config, m);
           resolve(m);        
         } else if(m.topic == 'condo entry setup') {
-          actions.linkCondo(m, result => resolve(result));
+          actions.linkCondo(m).then(resolve);
         } else if(m.topic == 'condo entry access') {
           actions.openCondo(m, m.user.phone_number, result => resolve(result));
         } else if(m.topic == 'condo entry lock') {
