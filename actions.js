@@ -22,7 +22,10 @@ this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
 });
 
 exports.linkCondo = message => new Promise(resolve => {
+  console.log(message, user)
   usersController.getUser(message.user_id).then(user => {
+    console.log(message, user)
+    
     message.response = 'Open the doors to this plane';
     message.reply_markup = {
       keyboard: [[{
