@@ -5,13 +5,12 @@ const
   bodyParser = require('body-parser'),
   methodOverride = require('method-override'),
   log = require('./logger'),
-  ngrok = promisify(require('ngrok').connect),
-  config = require('./config.json'),
+  ngrokConnect = promisify(require('ngrok').connect),
+  config = require('./init')(require('./config.json')),
   passport = require('passport'),
   compression = require('compression'),
   fork = require('child_process').fork;
 
-require('./init')(config);
 require('./passport')(passport);
 log.logLevel = config.log_level;
 log.debug(`Route token: ${config.route_token}`);
@@ -37,23 +36,30 @@ app.use((req, res, next) => {
   next();
 });
 
+const ngrok = () => new Promise(resolve => {
+  if(!config.url) {
+    ngrokConnect(config.port).then(url => {
+      config.url = url;
+      resolve(url);
+    });
+  } else resolve();
+});
 // Startup
 app.listen(config.port);
-if(!process.env.FOOBOT_URL)
-  ngrok(config.port).then(url => config.url = url);
 
-// Everything that needs a database, message queue, or classifier
-require('./startup').then(startup => {
+ngrok()
+  .then(() => require('./startup'))
+  .then(startup => {
+    // Use routes
+    app.use('/', require('./routes')(passport, startup.queueConnection));
 
-  // Use routes
-  app.use('/', require('./routes')(passport, startup.queueConnection));
+    // Subscribe to queues
+    let queues = new Map();
+    queues.set('internal', 'internal.message.nlp');
 
-  // Subscribe to queues
-  let queues = new Map();
-  queues.set('internal', 'internal.message.nlp');
-
-  queues.forEach((value, key) => {
-    log.debug(`Subscriber starting for ${key} queue`);
-    fork(__dirname + '/subscribe', [key, value], {silent: false, stdio: 'pipe'});
+    queues.forEach((value, key) => {
+      log.debug(`Subscriber starting for ${key} queue`);
+      fork(__dirname + '/subscribe', [key, value], {silent: false, stdio: 'pipe'});
+    });
+    console.log('startup complete');
   });
-});

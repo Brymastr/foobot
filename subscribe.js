@@ -23,9 +23,11 @@ require('./startup').then(app => {
     return app.queueConnection.createChannel();
   })
   .then(channel => {
+    console.log('start')
     channel.consume(queueName, message => {
       if(!message.consumerTag) channel.ack(message);
       message = JSON.parse(message.content.toString());
+      console.log(message)
       processing.processUpdate(message, app.queueConnection, app.classifier);
     });
   });
