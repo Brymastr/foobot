@@ -1,10 +1,8 @@
 const
   processing = require('./processing'),
-  config = require('./config.json'),
+  config = require('./init')(require('./config.json')),
   queueName = process.argv[2],
   routeKey = process.argv[3];
-
-require('./init')(config);
 
 // Create the queue before subscribing
 const queuePromise = connection => new Promise(resolve => {
@@ -23,11 +21,9 @@ require('./startup').then(app => {
     return app.queueConnection.createChannel();
   })
   .then(channel => {
-    console.log('start')
     channel.consume(queueName, message => {
       if(!message.consumerTag) channel.ack(message);
       message = JSON.parse(message.content.toString());
-      console.log(message)
       processing.processUpdate(message, app.queueConnection, app.classifier);
     });
   });

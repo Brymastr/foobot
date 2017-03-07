@@ -75,9 +75,9 @@ exports.process = (message, classifier) => {
         } else if(m.topic == 'condo entry setup') {
           actions.linkCondo(m).then(resolve);
         } else if(m.topic == 'condo entry access') {
-          actions.openCondo(m, m.user.phone_number, result => resolve(result));
+          actions.openCondo(m, result => resolve(result));
         } else if(m.topic == 'condo entry lock') {
-          actions.closeCondo(m, m.user.phone_number, result => resolve(result));
+          actions.closeCondo(m, result => resolve(result));
         } else {
           resolve(m);
         }

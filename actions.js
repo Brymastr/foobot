@@ -23,68 +23,70 @@ this.kanyeDoc = fs.readFile('./kanye.txt', 'utf-8', (err, data) => {
 
 exports.linkCondo = message => new Promise(resolve => {
   usersController.getUser(message.user_id).then(user => {
-    console.log(message, user)
-    
     message.response = 'Open the doors to this plane';
-    message.reply_markup = {
-      keyboard: [[{
-        text: 'Link my condo account',
-        type: 'request_contact'
-      }]],
-      resize_keyboard: true,
-      one_time_keyboard: true
-    }
-    
+    message.keyboard = [[{
+      text: 'Link my condo account',
+      type: 'request_contact'
+    }]];
     user.action = 'phone_number';
-    user.save().then(resolve);
+    user.save().then(doc => {
+      resolve(message);
+    });
   });
 });
 
-exports.openCondo = (message, phone_number, cb) => {
-  natural.PorterStemmer.attach();
-  let stemmed = message.text.tokenizeAndStem().join(' ');
-  
-  let number = compromise.value(stemmed).number || 0;
-  let duration = number * 1000; // start off with seconds then find appropriate multiplier
+exports.openCondo = (message, cb) => {
+  usersController.getUser(message.user_id).then(user => {
+    console.log(user)
+    if(!user.phone_number) throw new Error('no phone number');
+    let phone_number = user.phone_number;
 
-  // get unit
-  let units = textParser.parseStringForTokens(stemmed, ['second', 'minut', 'hour', 'dai', 'week', 'month', 'year', 'half', 'bit', 'while']);
-  // calculate door unlock duration in miliseconds  
-  if(units.includes('second')) {
-    // do nothing it's already in seconds
-  } else if(units.includes('minut')) {
-    duration *= 60;
-  } else if(units.includes('half') && units.includes('hour')) {
-    if(message.text.includes('hour and')) {number = 1; duration = 1000;}
-    number === 0 ? duration = 1800000 : duration *= 5400;
-  } else if(units.includes('hour')) {
-    if(message.text.includes(' an ')) number = 1;
-    duration *= 3600;
-  } else if(units.includes('dai')) {
-    duration *= 86400;
-  } else if(units.includes('week') || units.includes('month') || units.includes('year')) {
-    message.response = strings.$('tooLong');
-  } else if(units.includes('bit') || units.includes('while')) {
-    duration = 1000;
-    duration *= 900;
-  } else {
-    // No parameters. "open the door"
-    duration = 600000;
-  }
+    natural.PorterStemmer.attach();
+    let stemmed = message.text.tokenizeAndStem().join(' ');
+    
+    let number = compromise.value(stemmed).number || 0;
+    let duration = number * 1000; // start off with seconds then find appropriate multiplier
 
-  if(duration > 86400000 && duration <= 432000000) message.response = 'I can do one day, I suppose';
-  else if(duration > 432000000) message.response = strings.$('tooLong');
+    // get unit
+    let units = textParser.parseStringForTokens(stemmed, ['second', 'minut', 'hour', 'dai', 'week', 'month', 'year', 'half', 'bit', 'while']);
+    // calculate door unlock duration in miliseconds  
+    if(units.includes('second')) {
+      // do nothing it's already in seconds
+    } else if(units.includes('minut')) {
+      duration *= 60;
+    } else if(units.includes('half') && units.includes('hour')) {
+      if(message.text.includes('hour and')) {number = 1; duration = 1000;}
+      number === 0 ? duration = 1800000 : duration *= 5400;
+    } else if(units.includes('hour')) {
+      if(message.text.includes(' an ')) number = 1;
+      duration *= 3600;
+    } else if(units.includes('dai')) {
+      duration *= 86400;
+    } else if(units.includes('week') || units.includes('month') || units.includes('year')) {
+      message.response = strings.$('tooLong');
+    } else if(units.includes('bit') || units.includes('while')) {
+      duration = 1000;
+      duration *= 900;
+    } else {
+      // No parameters. "open the door"
+      duration = 600000;
+    }
 
-  if(message.response) {
-    cb(message);
-  } else if(!phone_number) {
-    this.linkCondo(message).then(result => cb(result));
-  } else {
-    services.condo.open(duration, phone_number, null, null, result => {
-      message.response = result;
+    if(duration > 86400000 && duration <= 432000000) message.response = 'I can do one day, I suppose';
+    else if(duration > 432000000) message.response = strings.$('tooLong');
+
+    if(message.response) {
       cb(message);
-    });
-  }
+    } else {
+      services.condo.open(duration, phone_number, null, null, result => {
+        message.response = result;
+        cb(message);
+      });
+    }
+  }).catch(err => {
+    this.linkCondo(message).then(cb);
+  });
+  
 };
 
 exports.closeCondo = (message, phone_number, cb) => {
