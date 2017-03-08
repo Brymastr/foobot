@@ -14,14 +14,14 @@ module.exports = passport => {
       profileFields: ['id', 'birthday', 'email', 'first_name', 'last_name', 'gender', 'hometown']
     }, (req, accessToken, refreshToken, profile, done) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
-      usersController.getUser(params.user_id, user => {
+      usersController.getUser(params.user_id).then(user => {
         if(user) {
           user.facebook_id = profile.id;
           user.facebook_token = accessToken;
           if(!user.first_name) user.first_name = profile.name.givenName;
           if(!user.last_name) user.last_name = profile.name.familyName;
           if(!user.gender) user.gender = profile.gender;
-          user.save((err, doc) => {
+          user.save().then(doc => {
             doc.chat_id = params.chat_id;
             usersController.consolidateUsers(doc).then(consolidated => done(null, consolidated));
           });
@@ -39,5 +39,5 @@ module.exports = passport => {
       return done(null, user, {scope: 'all'})
     });
   }));
-}
 
+};

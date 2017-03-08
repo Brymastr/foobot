@@ -57,22 +57,23 @@ module.exports = (passport, queueConnection) => {
         chat_id: req.user.chat_id,
         source: params.source
       });
-      processing.sendMessage(message, () => {
-        let post_auth = `
-          <script type="text/javascript">
-            if (window.opener) {
-              window.opener.focus();
-              if(window.opener.loginCallBack) {
-                window.opener.loginCallBack();
-              }
+  
+      services.rabbit.pub(queueConnection, `outgoing.message.${req.params.source}`, message);
+      
+      let post_auth = `
+        <script type="text/javascript">
+          if (window.opener) {
+            window.opener.focus();
+            if(window.opener.loginCallBack) {
+              window.opener.loginCallBack();
             }
-            window.close();
-          </script>`;
-        if(message.source == 'messenger')
-          res.redirect(params.redirect_uri + '&authorization_code=ITWORKS')
-        else
-          res.send(post_auth);
-      });        
+          }
+          window.close();
+        </script>`;
+      if(message.source === 'messenger')
+        res.redirect(params.redirect_uri + '&authorization_code=ITWORKS')
+      else
+        res.send(post_auth);
     }
   );
 
