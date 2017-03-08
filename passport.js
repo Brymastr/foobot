@@ -16,13 +16,13 @@ module.exports = passport => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
       usersController.getUser(params.user_id).then(user => {
         if(user) {
-          user.platform_id.push({name: 'facebook', id: profile.id});
+          let facebook_id = user.platform_id.find(p => p.name === 'facebook');
+          if(facebook_id) user.platform_id.push({name: 'facebook', id: profile.id});
           user.facebook_token = accessToken;
           if(!user.first_name) user.first_name = profile.name.givenName;
           if(!user.last_name) user.last_name = profile.name.familyName;
           if(!user.gender) user.gender = profile.gender;
           user.save().then(doc => {
-            console.log(doc)
             doc.chat_id = params.chat_id;
             usersController.consolidateUsers(doc).then(consolidated => done(null, consolidated));
           });
