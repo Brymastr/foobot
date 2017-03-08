@@ -57,8 +57,7 @@ module.exports = (passport, queueConnection) => {
         chat_id: req.user.chat_id,
         source: params.source
       });
-      console.log(queueConnection, req.params.source, message)
-      services.rabbit.pub(queueConnection, `outgoing.message.${req.params.source}`, message);
+      services.rabbit.pub(queueConnection, `outgoing.message.${message.source}`, message);
       
       let post_auth = `
         <script type="text/javascript">
