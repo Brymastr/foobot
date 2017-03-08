@@ -25,11 +25,11 @@ exports.getUserByPlatformId = id => new Promise(resolve => {
 
 exports.consolidateUsers = user => new Promise(resolve => {
   let facebook_id = user.platform_id.find(p => p.name === 'facebook');
-  console.log(user, facebook_id)
   User.findOne({
     platform_id: {$elemMatch: {name: 'facebook', id: facebook_id.id}},
     _id: {$ne: user._id}
   }).exec().then(other => {
+    console.log(other)
     if(other) {
       let joined = [...other.platform_id, ...user.platform_id];
       other = Object.assign(user, other);
