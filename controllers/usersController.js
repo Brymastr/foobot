@@ -29,7 +29,6 @@ exports.consolidateUsers = user => new Promise(resolve => {
     platform_id: {$elemMatch: {name: 'facebook', id: facebook_id.id}},
     _id: {$ne: user._id}
   }).exec().then(other => {
-    console.log(other)
     if(other) {
       let joined = [...other.platform_id, ...user.platform_id];
       other = Object.assign(user, other);
