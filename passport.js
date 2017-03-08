@@ -16,6 +16,7 @@ module.exports = passport => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
       usersController.getUser(params.user_id).then(user => {
         if(user) {
+          console.log(profile)
           let facebook_id = user.platform_id.find(p => p.name === 'facebook');
           if(facebook_id) user.platform_id.push({name: 'facebook', id: profile.id});
           user.facebook_token = accessToken;
