@@ -15,6 +15,8 @@ module.exports = passport => {
     }, (req, accessToken, refreshToken, profile, done) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
       usersController.getUser(params.user_id).then(user => {
+        console.log('FacebookStrategy')
+        console.log(user, profile)
         if(user) {
           user.facebook_id = profile.id;
           user.facebook_token = accessToken;
