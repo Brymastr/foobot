@@ -48,7 +48,6 @@ module.exports = (passport, queueConnection) => {
   });
 
   // Facebook auth
-  // TODO: This may also be broken
   router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {session: false, failureRedirect: '/'}), (req, res) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
@@ -59,7 +58,7 @@ module.exports = (passport, queueConnection) => {
       });
       services.rabbit.pub(queueConnection, `outgoing.message.${message.source}`, message);
       
-      let post_auth = `
+      const post_auth = `
         <script type="text/javascript">
           if (window.opener) {
             window.opener.focus();
