@@ -50,8 +50,8 @@ function consolidate(user1, user2) {
   const platformIds = [...user1.platform_id, ...user2.platform_id];
   
   const user3 = Object.assign({}, user1, user2);
-  user3._id = undefined;
-  user3.__v = undefined;
+  delete user3._id;
+  delete user3.__v;
   user3.platform_id = removeDuplicateFacebookIds(platformIds);
   if(!user3.old_user_ids) user3.old_user_ids = [];
   user3.old_user_ids = [user1._id, user2._id];
