@@ -38,7 +38,7 @@ exports.consolidateUsers = user => new Promise(resolve => {
       consolidated.markModified('platform_id');
       consolidated.save().then(consolidatedDoc => {
         user.remove().then(thisDoc => {
-          console.log(consolidateDoc);
+          console.log(consolidatedDoc);
           resolve(consolidatedDoc);
         });
       });
