@@ -33,10 +33,11 @@ exports.consolidateUsers = user => new Promise(resolve => {
 
       const consolidatedUser = consolidate(user, other);
       User.create(consolidatedUser).then(consolidatedDoc => {
+        console.log('AFTER SAVE')
         console.log(consolidatedDoc);
         Promise.all([
-          other.remove,
-          user.remove
+          other.remove(),
+          user.remove()
         ]).then(() => resolve(consolidatedDoc));
       })
 
@@ -55,6 +56,9 @@ function consolidate(user1, user2) {
   user3.platform_id = removeDuplicateFacebookIds(platformIds);
   if(!user3.old_user_ids) user3.old_user_ids = [];
   user3.old_user_ids = [user1._id, user2._id];
+
+  console.log('BEFORE')
+  console.log(user3)
   return user3;
 }
 
