@@ -30,21 +30,33 @@ exports.consolidateUsers = user => new Promise(resolve => {
     _id: {$ne: user._id}
   }).exec().then(other => {
     if(other) {
-      let joined = [...other.platform_id, ...user.platform_id];
-      let consolidated = Object.assign(user, other);
-      if(!consolidated.old_user_ids) consolidated.old_user_ids = [];
-      consolidated.old_user_ids.push(other._id);
-      consolidated.platform_id = removeDuplicateFacebookIds(joined);
-      consolidated.markModified('platform_id');
-      consolidated.save().then(consolidatedDoc => {
-        other.remove().then(thisDoc => resolve(consolidatedDoc));
-      });
+
+      const consolidatedUser = consolidate(user, other);
+      User.create(consolidatedUser).then(consolidatedDoc => {
+        console.log(consolidatedDoc);
+        Promise.all([
+          other.remove,
+          user.remove
+        ]).then(() => resolve(consolidatedDoc));
+      })
 
     } else {
       resolve(user);
     }
   });
 });
+
+function consolidate(user1, user2) {
+  const platformIds = [...user1.platform_id, ...user2.platform_id];
+  
+  const user3 = Object.assign({}, user1, user2);
+  user3._id = undefined;
+  user3.__v = undefined;
+  user3.platform_id = removeDuplicateFacebookIds(platformIds);
+  if(!user3.old_user_ids) user3.old_user_ids = [];
+  user3.old_user_ids.push(user1._id, user2._id_);
+  return user3;
+}
 
 function removeDuplicateFacebookIds(list) {
   let index = list.findIndex(obj => obj.name === 'facebook');
