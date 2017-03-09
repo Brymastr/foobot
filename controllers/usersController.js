@@ -36,7 +36,11 @@ exports.consolidateUsers = user => new Promise(resolve => {
       consolidated.old_user_ids.push(user._id);
       consolidated.platform_id = removeDuplicateFacebookIds(joined);
       consolidated.markModified('platform_id');
+      console.log('BEFORE SAVE')
+      console.log(consolidated)
       consolidated.save().then(consolidatedDoc => {
+        console.log('AFTER SAVE')
+        console.log(consolidatedDoc)
         user.remove().then(thisDoc => resolve(consolidatedDoc));
       });
 
@@ -49,7 +53,6 @@ exports.consolidateUsers = user => new Promise(resolve => {
 function removeDuplicateFacebookIds(list) {
   let index = list.findIndex(obj => obj.name === 'facebook');
   list.splice(index, 1);
-  console.log(list)
   return list;
 }
 
