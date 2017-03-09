@@ -54,7 +54,7 @@ function consolidate(user1, user2) {
   user3.__v = undefined;
   user3.platform_id = removeDuplicateFacebookIds(platformIds);
   if(!user3.old_user_ids) user3.old_user_ids = [];
-  user3.old_user_ids.push(user1._id, user2._id_);
+  user3.old_user_ids = [user1._id, user2._id];
   return user3;
 }
 
