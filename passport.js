@@ -17,7 +17,7 @@ module.exports = passport => {
       usersController.getUser(params.user_id).then(user => {
         if(user) {
           let facebook_id = user.platform_id.find(p => p.name === 'facebook');
-          if(facebook_id) user.platform_id.push({name: 'facebook', id: profile.id});
+          if(!facebook_id) user.platform_id.push({name: 'facebook', id: profile.id});
           user.facebook_token = accessToken;
           if(!user.first_name) user.first_name = profile.name.givenName;
           if(!user.last_name) user.last_name = profile.name.familyName;
