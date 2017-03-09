@@ -24,7 +24,10 @@ module.exports = passport => {
           if(!user.gender) user.gender = profile.gender;
           user.save().then(doc => {
             doc.chat_id = params.chat_id;
-            usersController.consolidateUsers(doc).then(consolidated => done(null, consolidated));
+            usersController.consolidateUsers(doc).then(consolidated => {
+              console.log(consolidated)
+              done(null, consolidated);
+            });
           });
         } else {
           done();
