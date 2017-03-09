@@ -36,12 +36,10 @@ exports.consolidateUsers = user => new Promise(resolve => {
       consolidated.old_user_ids.push(user._id);
       consolidated.platform_id = removeDuplicateFacebookIds(joined);
       consolidated.markModified('platform_id');
-      consolidated.save().then(consolidatedDoc => {
-        user.remove().then(thisDoc => {
-          console.log(consolidatedDoc);
-          resolve(consolidatedDoc);
-        });
-      });
+      consolidated.save().then(resolve)
+      // consolidated.save().then(consolidatedDoc => {
+      //   user.remove().then(thisDoc => resolve(consolidatedDoc));
+      // });
 
     } else {
       resolve(user);
