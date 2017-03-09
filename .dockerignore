@@ -8,3 +8,4 @@ corpora
 scrape.js
 *.md
 classifier.json
+test

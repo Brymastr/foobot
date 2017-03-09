@@ -31,10 +31,10 @@ exports.consolidateUsers = user => new Promise(resolve => {
   }).exec().then(other => {
     if(other) {
       let joined = [...other.platform_id, ...user.platform_id];
-      let consolidated = Object.assign({}, user, other);
+      let consolidated = Object.assign(user, other);
       if(!consolidated.old_user_ids) consolidated.old_user_ids = [];
       consolidated.old_user_ids.push(user._id);
-      consolidated.platform_id = joined;
+      consolidated.platform_id = removeDuplicateIds(joined);
 
       consolidated.save().then(consolidatedDoc => {
         user.remove().then(thisDoc => resolve(consolidatedDoc));
@@ -45,6 +45,12 @@ exports.consolidateUsers = user => new Promise(resolve => {
     }
   });
 });
+
+function removeDuplicateIds(list) {
+  let index = list.findIndex(obj => obj.name === 'facebook');
+  list.splice(index, 1);
+  return list;
+}
 
 exports.savePhoneNumber = message => {
   return new Promise((resolve, reject) => {
