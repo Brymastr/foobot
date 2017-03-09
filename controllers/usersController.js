@@ -32,6 +32,7 @@ exports.consolidateUsers = user => new Promise(resolve => {
     if(other) {
       let joined = [...other.platform_id, ...user.platform_id];
       let consolidated = Object.assign({}, user, other);
+      if(!consolidated.old_user_ids) consolidated.old_user_ids = [];
       consolidated.old_user_ids.push(user._id);
       consolidated.platform_id = joined;
 
