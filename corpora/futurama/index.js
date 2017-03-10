@@ -32,7 +32,6 @@ exports.scrapeEpisodeTranscripts = cb => {
       // if(number != 72) continue;
       let episode = episodes[number];
       getEpisode(url + episode, `${this.path}/${String('000' + number).slice(-3)}_${episode.split(':')[1]}.txt`, () => {
-        // console.log('done')
       })   
     }
   });
@@ -47,7 +46,6 @@ function getEpisode(url, filename, cb) {
 
       $('div.poem p, #mw-content-text p').each((i, element) => {
         let l = $(element).text();
-        // console.log(l)
         let quote = l
           .replace(/\[[a-z0-9,.?_ '-]*\]/ig, '')
           .replace(/\([a-z0-9,.?_: '-]*\)/ig, '')

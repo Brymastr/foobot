@@ -6,17 +6,11 @@ const
   Message = require('./models/Message'),
   messagesController = require('./controllers/messagesController'),
   usersController = require('./controllers/usersController'),
-  telegram = require('./services/telegram');
+  services = require('./services'),
+  config = require('./config.json');
 
-
-module.exports = (config, passport, classifier) => {
+module.exports = (passport, queueConnection) => {
   var router = express.Router();
-
-  // Turn the 'update' into a local 'message' object
-  // Decide what type of message it is
-  //   - Maybe a different type all together based on message text
-  // Save to database as correct object type
-  // Send back message object
 
   router.post('/webhook/:source/:token', (req, res) => {
 
@@ -25,40 +19,24 @@ module.exports = (config, passport, classifier) => {
       res.sendStatus(403);
       return;
     }
-
-    processing.processUpdate(req.body, req.params.source, classifier, config, message => {
-      res.sendStatus(200);
-      if(message.response || message.reply_markup) {
-        let length = 10;
-        if(message.response) message.response.length;
-        let delay = Math.random() * 1;
-        let timeout = (0.01 * length + delay) * 1000; // Human-like delay is about 0.08 seconds per character. 0.01 is much more tolerable and what you would expect from a superior being like foobot
-        processing.sendTyping(message, config, () => {
-          setTimeout(() => {
-            processing.sendMessage(message, config, () => {
-              if(message.topic == 'leave chat' && message.source == 'telegram')
-                telegram.leaveChat(message.chat_id, config, () => {});
-            });
-          }, timeout);
-        });
-      }
-    });
+    res.sendStatus(200);
+    services.rabbit.pub(queueConnection, `incoming.message.${req.params.source}`, req.body);
   });
 
   router.post('/send/:chat_id', (req, res) => {
-    // TODO: get some security up in here. Need to agree with Mark on something
+    // TODO: we must rebuild. This isn't going to work anymore
     res.sendStatus(200);
-    processing.sendExternal(req.body.message, req.params.chat_id, config, message => {});
+    processing.sendExternal(req.body.message, req.params.chat_id, message => console.log);
   });
 
   // Messenger verify
   router.get('/webhook/messenger/:token', (req, res) => {
-    if (req.query['hub.mode'] === 'subscribe' 
+    if (req.query['hub.mode'] === 'subscribe'
     && req.query['hub.verify_token'] === config.messenger.webhook_token) {
       res.status(200).send(req.query['hub.challenge']);
     } else {
       res.sendStatus(403);
-    }  
+    }
   });
 
   // Phonehome
@@ -71,30 +49,29 @@ module.exports = (config, passport, classifier) => {
 
   // Facebook auth
   router.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {session: false, failureRedirect: '/'}),
-    (req, res) => {
+    passport.authenticate('facebook', {session: false, failureRedirect: '/'}), (req, res) => {
       let params = JSON.parse(decodeURIComponent(req.query.state));
       let message = new Message({
         response: strings.$('facebookLoginSuccessful'),
         chat_id: req.user.chat_id,
         source: params.source
       });
-      processing.sendMessage(message, config, () => {
-        let post_auth = `
-          <script type="text/javascript">
-            if (window.opener) {
-              window.opener.focus();
-              if(window.opener.loginCallBack) {
-                window.opener.loginCallBack();
-              }
+      services.rabbit.pub(queueConnection, `outgoing.message.${message.source}`, message);
+      
+      const post_auth = `
+        <script type="text/javascript">
+          if (window.opener) {
+            window.opener.focus();
+            if(window.opener.loginCallBack) {
+              window.opener.loginCallBack();
             }
-            window.close();
-          </script>`;
-        if(message.source == 'messenger')
-          res.redirect(params.redirect_uri + '&authorization_code=ITWORKS')
-        else
-          res.send(post_auth);
-      });        
+          }
+          window.close();
+        </script>`;
+      if(message.source === 'messenger')
+        res.redirect(params.redirect_uri + '&authorization_code=ITWORKS')
+      else
+        res.send(post_auth);
     }
   );
 
@@ -111,7 +88,7 @@ module.exports = (config, passport, classifier) => {
     })(req, res, next);
   });
 
-  // Messages
+  // Messages (this is pretty bad, don't need a route for this)
   router.get('/messages/:chatId?/:userId?', (req, res) => {
     if(!req.params.chatId && !req.params.userId) 
       messagesController.getAllMessages(messages => res.json(messages));
@@ -125,6 +102,15 @@ module.exports = (config, passport, classifier) => {
       res.send('probably never');
   });
 
+  // Get the URL that foobot is living at
+  router.get('/info/webhook', (req, res) => {
+    res.json({
+      url: config.url,
+      route_token: config.route_token
+    });
+  });
+
+  // Get rid of the rest of these by v1.0
   router.delete('/messages', (req, res) => {
     messagesController.deleteMessages((result) => {
       log.debug(result);
@@ -135,16 +121,25 @@ module.exports = (config, passport, classifier) => {
   router.get('/users/:userId?', (req, res) => {
     if(!req.params.userId) usersController.getAllUserIds(users => res.json(users));
     else {
-      usersController.getUserByPlatformId(req.params.userId, user => {
+      usersController.getUserByPlatformId(req.params.userId).then(user => {
         if(user) res.json(user);
-        else usersController.getUser(req.params.userId, user => res.json(user));
+        else usersController.getUser(req.params.userId).then(user => res.json(user));
       });
     }
   });
 
   router.delete('/users', (req, res) => {
-    log.debug('users deleted');
-    usersController.deleteAllUsers(() => res.send(200));
+    log.info('users deleted');
+    usersController.deleteAllUsers(() => res.sendStatus(200));
+  });
+
+  router.all('/resetTelegramWebhook', (req, res) => {
+    // services.telegram.setWebhook();
+    res.sendStatus(200);
+  });
+
+  router.get('/loaderio-*', (req, res) => {
+    res.sendFile(__dirname + '/loaderio');
   });
   
   return router;

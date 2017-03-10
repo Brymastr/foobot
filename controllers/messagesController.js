@@ -11,13 +11,14 @@ const
   usersController = require('./usersController');
 
 // Save an incoming message to the database
-exports.createMessage = (message, cb) => {
-  message.save((err, _message) => {
-    usersController.getUser(_message.user_id, user => {
-      if(err) log.error(`Error saving message: ${err}`);
-      else log.info(`Message saved => ${_message.text}`);
-      cb(_message, user);
-    });
+exports.saveMessage = message => {
+  return new Promise((resolve, reject) => {
+    Message.create(message)
+      .then(resolve)
+      .catch(err => {
+        log.error(`Error saving message: ${err}`);
+        reject(err);
+      });
   });
 }
 

@@ -1,6 +1,6 @@
 const uuid = require('node-uuid');
 
-exports.init = config => {
+module.exports = config => {
   const vars = process.env;
 
   // General
@@ -12,10 +12,6 @@ exports.init = config => {
   // Telegram
   if(vars.FOOBOT_TELEGRAM_TOKEN) config.telegram.token = vars.FOOBOT_TELEGRAM_TOKEN;
   config.route_token = uuid.v4();
-
-  // Messenger
-  if(vars.FOOBOT_MESSENGER_WEBHOOK_TOKEN) config.messenger.webhook_token = vars.FOOBOT_MESSENGER_WEBHOOK_TOKEN;
-  if(vars.FOOBOT_MESSENGER_PAGE_ACCESS_TOKEN) config.messenger.page_access_token = vars.FOOBOT_MESSENGER_PAGE_ACCESS_TOKEN;
 
   // Facebook
   if(vars.FOOBOT_FACEBOOK_APP_ID) config.facebook.app_id = vars.FOOBOT_FACEBOOK_APP_ID;
@@ -35,6 +31,9 @@ exports.init = config => {
 
   // Condo entry (Mark Niehe)
   if(vars.FOOBOT_CONDO_ENTRY_URL) config.condo.url = vars.FOOBOT_CONDO_ENTRY_URL;
+
+  // Rabbit
+  if(vars.FOOBOT_RABBIT_QUEUE) config.rabbit.queue = vars.FOOBOT_RABBIT_QUEUE;
 
   return config;
 }

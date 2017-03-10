@@ -7,8 +7,7 @@ exports.createUser = (data, cb) => {
   new User({
     first_name: data.first_name,
     last_name: data.last_name,
-    telegram_id: data.telegram_id,
-    messenger_id: data.messenger_id
+    platform_id: data.platform_id,
   }).save((err, user) => {
     if (err) log.err(`Error creating user: ${err}`);
     else log.debug(`User created: ${user}`);
@@ -16,69 +15,90 @@ exports.createUser = (data, cb) => {
   });
 };
 
-exports.getUser = (id, cb) => {
-  User.findOne({ _id: id }, (err, user) => {
-    cb(user);
-  });
-};
+exports.getUser = id => new Promise(resolve => {
+  User.findOne({ _id: id }).exec().then(resolve);
+});
 
-exports.getUserByPlatformId = (id, cb) => {
-  User.findOne({ $or: [{ 'telegram_id': id }, { 'messenger_id': id }, { 'facebook_id': id }] }, (err, user) => {
-    cb(user);
-  });
-};
+exports.getUserByPlatformId = id => new Promise(resolve => {
+  User.findOne({platform_id: {$elemMatch: {id}}}).exec().then(resolve);
+});
 
-exports.consolidateUsers = (user, cb) => {
-  User.findOne({facebook_id: user.facebook_id, _id: {$ne: user._id}}, (err, other) => {
+exports.consolidateUsers = user => new Promise(resolve => {
+  let facebook_id = user.platform_id.find(p => p.name === 'facebook');
+  User.findOne({
+    platform_id: {$elemMatch: {name: 'facebook', id: facebook_id.id}},
+    _id: {$ne: user._id}
+  }).exec().then(other => {
     if(other) {
-      if(!other.messenger_id) other.messenger_id = user.messenger_id;
-      if(!other.telegram_id) other.telegram_id = user.telegram_id;
-      if(!other.gender) other.gender = user.gender;
-      if(!other.phone_number) other.phone_number = user.phone_number;
-      if(!other.email) other.email = user.email;
-      if(!other.username) other.username = user.username;
-      other.old_account_ids.push(user._id);
-      other.save((err, otherDoc) => {
-        user.remove((err, thisDoc) => {
-          cb(otherDoc);
-        });
-      });
+      const otherId = other._id;
+      const userId = user._id;
+      const consolidatedUser = consolidate(user, other);
+      User.create(consolidatedUser).then(consolidatedDoc => {
+        other._id = otherId;
+        user._id = userId;
+        Promise.all([
+          other.remove(),
+          user.remove()
+        ]).then(() => resolve(consolidatedDoc));
+      })
+
     } else {
-      cb(user);
+      resolve(user);
     }
   });
-};
+});
 
-exports.savePhoneNumber = (message, cb) => {
-  User.findOne({_id: message.user_id}, (err, user) => {
-    if(message.other.contact_telegram_id == user.telegram_id && user.action == 'phone_number') {
-      user.phone_number = message.text.substr(1) === '+' ? message.text : '+' + message.text;
-      user.action = null;
-      user.save((err, doc) => {
-        message.response = 'Condo account linked';
-        cb(message);
-      });
-    } else cb(message);
-    
+function consolidate(user1, user2) {
+  const platformIds = [...user1.platform_id, ...user2.platform_id];
+  
+  const user3 = Object.assign({}, user1, user2);
+  user3._doc.platform_id = removeDuplicateFacebookIds(platformIds);
+  if(!user3._doc.old_user_ids) user3._doc.old_user_ids = [];
+  user3._doc.old_user_ids = [user1._id, user2._id];
+  delete user3._doc._id;
+  delete user3._doc.__v;
+  return user3._doc;
+}
+
+function removeDuplicateFacebookIds(list) {
+  let index = list.findIndex(obj => obj.name === 'facebook');
+  list.splice(index, 1);
+  return list;
+}
+
+exports.savePhoneNumber = message => {
+  return new Promise((resolve, reject) => {
+    User.findOne({_id: message.user_id}).exec().then(user => {
+      let telegramId = user.platform_id.find(p => p.name === 'telegram').id;
+      if(message.other.contact_telegram_id == telegramId && user.action == 'phone_number') {
+        user.phone_number = message.text.substr(1) === '+' ? message.text : '+' + message.text;
+        user.action = null;
+        user.save((err, doc) => {
+          message.response = 'Condo account linked';
+          resolve(message);
+        });
+      }
+    })
+    .catch(err => console.warn);
   });
 };
 
 // Don't keep this
 exports.getAllUserIds = cb => {
-  User.find({}, 'telegram_id messenger_id facebook_id', (err, users) => {
+  User.find({}, 'platform_id').exec().then(users => {
     cb(users);
   });
 };
 
 // Or this
 exports.getAllUsers = cb => {
-  User.find({}, (err, users) => {
+  User.find({}).exec().then(users => {
     cb(users);
   });
 };
 
 exports.deleteAllUsers = cb => {
-  User.remove({}, (err, count) => {
+  User.remove({}).exec().then(count => {
     cb();
   });
 }

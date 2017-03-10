@@ -1,33 +1,31 @@
 // Require libraries
 const 
-  mongoose = require('mongoose'),
+  promisify = require('es6-promisify'),
   express = require('express'),
   bodyParser = require('body-parser'),
-  processing = require('./processing'),
-  services = require('./services'),
   methodOverride = require('method-override'),
   log = require('./logger'),
-  natural = require('natural'),
-  ngrok = require('ngrok'),
-  init = require('./init'),
+  ngrokConnect = promisify(require('ngrok').connect),
+  config = require('./init')(require('./config.json')),
   passport = require('passport'),
-  schedule = require('node-schedule'),
-  async = require('async'),
-  strings = require('./strings');
+  compression = require('compression'),
+  fork = require('child_process').fork;
 
-mongoose.Promise = Promise;
-var config = require('./config.json');
+require('./passport')(passport);
+log.logLevel = config.log_level;
+log.debug(`Route token: ${config.route_token}`);
 
 // Express setup
-var app = express();
-app.use(bodyParser.urlencoded({extended:true}));
-app.use(bodyParser.json({type:'application/json'}));
+const app = express();
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json({type: 'application/json'}));
 app.use(methodOverride());
 app.use(passport.initialize());
+app.use(compression());
 
 // Logging middleware
 app.use('*', (req, res, next) => {
-  log.info(`${req.method}: ${req.baseUrl}`);
+  log.debug(`${req.method}: ${req.baseUrl}`);
   next();
 });
 
@@ -38,59 +36,30 @@ app.use((req, res, next) => {
   next();
 });
 
-// Configurations
-ngrok.connect(config.port, (err, url) => {
-  config.url = url;
-  config = init.init(config);
-  if(process.env.FOOBOT_URL) ngrok.disconnect(url);
-
-  log.logLevel = config.log_level;
-  log.debug(`Route token: ${config.route_token}`);
-  require('./passport')(config, passport);
-
-  // Routes + classifier
-  natural.BayesClassifier.load('classifier.json', null, (err, classifier) => { 
-    let routes = require('./routes')(config, passport, classifier);
-    app.use('/', routes);
-  });
-
-  // MongoDB connection
-  mongoose.connect(config.db);
-  mongoose.connection.on('open', () => {
-    console.log(`Connected to mongodb at: ${config.db}`);
-  });
-
-  // Start server
-  app.listen(config.port);
-
-  // Telegram
-  if(config.telegram)
-    services.telegram.setWebhook(config);
-
-  // Twitter
-  let rule = new schedule.RecurrenceRule();
-  rule.hour = 10;
-  rule.minute = 30;
-  schedule.scheduleJob(rule, () => {
-    async.retry({
-      times: 5,
-      interval: 2000,
-      errorFilter: err => err === 187
-    }, (cb, results) => {
-      services.twitter.sendTweet(config, strings.$('tweet'))
-        .then(tweet => {
-          cb(tweet);
-          log.info(`Tweet sent: ${tweet}`);
-        })
-        .catch(err => cb(new Error(err)));
+const ngrok = () => new Promise(resolve => {
+  if(!config.url) {
+    ngrokConnect(config.port).then(url => {
+      config.url = url;
+      resolve(url);
     });
-  });
-  
-
-  // Skype
-
-  // Slack
-
-  // Messenger
-
+  } else resolve();
 });
+// Startup
+app.listen(config.port);
+
+ngrok()
+  .then(() => require('./startup'))
+  .then(startup => {
+    // Use routes
+    app.use('/', require('./routes')(passport, startup.queueConnection));
+
+    // Subscribe to queues
+    let queues = new Map();
+    queues.set('internal', 'internal.message.nlp');
+
+    queues.forEach((value, key) => {
+      log.debug(`Subscriber starting for ${key} queue`);
+      fork(__dirname + '/subscribe', [key, value, config.url], {silent: false, stdio: 'pipe'});
+    });
+    console.log('startup complete');
+  });
