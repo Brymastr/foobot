@@ -57,9 +57,6 @@ function consolidate(user1, user2) {
   user3._doc.old_user_ids = [user1._id, user2._id];
   delete user3._doc._id;
   delete user3._doc.__v;
-
-  console.log('BEFORE')
-  console.log(user3)
   return user3._doc;
 }
 

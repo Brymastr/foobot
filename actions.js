@@ -83,7 +83,7 @@ exports.openCondo = (message, cb) => {
     }
   }).catch(err => {
     console.log(err);
-    if(err === 'setup required')
+    if(err.message === 'setup required')
       this.linkCondo(message).then(cb);
     else cb(message);
   });
