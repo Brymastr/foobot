@@ -101,7 +101,7 @@ exports.process = (message, classifier) => {
             m.response = `I love you too, ${m.platform_from.first_name}`;
           } else if(m.sentiment < -1) {
             m.response = strings.$('leaveChat');
-            m.topic = 'leave chat';
+            m.action = 'leave chat';
           } else m.response = actions.iAmFoobot();
           resolve(m);
         } else if(m.text == '') {
