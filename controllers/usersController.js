@@ -30,11 +30,12 @@ exports.consolidateUsers = user => new Promise(resolve => {
     _id: {$ne: user._id}
   }).exec().then(other => {
     if(other) {
-
+      const otherId = other._id;
+      const userId = user._id;
       const consolidatedUser = consolidate(user, other);
       User.create(consolidatedUser).then(consolidatedDoc => {
-        console.log('AFTER SAVE')
-        console.log(consolidatedDoc);
+        other._id = otherId;
+        user._id = userId;
         Promise.all([
           other.remove(),
           user.remove()
