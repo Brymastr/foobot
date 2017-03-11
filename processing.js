@@ -50,7 +50,7 @@ exports.process = (message, classifier) => {
           });
           resolve(m);
         } else if(m.topic == 'shorten url') {
-          actions.shortenUrl(m, config, short => {
+          actions.shortenUrl(m, short => {
             m.response = short || 'Ziip has died, may it rest in peace';
             resolve(m);
           });

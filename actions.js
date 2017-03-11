@@ -150,7 +150,8 @@ exports.shortenUrl = (message, done) => {
   let url = message.text.match(/(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])?/i);
   if(!url) done('');
   else {
-    services.ziip.shorten(url[0])
+    services.ziip
+      .shorten(url[0])
       .then(short => done(`${config.ziip.url}/${short}`))
       .catch(err => done());
   }
