@@ -37,23 +37,28 @@ module.exports = mongoose.model('Message', Schema({
 })
   .pre('save', function(next) {
     let message = this;
-    usersController.getUserByPlatformId(message.platform_from.id).then(user => {
-      if(!user) {
-        usersController.createUser({
-          platform_id: [{name: message.source, id: message.platform_from.id}],
-          first_name: message.platform_from.first_name,
-          last_name: message.platform_from.last_name,
-          username: message.platform_from.username
-        }, _user => {
-          message.user_id = _user._id;
+    if(message.platform_from) {
+      usersController.getUserByPlatformId(message.platform_from.id).then(user => {
+        if(!user) {
+          usersController.createUser({
+            platform_id: [{name: message.source, id: message.platform_from.id}],
+            first_name: message.platform_from.first_name,
+            last_name: message.platform_from.last_name,
+            username: message.platform_from.username
+          }, _user => {
+            message.user_id = _user._id;
+            next();
+          });
+        } else {
+          message.user_id = user._id;
           next();
-        });
-      } else {
-        message.user_id = user._id;
-        next();
-      }
-    }).catch(err => {
-      console.error(err);
-    });
+        }
+      }).catch(err => {
+        console.error(err);
+      });
+
+    } else {
+      next();
+    }
   })
 );
