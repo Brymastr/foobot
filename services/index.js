@@ -3,5 +3,4 @@ exports.google = require('./google');
 exports.canadaPost = require('./canadaPost');
 exports.ziip = require('./ziip');
 exports.condo = require('./condo');
-exports.twitter = require('./twitter');
 exports.rabbit = require('./rabbit');

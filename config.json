@@ -15,12 +15,6 @@
     "app_id": null,
     "app_secret": null
   },
-  "twitter": {
-    "api_key": null,
-    "api_secret": null,
-    "access_token_key": null,
-    "access_token_secret": null
-  },
   "slack": {
 
   },
