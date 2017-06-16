@@ -1,3 +1,11 @@
 node_modules
-.vscode
 .git
+.gitignore
+.dockerignore
+Dockerfile
+assets
+corpora
+scrape.js
+*.md
+classifier.json
+test

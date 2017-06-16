@@ -8,6 +8,8 @@ const
   Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
 
+mongoose.Promise = Promise;
+
 module.exports = mongoose.model('Member', Schema({
   user_id: ObjectId,
   thing: String,

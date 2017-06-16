@@ -1,5 +1,6 @@
 const 
   log = require('../logger'),
   request = require('request'),
-  textParser = require('../textParser');
+  textParser = require('../textParser'),
+  config = require('../config.json');
 
